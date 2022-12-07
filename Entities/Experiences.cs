@@ -11,6 +11,6 @@ public class Experiences
   public string? Descripeion { get; set; }
 
   public int FrelancerInfoId { get; set; }
-  public FrenaceInfo FrenaceInfo { get; set; }
+  public FrelaceInfo? FrenaceInfo { get; set; }
  }
 
