@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MyCarearApi.Data;
 using MyCarearApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source = Data.db;"));
 
 var app = builder.Build();
 
