@@ -5,7 +5,7 @@ using MyCarearApi.Entities;
 
 namespace MyCarearApi.Repositoryies
 {
-    public class JobSkillsRepository: GenericRepository<JobSkills>, IJobSkillsRepository
+    public class JobSkillsRepository: GenericRepository<JobSkill>, IJobSkillsRepository
     {
         public JobSkillsRepository(AppDbContext appDbContext) : base(appDbContext) { }
     }

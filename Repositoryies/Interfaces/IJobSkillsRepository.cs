@@ -3,7 +3,7 @@ using MyCarearApi.Repositories;
 
 namespace MyCarearApi.Repositoryies.Interfaces
 {
-    public interface IJobSkillsRepository: IGenericRepository<JobSkills>
+    public interface IJobSkillsRepository: IGenericRepository<JobSkill>
     {
     }
 }
