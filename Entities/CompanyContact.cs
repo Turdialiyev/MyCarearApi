@@ -9,5 +9,7 @@ public class CompanyContact
     public string?  Twitter { get; set; }
     public string?  Instagram { get; set; }
     public string?  WebSite { get; set; }
+    
     public int CompanyId { get; set; }
+    public Company? Company { get; set; }
 }

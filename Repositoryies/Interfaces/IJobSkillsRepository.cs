@@ -5,5 +5,6 @@ namespace MyCarearApi.Repositoryies.Interfaces
 {
     public interface IJobSkillsRepository: IGenericRepository<JobSkill>
     {
+             
     }
 }
