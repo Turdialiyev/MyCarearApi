@@ -1,4 +1,5 @@
-﻿using MyCareerApi.Entities;
+﻿using MyCarearApi.Entities;
+using MyCareerApi.Entities;
 using System.Linq.Expressions;
 
 namespace MyCarearApi.Repositoryies.Interfaces
