@@ -1,5 +1,5 @@
-﻿using MyCareerApi.Entities;
-using MyCarrearApi.Repositories;
+﻿using MyCarearApi.Entities;
+using MyCarearApi.Repositories;
 
 namespace MyCarearApi.Repositoryies.Interfaces
 {
