@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace MyCarrearApi.Repositories;
 
 public interface IGenericRepository<TEntity> where TEntity : class
