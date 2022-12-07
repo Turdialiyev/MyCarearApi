@@ -14,17 +14,31 @@ public class UnitOfWork : IUnitOfWork
         Experiences = new ExperienceRepository(context);
         Resumes = new ResumeRepository(context);
         UserLanguages = new UserLanguageRepository(context);
+        FreelancerInformations = new FreelancerInformationRepository(context);
+        FreelancerSkills = new FreelancerSkillRepository(context);
+        Positions = new PositionRepository(context);
+        Hobbies = new HobbyRepository(context);
+        PositionSkills = new PositionSkillRepository(context);
+        Skills = new SkillRepository(context);
+        CompanyContacts = new CompanyContactRepository(context);
     }
 
-    public ICompanyRepository Companies {get;}
+    public ICompanyRepository Companies { get; }
 
-    public ICompanyLocationRepository CompanyLocations {get;}
+    public ICompanyLocationRepository CompanyLocations { get; }
 
-    public IExperienceRepository Experiences {get;}
+    public IExperienceRepository Experiences { get; }
 
-    public IResumeRepository Resumes {get;}
+    public IResumeRepository Resumes { get; }
 
-    public IUserLanguageRepository UserLanguages {get;}
+    public IUserLanguageRepository UserLanguages { get; }
+    public IFreelancerInformationRepository FreelancerInformations { get; set; }
+    public IFreelancerSkillRepository FreelancerSkills { get; set; }
+    public IPositionRepository Positions { get; set; }
+    public IHobbyRepository Hobbies { get; set; }
+    public IPositionSkillRepository PositionSkills { get; set; }
+    public ISkillRepository Skills { get; set; }
+    public ICompanyContactRepository CompanyContacts { get; set; }
 
     public void Dispose()
     {
