@@ -10,7 +10,7 @@ public class Address
 
     public string Home { get; set; }
 
-    public int FrelanceInfoId { get; set; }
+    public int FrelanceInformationId { get; set; }
 
     public FreelancerInformation FreelancerInformation { get; set; }
 }
