@@ -1,6 +1,6 @@
-﻿namespace MyCareerApi.Entities;
+﻿namespace MyCarearApi.Entities;
 
-public class Hobbie
+public class Hobby
 {
     public int Id { get; set; }
     public string? Hobbies { get; set; }
