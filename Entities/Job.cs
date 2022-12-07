@@ -1,4 +1,6 @@
-﻿namespace MyCarearApi.Entities;
+﻿using MyCareerApi.Entities;
+
+namespace MyCarearApi.Entities;
 
 public class Job 
 {
@@ -7,11 +9,16 @@ public class Job
 
     public JobState State { get; set; }
 
+    public int DeadLine { get; set; }
+
     public int PositionsId { get; set; }
 
     public Position Position { get; set; }
 
+    public int CompanyId { get; set; }
+    public Company Company { get; set; }
 
+    public IEnumerable<JobSkill> JobSkills { get; set; }
 }
 
 
