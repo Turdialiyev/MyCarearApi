@@ -1,0 +1,7 @@
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.csproj.AssemblyReference.cache
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.AssemblyInfoInputs.cache
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.AssemblyInfo.cs
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.csproj.CoreCompileInputs.cache
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\qudra\OneDrive\Документы\GitHub\MyCarearApi\obj\Debug\net7.0\MyCarearApi.MvcApplicationPartsAssemblyInfo.cache
