@@ -1,11 +1,11 @@
 using MyCarearApi.Entities.Enums;
 
 namespace MyCareerApi.Entities;
-public class Educations
+public class Education
  {
    public int Id { get; set; }
 
-   public string SchoolName { get; set; }
+   public string? SchoolName { get; set; }
    public EducationDegree EducationDegree { get; set; }
 
    public TypeStudy TypeStudy { get; set; }

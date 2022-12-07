@@ -1,6 +1,6 @@
 ﻿namespace MyCareerApi.Entities;
 
-public class CompanyLocations
+public class CompanyLocation
  { 
    public int Id { get; set; }
    public string? Location { get; set; }

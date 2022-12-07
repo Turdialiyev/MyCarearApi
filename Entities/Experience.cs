@@ -1,6 +1,6 @@
 namespace MyCareerApi.Entities; 
 
-public class Experiences
+public class Experience
  {
   public int Id { get; set; }
   public string? CompanyName { get; set; }

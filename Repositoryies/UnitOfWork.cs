@@ -1,4 +1,4 @@
-using MyCarrearApi.Data;
+using MyCarearApi.Data;
 
 namespace MyCarearApi.Repositories;
 
