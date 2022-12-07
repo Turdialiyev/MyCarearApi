@@ -11,6 +11,6 @@ public class Educations
    public bool CurrentStudy { get; set; } = false;
 
    public int FrelancerInfoId { get; set; }
-   public FrenaceInfo FrenaceInfo { get; set; }
+   public FrelaceInfo? FrenaceInfo { get; set; }
  }
 

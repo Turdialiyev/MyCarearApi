@@ -6,6 +6,6 @@ public class Resume
    public TypeResume TypeResume { get; set; }
 
    public int FrelanceInfoId { get; set; }
-   public FrenaceInfo FrenaceInfo { get; set; }
+   public FrelaceInfo? FrenaceInfo { get; set; }
  }
 
