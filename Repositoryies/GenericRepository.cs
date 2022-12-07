@@ -1,3 +1,6 @@
+using MyCarrearApi.Data;
+using System.Linq.Expressions;
+
 namespace MyCarrearApi.Repositories;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class

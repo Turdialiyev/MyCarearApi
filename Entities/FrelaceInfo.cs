@@ -1,5 +1,5 @@
 ﻿namespace MyCareerApi.Entities;
 
-public class FrenaceInfo
+public class FrelaceInfo
 {
 }
