@@ -1,4 +1,4 @@
-﻿namespace MyCareerApi.Entities; 
+﻿namespace MyCarearApi.Entities;
 
 public class Address 
 {
@@ -12,7 +12,7 @@ public class Address
 
     public int FrelanceInfoId { get; set; }
 
-    public FrelaceInfo FrelanceInfo { get; set; }
+    public FreelancerInformation FreelancerInformation { get; set; }
 }
 
 

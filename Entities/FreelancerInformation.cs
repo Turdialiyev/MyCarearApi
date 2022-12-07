@@ -1,6 +1,6 @@
-﻿namespace MyCareerApi.Entities;
+﻿namespace MyCarearApi.Entities;
 
-public class FrelanceInformation
+public class FreelancerInformation
 {
     public int Id { get; set; }
     public string? FirstName { get; set; }

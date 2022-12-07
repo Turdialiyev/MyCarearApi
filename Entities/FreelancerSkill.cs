@@ -1,6 +1,6 @@
-﻿namespace MyCareerApi.Entities;
+﻿namespace MyCarearApi.Entities;
 
-public class FrelanceSkill 
+public class FreelancerSkill 
 {
     public int Id { get; set; }
     public int SkillId { get; set; }

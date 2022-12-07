@@ -1,4 +1,4 @@
-namespace MyCareerApi.Entities; 
+namespace MyCarearApi.Entities;
 
 public class Experience
  {
@@ -12,7 +12,7 @@ public class Experience
 
   public int FrelancerInfoId { get; set; }
 
-  public FrelaceInfo FrelaceInfo { get; set; }
+  public FreelancerInformation FreelancerInformation { get; set; }
 
  }
 

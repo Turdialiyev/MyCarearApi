@@ -1,4 +1,4 @@
-using MyCareerApi.Entities;
+using MyCarearApi.Entities;
 
 namespace MyCarearApi.Repositories;
 

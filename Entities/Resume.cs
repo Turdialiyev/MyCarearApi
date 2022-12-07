@@ -1,6 +1,6 @@
 using MyCarearApi.Entities.Enums;
 
-namespace MyCareerApi.Entities; 
+namespace MyCarearApi.Entities;
 
 public class Resume
  {
@@ -9,7 +9,7 @@ public class Resume
 
    public int FrelanceInfoId { get; set; }
 
-   public FrelaceInfo FrelaceInfo { get; set; }
+   public FreelancerInformation FreelancerInformation { get; set; }
 
  }
 

@@ -1,6 +1,6 @@
 using MyCarearApi.Entities.Enums;
 
-namespace MyCareerApi.Entities;
+namespace MyCarearApi.Entities;
 public class Education
  {
    public int Id { get; set; }
@@ -16,7 +16,7 @@ public class Education
 
    public int FrelancerInfoId { get; set; }
 
-   public FrelaceInfo FrelaceInfo { get; set; }
+   public FreelancerInformation FrelaceInfo { get; set; }
 
  }
 
