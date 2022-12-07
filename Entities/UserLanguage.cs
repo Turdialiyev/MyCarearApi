@@ -1,7 +1,7 @@
 using MyCarearApi.Entities.Enums;
 
 namespace MyCareerApi.Entities;
-public class UserLanguages 
+public class UserLanguage
 { 
     public int Id { get; set; }
     public int Language { get; set; }
