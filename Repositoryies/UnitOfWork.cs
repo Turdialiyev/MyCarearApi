@@ -14,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
         Experiences = new ExperienceRepository(context);
         Resumes = new ResumeRepository(context);
         UserLanguages = new UserLanguageRepository(context);
+        CompanyContacts = new CompanyContactRepository(context);
     }
 
     public ICompanyRepository Companies {get;}
@@ -25,6 +26,8 @@ public class UnitOfWork : IUnitOfWork
     public IResumeRepository Resumes {get;}
 
     public IUserLanguageRepository UserLanguages {get;}
+
+    public ICompanyContactRepository CompanyContacts {get;}
 
     public void Dispose()
     {

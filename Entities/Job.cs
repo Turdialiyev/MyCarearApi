@@ -9,7 +9,7 @@ public class Job
 
     public int PositionsId { get; set; }
 
-    public Positions Positions { get; set; }
+    public Positions? Positions { get; set; }
 
 
 }

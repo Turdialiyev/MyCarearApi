@@ -9,5 +9,5 @@ public class UserLanguage
     
     public int FrelanceInfoId {get; set;}
 
-    public FrelaceInfo FrelaceInfo {get; set;}
+    public FrelaceInfo? FrelaceInfo {get; set;}
 }

@@ -16,7 +16,7 @@ public class Education
 
    public int FrelancerInfoId { get; set; }
 
-   public FrelaceInfo FrelaceInfo { get; set; }
+   public FrelaceInfo? FrelaceInfo { get; set; }
 
  }
 
