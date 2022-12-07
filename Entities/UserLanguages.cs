@@ -1,4 +1,6 @@
-﻿namespace MyCareerApi.Entities;
+﻿using MyCarearApi.Entities.Enums;
+
+namespace MyCareerApi.Entities;
 public class UserLanguages 
 { 
     public int Id { get; set; }
@@ -6,5 +8,5 @@ public class UserLanguages
     public Level Level {get; set;}
     
     public int FrelanceInfoId {get; set;}
-    public FrenaceInfo FrenaceInfo {get; set;}
+    public FrelaceInfo FrelaceInfo {get; set;}
 }
