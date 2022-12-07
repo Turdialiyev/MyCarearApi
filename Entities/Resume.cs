@@ -1,4 +1,6 @@
-﻿namespace MyCareerApi.Entities; 
+using MyCarearApi.Entities.Enums;
+
+namespace MyCareerApi.Entities; 
 
 public class Resume
  {
@@ -6,6 +8,8 @@ public class Resume
    public TypeResume TypeResume { get; set; }
 
    public int FrelanceInfoId { get; set; }
-   public FrelaceInfo? FrenaceInfo { get; set; }
+
+   public FrelaceInfo FrelaceInfo { get; set; }
+
  }
 

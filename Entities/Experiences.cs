@@ -1,4 +1,4 @@
-﻿namespace MyCareerApi.Entities; 
+namespace MyCareerApi.Entities; 
 
 public class Experiences
  {
@@ -11,6 +11,8 @@ public class Experiences
   public string? Descripeion { get; set; }
 
   public int FrelancerInfoId { get; set; }
-  public FrelaceInfo? FrenaceInfo { get; set; }
+
+  public FrelaceInfo FrelaceInfo { get; set; }
+
  }
 
