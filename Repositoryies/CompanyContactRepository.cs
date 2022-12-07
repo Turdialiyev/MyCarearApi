@@ -1,9 +1,9 @@
 using MyCarearApi.Data;
-using MyCareerApi.Entities;
+using MyCarearApi.Entities;
 
 namespace MyCarearApi.Repositories;
 
-public class CompanyContactRepository : GenericRepository<CompanyContact>, ICompanyContactRepository
+public class CompanyContactRepository : GenericRepository<Contact>, ICompanyContactRepository
 {
     public CompanyContactRepository(AppDbContext context) : base(context) { }
 }

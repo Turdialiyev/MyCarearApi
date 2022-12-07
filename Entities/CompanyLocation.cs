@@ -1,4 +1,4 @@
-﻿namespace MyCareerApi.Entities;
+﻿namespace MyCarearApi.Entities;
 
 public class CompanyLocation
  { 

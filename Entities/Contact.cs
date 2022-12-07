@@ -1,5 +1,5 @@
-﻿namespace MyCareerApi.Entities;
-public class CompanyContact 
+﻿namespace MyCarearApi.Entities;
+public class Contact 
 { 
     public int Id { get; set; }
     public string?  WatsApp { get; set; }
@@ -9,5 +9,4 @@ public class CompanyContact
     public string?  Twitter { get; set; }
     public string?  Instagram { get; set; }
     public string?  WebSite { get; set; }
-    public int CompanyId { get; set; }
 }

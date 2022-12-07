@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace MyCareerApi.Entities;
+namespace MyCarearApi.Entities;
 
 public class AppUser: IdentityUser { 
     public string? FirstName { get; set; }

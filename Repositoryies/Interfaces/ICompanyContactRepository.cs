@@ -1,5 +1,5 @@
-using MyCareerApi.Entities;
+using MyCarearApi.Entities;
 
 namespace MyCarearApi.Repositories;
 
-public interface ICompanyContactRepository : IGenericRepository<CompanyContact> { }
+public interface ICompanyContactRepository : IGenericRepository<Contact> { }
