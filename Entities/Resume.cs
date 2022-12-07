@@ -8,7 +8,6 @@ public class Resume
    public TypeResume TypeResume { get; set; }
 
    public int FrelanceInfoId { get; set; }
-
    public FreelancerInformation FreelancerInformation { get; set; }
 
  }

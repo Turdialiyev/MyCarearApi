@@ -8,6 +8,5 @@ public class UserLanguage
     public Level Level {get; set;}
     
     public int FrelanceInfoId {get; set;}
-
     public FreelancerInformation FreelancerInformation {get; set;}
 }
