@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using MyCarearApi.Data;
 using MyCarearApi.Repositories;
+using MyCarearApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,11 +10,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source = Data.db;");
 });
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 var app = builder.Build();
 
