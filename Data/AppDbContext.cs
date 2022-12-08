@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 namespace MyCarearApi.Data;
 
 
- public class AppDbContext: IdentityDbContext
+ public class AppDbContext : IdentityDbContext
  {
     
  }
