@@ -15,84 +15,89 @@ public class AccountController: ControllerBase
 
     private readonly IPasswordValidator<AppUser> _passwordValidator;
     private readonly IUserValidator<AppUser> _userValidator;
+    
     private readonly JwtService _jwtService;
 
 
     ILogger<AccountController> _logger;
 
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-        RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger)
+        RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger,
+        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _passwordValidator = passwordValidator;
+        _userValidator = userValidator;
+        _regex = new Regex(pattern);
     }
 
     private string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
                 @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$";
 
+    private Regex _regex;
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody]UserModel userModel)
     {
         var newUser = new AppUser { UserName = userModel.Email, Email = userModel.Email };
+        Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
 
         IdentityResult emailValidationResult = await _userValidator.ValidateAsync(_userManager, newUser);
-
-        if(!emailValidationResult.Succeeded) 
-        {
-            return Ok(new
-            {
-                EmailError = true,
-                Errors = emailValidationResult.Errors.Select(x => x.Description)
-            });
-        }
-        IdentityResult passwordValidationResult = await _passwordValidator.ValidateAsync(_userManager, newUser, userModel.Password);
-        if(!passwordValidationResult.Succeeded)
-        {
-            return Ok(new
-            {
-                PasswordError = true,
-                Errors = passwordValidationResult.Errors.Select(x => x.Description)
-            });
-        }
-
-        if(userModel.Password != userModel.ConfirmPassword)
-        {
-            return Ok(new
-            {
-                PasswordConfirm = true,
-                Errors = new List<string>() { "Password not confirmed" }
-            });
-        }
-
-        var signUpResult = await _userManager.CreateAsync(newUser, userModel.Password);
-        if(!signUpResult.Succeeded) 
-        {
-            return Ok(new
-            {
-                OtherError = true,
-                Errors = signUpResult.Errors.Select(x => x.Description)
-            });
-        }
-
         
+        //Email validation
+        errors.Add("EmailError", new List<string>());
+        if (!emailValidationResult.Succeeded ) 
+            errors["EmailError"].AddRange(emailValidationResult.Errors.Select(x => x.Description));
 
-        return Ok( new { Succeded = true } );
+
+        if (!_regex.IsMatch(userModel.Email))
+            errors["EmailError"].Add("You must enter");
+
+
+        //Password Validation
+        IdentityResult passwordValidationResult = await _passwordValidator.ValidateAsync(_userManager, newUser, userModel.Password);
+        errors.Add("PasswordError", new List<string>());
+        if(!passwordValidationResult.Succeeded)
+            errors["PasswordError"].AddRange(passwordValidationResult.Errors.Select(x => x.Description));
+
+        //Password Confirmation
+        errors.Add("PasswordConfirmError", new List<string>());
+        if(userModel.Password != userModel.ConfirmPassword)
+            errors["PasswordConfirmError"].Add("Password not confirmed");
+
+        //Signing Up 
+        errors.Add("OtherError", new List<string>());
+        var signUpResult = await _userManager.CreateAsync(newUser, userModel.Password);
+        if (!signUpResult.Succeeded)
+            errors["OtherError"].AddRange(signUpResult.Errors.Select(x => x.Description));
+
+        var result = new { Succeded = isSuccess(errors), Errors = errors };        
+
+        return Ok( result );
     }
+
+    private bool isSuccess(Dictionary<string, List<string>> errors)
+    {
+        return (errors["EmailError"] is null || !errors["EmailError"].Any())
+            && (errors["PasswordError"] is null || !errors["PasswordError"].Any())
+            && (errors["PasswordConfirmError"] is null || !errors["PasswordConfirmError"].Any())
+            && (errors["OtherError"] is null || !errors["OtherError"].Any());
+    }
+
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
-        Regex regex = new Regex(pattern);
         var errorResult = Ok(new
         {
             ErrorOccured = true,
             Description = "Email or password incorrect"
         });
 
-        if (!regex.IsMatch(userModel.Email)) return errorResult;
+        if (!_regex.IsMatch(userModel.Email)) return errorResult;
 
         if(userModel.Password == null || userModel.Password.Any(x => char.IsWhiteSpace(x))) return errorResult;
 
