@@ -54,7 +54,7 @@ public class AccountController: ControllerBase
 
 
         if (!_regex.IsMatch(userModel.Email))
-            errors["EmailError"].Add("You must enter");
+            errors["EmailError"].Add("You must enter valid Email");
 
 
         //Password Validation
@@ -68,6 +68,8 @@ public class AccountController: ControllerBase
         if(userModel.Password != userModel.ConfirmPassword)
             errors["PasswordConfirmError"].Add("Password not confirmed");
 
+        if (!isSuccess(errors))
+            return Ok(new { Succeded = isSuccess(errors), Errors = errors });
         //Signing Up 
         errors.Add("OtherError", new List<string>());
         var signUpResult = await _userManager.CreateAsync(newUser, userModel.Password);
@@ -81,10 +83,10 @@ public class AccountController: ControllerBase
 
     private bool isSuccess(Dictionary<string, List<string>> errors)
     {
-        return (errors["EmailError"] is null || !errors["EmailError"].Any())
-            && (errors["PasswordError"] is null || !errors["PasswordError"].Any())
-            && (errors["PasswordConfirmError"] is null || !errors["PasswordConfirmError"].Any())
-            && (errors["OtherError"] is null || !errors["OtherError"].Any());
+        return (!errors.ContainsKey("EmailError") || !errors["EmailError"].Any())
+            && (!errors.ContainsKey("PasswordError") || !errors["PasswordError"].Any())
+            && (!errors.ContainsKey("PasswordConfirmError") || !errors["PasswordConfirmError"].Any())
+            && (!errors.ContainsKey("OtherError") || !errors["OtherError"].Any());
     }
 
 
