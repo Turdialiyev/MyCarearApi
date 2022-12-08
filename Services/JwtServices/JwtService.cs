@@ -5,10 +5,11 @@ using MyCarearApi.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MyCarearApi.Services.JwtServices.Interfaces;
 
 namespace MyCarearApi.Services.JwtServices;
 
-public class JwtService
+public class JwtService: IJwtService
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
