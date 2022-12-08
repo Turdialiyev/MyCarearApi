@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using MyCarearApi.Data;
+using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
 using MyCarearApi.Services;
 
@@ -12,12 +14,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
+    //options.UseSqlite("Data Source = Data.db;");
+    options.UseInMemoryDatabase("TestDb");
 });
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    options.User.RequireUniqueEmail = false;
+}).AddEntityFrameworkStores<AppDbContext>();
+
 builder.Services.AddTransient<ICompanyService, CompanyService>();
+
 
 var app = builder.Build();
 
