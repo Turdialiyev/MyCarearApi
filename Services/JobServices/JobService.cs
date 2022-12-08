@@ -10,7 +10,10 @@ namespace MyCarearApi.Services.JobServices
 
         public JobService(IUnitOfWork unitOfWork)
         {
-            
+            _jobRepository = unitOfWork.Jobs;
+            _jobSkillsRepository = unitOfWork.JobSkills;
         }
+
+
     }
 }

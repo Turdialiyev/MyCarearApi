@@ -1,4 +1,6 @@
 using MyCarearApi.Data;
+using MyCarearApi.Repositoryies;
+using MyCarearApi.Repositoryies.Interfaces;
 
 namespace MyCarearApi.Repositories;
 
@@ -21,6 +23,10 @@ public class UnitOfWork : IUnitOfWork
         Hobbies = new HobbyRepository(context);
         Skills = new SkillRepository(context);
         CompanyContacts = new CompanyContactRepository(context);
+        Jobs = new JobRepository(context);
+        JobSkills = new JobSkillsRepository(context);
+        Addresses = new AddressRepository(context);
+        Contracts = new ContractRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -39,6 +45,14 @@ public class UnitOfWork : IUnitOfWork
     public ISkillRepository Skills { get; set; }
     public ICompanyContactRepository CompanyContacts { get; set; }
     public IFreelancerHobbyRepository FreelancerHobbies { get; set; }
+
+    public IJobRepository Jobs { get; }
+
+    public IJobSkillsRepository JobSkills { get; }
+
+    public IAddressRepository Addresses { get; }
+
+    public IContractRepository Contracts { get; }
 
     public void Dispose()
     {
