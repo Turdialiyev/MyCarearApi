@@ -20,10 +20,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
+
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = false;
 }).AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddTransient<ICompanyService, CompanyService>();
+
 
 var app = builder.Build();
 
