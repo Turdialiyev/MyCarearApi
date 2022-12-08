@@ -9,17 +9,3 @@ public class Address
     public int FrelanceInformationId { get; set; }
     public FreelancerInformation? FreelancerInformation { get; set; }
 }
-
-
-
-/*
- * 
- * 
-Table Address{
-  Id int [PK]
-  Country nvarchar
-  Region nvarchar
-  Home nvarchar
-  FrenaceInfoId nvarchar [ref: > FrenaceInfo.Id]
-}
- * */

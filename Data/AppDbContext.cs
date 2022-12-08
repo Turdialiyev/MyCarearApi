@@ -37,8 +37,6 @@ namespace MyCarearApi.Data;
 
     public DbSet<Position> Positions { get; set; }
 
-    public DbSet<PositionSkill> PositionSkills { get; set; }
-
     public DbSet<Resume> Resumes { get; set; }
 
     public DbSet<Skill> Skills { get; set; }

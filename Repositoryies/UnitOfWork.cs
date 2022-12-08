@@ -9,6 +9,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
+        FreelancerHobbies = new FreelancerHobbyRepository(context);
         Companies = new CompanyRepository(context);
         CompanyLocations = new CompanyLocationRepository(context);
         Experiences = new ExperienceRepository(context);
@@ -18,7 +19,6 @@ public class UnitOfWork : IUnitOfWork
         FreelancerSkills = new FreelancerSkillRepository(context);
         Positions = new PositionRepository(context);
         Hobbies = new HobbyRepository(context);
-        PositionSkills = new PositionSkillRepository(context);
         Skills = new SkillRepository(context);
         CompanyContacts = new CompanyContactRepository(context);
     }
@@ -36,9 +36,9 @@ public class UnitOfWork : IUnitOfWork
     public IFreelancerSkillRepository FreelancerSkills { get; set; }
     public IPositionRepository Positions { get; set; }
     public IHobbyRepository Hobbies { get; set; }
-    public IPositionSkillRepository PositionSkills { get; set; }
     public ISkillRepository Skills { get; set; }
     public ICompanyContactRepository CompanyContacts { get; set; }
+    public IFreelancerHobbyRepository FreelancerHobbies { get; set; }
 
     public void Dispose()
     {

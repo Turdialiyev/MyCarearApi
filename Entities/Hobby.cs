@@ -1,9 +1,7 @@
-﻿namespace MyCarearApi.Entities;
+namespace MyCarearApi.Entities;
 
 public class Hobby
 {
     public int Id { get; set; }
-    public string? Hobbies { get; set; }
-    public int FreelanceInformationId { get; set; }
-    public FreelancerInformation? FreelancerInformation { get; set; }
+    public string? Name { get; set; }
 }
