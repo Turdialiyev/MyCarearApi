@@ -1,3 +1,5 @@
+using MyCarearApi.Repositoryies.Interfaces;
+
 namespace MyCarearApi.Repositories;
 
 public interface IUnitOfWork : IDisposable
@@ -14,5 +16,10 @@ public interface IUnitOfWork : IDisposable
     IExperienceRepository Experiences {get;}
     IResumeRepository Resumes {get;}
     IUserLanguageRepository UserLanguages {get;}
+    IJobRepository Jobs { get; }
+    IJobSkillsRepository JobSkills { get; }
+    IAddressRepository Addresses { get; }
+    IContractRepository Contracts { get; }
+
     int Save();
 }
