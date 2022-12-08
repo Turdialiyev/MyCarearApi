@@ -28,6 +28,15 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         await _context.SaveChangesAsync();
     }
 
+    public  TEntity Add(TEntity entity)
+    {
+        var entry = _context.Set<TEntity>().Add(entity);
+
+        _context.SaveChanges();
+
+        return entry.Entity;
+    }
+
     public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
         => _context.Set<TEntity>().Where(expression);
 
