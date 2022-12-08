@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
+builder.Services.AddTransient<ICompanyService, CompanyService>();
 
 var app = builder.Build();
 
