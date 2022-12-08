@@ -5,7 +5,7 @@ namespace MyCarearApi.Services;
 public class FileHelper : IFileHelper
 {
 
-// Fileni imagega tekshiradi Imagefilega tekshirish kerak bo'lsa shu funksiyadan fooydalaniylar
+    // Fileni imagega tekshiradi Imagefilega tekshirish kerak bo'lsa shu funksiyadan fooydalaniylar
     public bool FileValidateImage(IFormFile file)
     {
         var defineFileExtension = DefineFileExtension(file);
@@ -15,7 +15,7 @@ public class FileHelper : IFileHelper
 
         return false;
     }
-//  istalgan filega tekshiradi kimgadur filega tekshirish kerak bo'lsa shu funksiya
+    //  istalgan filega tekshiradi kimgadur filega tekshirish kerak bo'lsa shu funksiya
     public bool FileValidate(IFormFile file)
     {
         var defineFileExtension = DefineFileExtension(file);
@@ -39,9 +39,8 @@ public class FileHelper : IFileHelper
         return filePath;
     }
     // saqlangan file tipini bo'lsa o'chirib tashlaydi bo'lmasa false qaytaradi
-    public bool DeleteFileByName(string fileName)
+    public bool DeleteFileByName(string filePath)
     {
-        var filePath = Folder(fileName);
         if (File.Exists(filePath))
         {
             // If file found, delete it    
@@ -49,14 +48,12 @@ public class FileHelper : IFileHelper
 
             return true;
         }
+        if (!File.Exists(filePath))
+            return true;
 
         return false;
     }
-    public string UpdateFileBy(string fileName, IFormFile file)
-    {
-        
-        throw new NotImplementedException();
-    }
+
 
 
     // Extention file kengaytmasini qaytaradi
@@ -87,6 +84,6 @@ public class FileHelper : IFileHelper
 
         return reversedString;
     }
-//    file Pathni ko'rsatadi 
+    //    file Pathni ko'rsatadi 
     public string Folder(string fileFolder) => Path.Combine(Directory.GetCurrentDirectory(), @"Data\Folders\" + fileFolder);
 }
