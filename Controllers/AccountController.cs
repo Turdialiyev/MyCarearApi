@@ -101,7 +101,7 @@ public class AccountController: ControllerBase
 
         if (!_regex.IsMatch(userModel.Email)) return errorResult;
 
-        if(userModel.Password == null || userModel.Password.Any(x => char.IsWhiteSpace(x))) return errorResult;
+        if( string.IsNullOrEmpty(userModel.Password) || userModel.Password.Any(x => char.IsWhiteSpace(x))) return errorResult;
 
         await _signInManager.SignOutAsync();
 
@@ -120,11 +120,11 @@ public class AccountController: ControllerBase
         {
             ErrorOccured = false,
             Token = _jwtService.GenerateToken(user)
-        });        
+        });
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout() 
+    public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
         return Ok();
