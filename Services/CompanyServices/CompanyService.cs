@@ -35,7 +35,6 @@ public partial class CompanyService : ICompanyService
         }
     }
 
-
     public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact)
     {
         try
@@ -87,7 +86,7 @@ public partial class CompanyService : ICompanyService
             if(file is null)
             return new("File Can't be null");
             
-            var FilePath = Directory.GetCurrentDirectory()+"wwwroot";
+            var FilePath = Directory.GetCurrentDirectory()+"/wwwroot";
 
             var path = Path.Combine(FilePath, file.FileName);
 
@@ -95,7 +94,7 @@ public partial class CompanyService : ICompanyService
             file.CopyTo(createdFile);
 
             createdFile.Close();
-
+            
             return new(true)  {Data = path};
         }
         catch (System.Exception e)

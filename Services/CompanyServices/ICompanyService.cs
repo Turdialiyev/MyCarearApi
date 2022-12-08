@@ -8,5 +8,6 @@ public interface ICompanyService
    ValueTask<Result<string>> UploadCompanyPhoto(IFormFile file);
    ValueTask<Result<Contact>> CreateCompanyContact(Contact contact);
    ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation);
+   
 
 }

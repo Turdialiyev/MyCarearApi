@@ -11,7 +11,7 @@ using MyCarearApi.Data;
 namespace MyCarearApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221208054055_Migrations")]
+    [Migration("20221208104744_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -186,6 +186,10 @@ namespace MyCarearApi.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CopmanyEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -250,6 +254,10 @@ namespace MyCarearApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ContactId")
                         .HasColumnType("INTEGER");
 
@@ -269,6 +277,8 @@ namespace MyCarearApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("ContactId");
 
@@ -403,6 +413,30 @@ namespace MyCarearApi.Migrations
                     b.ToTable("Experiences");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerHobby", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FreelanceInformationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("FreelancerInformationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HobbyId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FreelancerInformationId");
+
+                    b.HasIndex("HobbyId");
+
+                    b.ToTable("FreelancerHobby");
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerInformation", b =>
                 {
                     b.Property<int>("Id")
@@ -442,8 +476,8 @@ namespace MyCarearApi.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Position")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PositionId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -453,6 +487,8 @@ namespace MyCarearApi.Migrations
                     b.HasIndex("AppUserId1");
 
                     b.HasIndex("ContactId");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("FreelancerInformations");
                 });
@@ -487,18 +523,10 @@ namespace MyCarearApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FreelanceInformationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("FreelancerInformationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Hobbies")
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FreelancerInformationId");
 
                     b.ToTable("Hobbies");
                 });
@@ -583,28 +611,6 @@ namespace MyCarearApi.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("MyCarearApi.Entities.PositionSkill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("PositionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PositionsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PositionId");
-
-                    b.ToTable("PositionSkills");
-                });
-
             modelBuilder.Entity("MyCarearApi.Entities.Resume", b =>
                 {
                     b.Property<int>("Id")
@@ -641,6 +647,8 @@ namespace MyCarearApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PositionId");
+
                     b.ToTable("Skills");
                 });
 
@@ -650,13 +658,13 @@ namespace MyCarearApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FreelancerInformationId")
+                    b.Property<int?>("FreelancerInformationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("FrelanceInfoId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Language")
+                    b.Property<int>("LanguageId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Level")
@@ -782,11 +790,19 @@ namespace MyCarearApi.Migrations
 
             modelBuilder.Entity("MyCarearApi.Entities.Company", b =>
                 {
+                    b.HasOne("MyCarearApi.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MyCarearApi.Entities.Contact", "Conatct")
                         .WithMany()
                         .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AppUser");
 
                     b.Navigation("Conatct");
                 });
@@ -824,6 +840,23 @@ namespace MyCarearApi.Migrations
                     b.Navigation("FreelancerInformation");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerHobby", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
+                        .WithMany("Hobbies")
+                        .HasForeignKey("FreelancerInformationId");
+
+                    b.HasOne("MyCarearApi.Entities.FreelancerHobby", "Hobby")
+                        .WithMany()
+                        .HasForeignKey("HobbyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FreelancerInformation");
+
+                    b.Navigation("Hobby");
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerInformation", b =>
                 {
                     b.HasOne("MyCarearApi.Entities.Address", "Address")
@@ -842,11 +875,19 @@ namespace MyCarearApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MyCarearApi.Entities.Position", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Address");
 
                     b.Navigation("AppUser");
 
                     b.Navigation("Contact");
+
+                    b.Navigation("Position");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerSkill", b =>
@@ -864,15 +905,6 @@ namespace MyCarearApi.Migrations
                     b.Navigation("FreelancerInformation");
 
                     b.Navigation("Skill");
-                });
-
-            modelBuilder.Entity("MyCarearApi.Entities.Hobby", b =>
-                {
-                    b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
-                        .WithMany("Hobbies")
-                        .HasForeignKey("FreelancerInformationId");
-
-                    b.Navigation("FreelancerInformation");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.Job", b =>
@@ -913,15 +945,6 @@ namespace MyCarearApi.Migrations
                     b.Navigation("Skill");
                 });
 
-            modelBuilder.Entity("MyCarearApi.Entities.PositionSkill", b =>
-                {
-                    b.HasOne("MyCarearApi.Entities.Position", "Position")
-                        .WithMany("PositionSkills")
-                        .HasForeignKey("PositionId");
-
-                    b.Navigation("Position");
-                });
-
             modelBuilder.Entity("MyCarearApi.Entities.Resume", b =>
                 {
                     b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
@@ -933,13 +956,20 @@ namespace MyCarearApi.Migrations
                     b.Navigation("FreelancerInformation");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.Skill", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.Position", null)
+                        .WithMany("Skills")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.UserLanguage", b =>
                 {
                     b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
                         .WithMany("userLanguages")
-                        .HasForeignKey("FreelancerInformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FreelancerInformationId");
 
                     b.Navigation("FreelancerInformation");
                 });
@@ -996,7 +1026,7 @@ namespace MyCarearApi.Migrations
 
             modelBuilder.Entity("MyCarearApi.Entities.Position", b =>
                 {
-                    b.Navigation("PositionSkills");
+                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }
