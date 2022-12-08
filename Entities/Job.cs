@@ -2,7 +2,7 @@
 
 namespace MyCarearApi.Entities;
 
-public class Job 
+public class Job
 {
     public int Id { get; set; }
 
@@ -24,6 +24,7 @@ public class Job
     public Company Company { get; set; }
 
     public IEnumerable<JobSkill> JobSkills { get; set; }
+    public IEnumerable<JobLanguage> JobLanguages { get; set; }
 }
 
 
