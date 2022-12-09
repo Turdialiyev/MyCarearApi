@@ -21,8 +21,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    //options.UseSqlite("Data Source = Data.db;");
-     options.UseInMemoryDatabase("TestDb");
+    options.UseSqlite("Data Source = Data.db;");
+    //  options.UseInMemoryDatabase("TestDb");
 });
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -44,10 +44,11 @@ builder.Services.AddAuthentication(opt => {
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = true,
+            ValidateLifetime = false,
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
+
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
         };
     });
@@ -78,6 +79,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
