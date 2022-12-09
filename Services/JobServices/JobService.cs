@@ -15,6 +15,7 @@ namespace MyCarearApi.Services.JobServices
         private readonly IJobSkillsService _jobSkillsService;
         private readonly IJobLanguagesService _jobLanguagesService;
         private readonly IPositionRepository _positionRepository;
+        private readonly ICompanyRepository _companyRepository;
 
         public JobService(IUnitOfWork unitOfWork, IJobSkillsService jobSkillsService, IJobLanguagesService jobLanguagesService)
         {
@@ -23,6 +24,7 @@ namespace MyCarearApi.Services.JobServices
             _jobSkillsService = jobSkillsService;
             _jobLanguagesService = jobLanguagesService;
             _positionRepository = unitOfWork.Positions;
+            _companyRepository = unitOfWork.Companies;
         }
 
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
@@ -45,9 +47,9 @@ namespace MyCarearApi.Services.JobServices
 
         public int AddJob(Job job) => _jobRepository.Add(job).Id;
 
-        public int AddJob(string name, int PositionId)
+        public int AddJob(string name, int PositionId, int companyId)
         {
-            var job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false };
+            var job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
             return _jobRepository.Add(job).Id;
         }
 
@@ -130,6 +132,8 @@ namespace MyCarearApi.Services.JobServices
         }
 
         public bool IsPositionExist(int positionId) => _positionRepository.GetById(positionId) is not null;
+
+        public Company? GetCompany(string userId) => _companyRepository.Find(x => x.AppUserId == userId).FirstOrDefault();
 
         public void UpdateJob(Job job)
         {

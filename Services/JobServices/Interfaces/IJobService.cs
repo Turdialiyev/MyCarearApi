@@ -11,7 +11,7 @@ public interface IJobService
 
     int AddJob(Job job);
 
-    int AddJob(string name, int PositionId);
+    int AddJob(string name, int PositionId, int companyId);
 
     Task<int> UpdateTitle(int id, string name, int PositionId);
 
@@ -24,6 +24,10 @@ public interface IJobService
     Task<int> SetContractRequirements(int id, decimal price, int currencyId, PriceRate priceRate, int deadline, DeadlineRate deadlineRate);
     
     Task<int> SaveJob(int id);
+
+    bool IsPositionExist(int positionId);
+
+    public Company GetCompany(string userId);
 
     void UpdateJob(Job job);
 

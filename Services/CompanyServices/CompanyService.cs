@@ -116,6 +116,7 @@ public partial class CompanyService : ICompanyService
         }
     }
 
+
     public string UploadCompanyPhoto(IFormFile file)
     {
         try
