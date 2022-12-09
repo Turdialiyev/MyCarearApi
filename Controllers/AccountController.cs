@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Entities;
 using MyCarearApi.Models.Account;
@@ -130,5 +131,15 @@ public class AccountController: ControllerBase
     {
         await _signInManager.SignOutAsync();
         return Ok();
+    }
+
+    [HttpGet("CLAIMS")]
+    [Authorize]
+    public IActionResult Claims()
+    {
+        return Ok(new
+        {
+            Claims=User.Claims.Select(x => new {x.Type, x.Value})
+        });
     }
 }
