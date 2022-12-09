@@ -11,6 +11,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
+        Educations = new EducationRepository(context);
         FreelancerHobbies = new FreelancerHobbyRepository(context);
         Companies = new CompanyRepository(context);
         CompanyLocations = new CompanyLocationRepository(context);
@@ -47,6 +48,7 @@ public class UnitOfWork : IUnitOfWork
     public ICompanyContactRepository CompanyContacts { get; set; }
     public IFreelancerHobbyRepository FreelancerHobbies { get; set; }
     public IAddressRepository Addresses { get; set; }
+    public IEducationRepository Educations { get; set; }
 
     public IJobRepository Jobs { get; }
 
