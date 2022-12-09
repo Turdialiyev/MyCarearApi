@@ -6,5 +6,5 @@ public class Position
     public DateOnly Birthday { get; set; }
     public int PositionId { get; set; }
     public int[]? PositionSkills { get; set; }
-    public int[]? Hobbies { get; set; }
+    public int[]? Hobbies { get; set;}
 }
