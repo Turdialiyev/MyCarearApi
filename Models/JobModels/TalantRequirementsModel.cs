@@ -1,6 +1,6 @@
 ﻿using MyCarearApi.Entities.Enums;
 
-namespace MyCarearApi.Models.Job
+namespace MyCarearApi.Models
 {
     public class TalantRequirementsModel
     {
