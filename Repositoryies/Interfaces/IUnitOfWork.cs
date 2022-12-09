@@ -19,7 +19,6 @@ public interface IUnitOfWork : IDisposable
     IUserLanguageRepository UserLanguages {get;}
     IJobRepository Jobs { get; }
     IJobSkillsRepository JobSkills { get; }
-    IAddressRepository Addresses { get; }
     IContractRepository Contracts { get; }
 
     int Save();

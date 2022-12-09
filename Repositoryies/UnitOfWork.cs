@@ -26,7 +26,6 @@ public class UnitOfWork : IUnitOfWork
         Addresses = new AddressRepository(context);
         Jobs = new JobRepository(context);
         JobSkills = new JobSkillsRepository(context);
-        Addresses = new AddressRepository(context);
         Contracts = new ContractRepository(context);
     }
 
@@ -52,7 +51,6 @@ public class UnitOfWork : IUnitOfWork
 
     public IJobSkillsRepository JobSkills { get; }
 
-    public IAddressRepository Addresses { get; }
 
     public IContractRepository Contracts { get; }
 
