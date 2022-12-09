@@ -48,6 +48,7 @@ namespace MyCarearApi.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     FirstName = table.Column<string>(type: "TEXT", nullable: true),
                     LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    CopmanyEmail = table.Column<string>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -88,6 +89,19 @@ namespace MyCarearApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Hobbies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Hobbies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Positions",
                 columns: table => new
                 {
@@ -98,20 +112,6 @@ namespace MyCarearApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Positions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Skills",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    PositionId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skills", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,11 +231,18 @@ namespace MyCarearApi.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Photo = table.Column<string>(type: "TEXT", nullable: true),
+                    AppUserId = table.Column<string>(type: "TEXT", nullable: false),
                     ContactId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companys", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Companys_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Companys_Contacts_ContactId",
                         column: x => x.ContactId,
@@ -255,13 +262,13 @@ namespace MyCarearApi.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: true),
                     PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
                     FreelancerImage = table.Column<string>(type: "TEXT", nullable: true),
-                    Position = table.Column<string>(type: "TEXT", nullable: true),
                     Birthday = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    PositionId = table.Column<int>(type: "INTEGER", nullable: false),
                     ContactId = table.Column<int>(type: "INTEGER", nullable: false),
                     AppUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     AppUserId1 = table.Column<string>(type: "TEXT", nullable: true),
-                    AddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -283,26 +290,32 @@ namespace MyCarearApi.Migrations
                         principalTable: "Contacts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FreelancerInformations_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PositionSkills",
+                name: "Skills",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    PositionsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PositionId = table.Column<int>(type: "INTEGER", nullable: true),
-                    SkillsId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    PositionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PositionSkills", x => x.Id);
+                    table.PrimaryKey("PK_Skills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PositionSkills_Positions_PositionId",
+                        name: "FK_Skills_Positions_PositionId",
                         column: x => x.PositionId,
                         principalTable: "Positions",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -412,46 +425,26 @@ namespace MyCarearApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FreelancerSkills",
+                name: "FreelancerHobby",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SkillId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FrelanceInformationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FreelancerSkills", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FreelancerSkills_FreelancerInformations_FreelancerInformationId",
-                        column: x => x.FreelancerInformationId,
-                        principalTable: "FreelancerInformations",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_FreelancerSkills_Skills_SkillId",
-                        column: x => x.SkillId,
-                        principalTable: "Skills",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Hobbies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Hobbies = table.Column<string>(type: "TEXT", nullable: true),
+                    HobbyId = table.Column<int>(type: "INTEGER", nullable: false),
                     FreelanceInformationId = table.Column<int>(type: "INTEGER", nullable: false),
                     FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Hobbies", x => x.Id);
+                    table.PrimaryKey("PK_FreelancerHobby", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Hobbies_FreelancerInformations_FreelancerInformationId",
+                        name: "FK_FreelancerHobby_FreelancerHobby_HobbyId",
+                        column: x => x.HobbyId,
+                        principalTable: "FreelancerHobby",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FreelancerHobby_FreelancerInformations_FreelancerInformationId",
                         column: x => x.FreelancerInformationId,
                         principalTable: "FreelancerInformations",
                         principalColumn: "Id");
@@ -484,10 +477,10 @@ namespace MyCarearApi.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Language = table.Column<int>(type: "INTEGER", nullable: false),
+                    LanguageId = table.Column<int>(type: "INTEGER", nullable: false),
                     Level = table.Column<int>(type: "INTEGER", nullable: false),
                     FrelanceInfoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: false)
+                    FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -496,6 +489,31 @@ namespace MyCarearApi.Migrations
                         name: "FK_UserLanguages_FreelancerInformations_FreelancerInformationId",
                         column: x => x.FreelancerInformationId,
                         principalTable: "FreelancerInformations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FreelancerSkills",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SkillId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FrelanceInformationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FreelancerSkills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FreelancerSkills_FreelancerInformations_FreelancerInformationId",
+                        column: x => x.FreelancerInformationId,
+                        principalTable: "FreelancerInformations",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_FreelancerSkills_Skills_SkillId",
+                        column: x => x.SkillId,
+                        principalTable: "Skills",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -605,6 +623,11 @@ namespace MyCarearApi.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Companys_AppUserId",
+                table: "Companys",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Companys_ContactId",
                 table: "Companys",
                 column: "ContactId");
@@ -630,6 +653,16 @@ namespace MyCarearApi.Migrations
                 column: "FreelancerInformationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FreelancerHobby_FreelancerInformationId",
+                table: "FreelancerHobby",
+                column: "FreelancerInformationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FreelancerHobby_HobbyId",
+                table: "FreelancerHobby",
+                column: "HobbyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FreelancerInformations_AddressId",
                 table: "FreelancerInformations",
                 column: "AddressId",
@@ -646,6 +679,11 @@ namespace MyCarearApi.Migrations
                 column: "ContactId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FreelancerInformations_PositionId",
+                table: "FreelancerInformations",
+                column: "PositionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FreelancerSkills_FreelancerInformationId",
                 table: "FreelancerSkills",
                 column: "FreelancerInformationId");
@@ -654,11 +692,6 @@ namespace MyCarearApi.Migrations
                 name: "IX_FreelancerSkills_SkillId",
                 table: "FreelancerSkills",
                 column: "SkillId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Hobbies_FreelancerInformationId",
-                table: "Hobbies",
-                column: "FreelancerInformationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Jobs_CompanyId",
@@ -681,14 +714,14 @@ namespace MyCarearApi.Migrations
                 column: "SkillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PositionSkills_PositionId",
-                table: "PositionSkills",
-                column: "PositionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Resumes_FreelancerInformationId",
                 table: "Resumes",
                 column: "FreelancerInformationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skills_PositionId",
+                table: "Skills",
+                column: "PositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLanguages_FreelancerInformationId",
@@ -727,6 +760,9 @@ namespace MyCarearApi.Migrations
                 name: "Experiences");
 
             migrationBuilder.DropTable(
+                name: "FreelancerHobby");
+
+            migrationBuilder.DropTable(
                 name: "FreelancerSkills");
 
             migrationBuilder.DropTable(
@@ -734,9 +770,6 @@ namespace MyCarearApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "JobsSkill");
-
-            migrationBuilder.DropTable(
-                name: "PositionSkills");
 
             migrationBuilder.DropTable(
                 name: "Resumes");
@@ -760,10 +793,10 @@ namespace MyCarearApi.Migrations
                 name: "Companys");
 
             migrationBuilder.DropTable(
-                name: "Positions");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "Addresses");
+                name: "Positions");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

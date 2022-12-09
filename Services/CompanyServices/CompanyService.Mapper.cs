@@ -12,8 +12,7 @@ public partial class CompanyService
         PhoneNumber = company.PhoneNumber,
         Email = company.Email,
         Description = company.Description,
-        Photo = company.Photo,
-        ContactId = company.ContactId,
+        Photo = company.Photo
     };
     private Company ToModelCompany(Entities.Company company)
     => new()
@@ -24,7 +23,6 @@ public partial class CompanyService
         Email = company.Email,
         Description = company.Description,
         Photo = company.Photo,
-        ContactId = company.ContactId,
     };
     private Contact ToModelContact(Entities.Contact contact)
     => new()

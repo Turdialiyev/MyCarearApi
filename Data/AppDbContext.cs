@@ -43,6 +43,10 @@ namespace MyCarearApi.Data;
 
     public DbSet<UserLanguage> UserLanguages { get; set; }
 
+    public DbSet<Language> Languages { get; set; }
+
+    public DbSet<JobLanguage> JobLanguages { get; set; }
+
  }
 
  
