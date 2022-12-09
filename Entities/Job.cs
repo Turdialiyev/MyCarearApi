@@ -27,6 +27,8 @@ public class Job
 
     public Level RequiredLevel { get; set; }
 
+    public bool IsSaved { get; set; }
+
     //Category
     public int PositionsId { get; set; }
 

@@ -27,6 +27,7 @@ public class UnitOfWork : IUnitOfWork
         JobSkills = new JobSkillsRepository(context);
         Addresses = new AddressRepository(context);
         Contracts = new ContractRepository(context);
+        JobLanguages = new JobLanguageRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -54,6 +55,7 @@ public class UnitOfWork : IUnitOfWork
 
     public IContractRepository Contracts { get; }
 
+    public IJobLanguageRepository JobLanguages { get; }
     public void Dispose()
     {
         _context.Dispose();
