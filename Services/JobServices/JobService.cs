@@ -60,6 +60,7 @@ namespace MyCarearApi.Services.JobServices
 
         public async Task<int> AddDescriptionToJob(int id,string description, IFormFile file)
         {
+            MyCarearApi.Models.Job g;
             string fileName="";
             if (file is not null)
             {
