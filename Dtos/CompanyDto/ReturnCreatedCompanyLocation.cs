@@ -2,7 +2,7 @@ namespace MyCarearApi.Dtos;
 
 public class ReturnCreatedCompanyLocation
 {
-   public int Id { get; set; }
-   public string? Location { get; set; }
-   public int CompanyId { get; set; }
+   public List<string>? Location { get; set; }
+   public string? Description { get; set; }
+   public string? AppUserId { get; set; }
 }

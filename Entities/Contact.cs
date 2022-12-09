@@ -10,6 +10,6 @@ public class Contact
     public string?  Instagram { get; set; }
     public string?  WebSite { get; set; }
 
-    public string UserId { get; set; }
-    public AppUser AppUser {get; set;}
+    public string? UserId { get; set; }
+    public AppUser? AppUser { get; set; }
 }

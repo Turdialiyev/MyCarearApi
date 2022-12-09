@@ -16,7 +16,7 @@ public partial class CompanyController
         Email = company.Email,
         Description = company.Description,
         Photo = company.Photo,
-        ContactId = company.ContactId
+        ContactId = company.ContactId,
     };
 
     private  Company ToModelCompany(CreateCompanyDto company)
@@ -26,20 +26,23 @@ public partial class CompanyController
         PhoneNumber = company.PhoneNumber,
         Email = company.Email,
         Description = company.Description,
+        AppUserId = ""
     };
    
-   private CompanyLocation ToModelLocation(CreateCompanyLocation location)
+   private CompanyLocation ToModelLocation(CreateCompanyLocation location, string userId)
     => new()
     {
-        Location = location.Location,
+        Locations = location.Locations,
+        Description = location.Description,
+        AppUserId = userId
+        
     };
     
     private ReturnCreatedCompanyLocation ToDtoLocation(CompanyLocation? location)
     => new()
     {
-        Id = location!.Id,
-        CompanyId = location.CompanyId,
-        Location = location.Location
+        AppUserId = location.AppUserId,
+        Location = location.Locations
     };
     private ReturnCreatedCompanyContact? ToDtoCreatedContact(Contact? contact)
     => new()
@@ -62,5 +65,23 @@ public partial class CompanyController
        WebSite = contact.WebSite,
        Telegram = contact.Telegram,
        Twitter = contact.Twitter 
+    };
+
+    private CompanyUser? ToDtoCompanyUser(AppUser? user)
+    => new()
+    {
+        FirstName = user.FirstName,
+        CopmanyEmail = user.CopmanyEmail,
+        LastName = user.LastName,
+        PhoneNumber = user.PhoneNumber
+    };
+
+    private AppUser ToModelCompanyUser(CompanyUser user)
+    => new()
+    {
+        FirstName = user.FirstName,
+        CopmanyEmail = user.CopmanyEmail,
+        LastName = user.LastName,
+        PhoneNumber = user.PhoneNumber
     };
  }

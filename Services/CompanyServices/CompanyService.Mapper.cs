@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Models;
 
 namespace MyCarearApi.Services;
@@ -5,14 +6,15 @@ namespace MyCarearApi.Services;
 
 public partial class CompanyService
 {
-    private Entities.Company ToEntityCompany(Company company)
+    private Entities.Company ToEntityCompany(Company company,string userId,string filePath)
     => new()
     {
         Name = company.Name,
         PhoneNumber = company.PhoneNumber,
         Email = company.Email,
         Description = company.Description,
-        Photo = company.Photo
+        Photo = filePath,
+        AppUserId = userId
     };
     private Company ToModelCompany(Entities.Company company)
     => new()
@@ -23,48 +25,62 @@ public partial class CompanyService
         Email = company.Email,
         Description = company.Description,
         Photo = company.Photo,
+        AppUserId = company.AppUserId
     };
     private Contact ToModelContact(Entities.Contact contact)
     => new()
     {
+        Id = contact.Id,
          WatsApp = contact.WatsApp,
          Facebook = contact.Facebook,
          Telegram = contact.Telegram,
          GitHub = contact.GitHub,
          Twitter = contact.Twitter,
          Instagram = contact.Instagram,
-         WebSite = contact.WebSite
+         WebSite = contact.WebSite,
+         UserId = contact.UserId
     };
    
 
-    private Entities.Contact ToEntityContact(Contact contact)
+    private Entities.Contact ToEntityContact(Contact contact, string userId)
     => new()
     {
-         Id = contact.Id,
          WatsApp = contact.WatsApp,
          Facebook = contact.Facebook,
          Telegram = contact.Telegram,
          GitHub = contact.GitHub,
          Twitter = contact.Twitter,
          Instagram = contact.Instagram,
-         WebSite = contact.WebSite
+         WebSite = contact.WebSite,
+         UserId = contact.UserId
     };
 
     
-    private CompanyLocation ToModelCompanyLocation(Entities.CompanyLocation location)
+    private CompanyLocation ToModelCompanyLocation(List<string> locations, string AppUserId, string description)
     => new()
     {
-       Id = location.Id,
-       Location = location.Location,
-       CompanyId = location.CompanyId
+       Locations = locations,
+       AppUserId = AppUserId,
+       Description = description
     };
 
 
-    private Entities.CompanyLocation ToEntityCompanyLocation(CompanyLocation location)
+    private Entities.CompanyLocation ToEntityCompanyLocation(string location, string userId, string description)
     => new()
     {
-       Location = location.Location,
-       CompanyId = location.CompanyId
+       Location = location,
+       Description = description,
+       UserId = userId
     };
+
+    private AppUser ToModelUser(Entities.AppUser? identityUser)
+    => new()
+    {
+       FirstName = identityUser.FirstName,
+       LastName = identityUser.LastName,
+       CopmanyEmail = identityUser.CompanyEmail,
+       PhoneNumber = identityUser.PhoneNumber
+    };
+
 
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 
@@ -7,20 +8,25 @@ public partial class CompanyService : ICompanyService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CompanyService> _logger;
+    private readonly UserManager<Entities.AppUser> _userManager;
 
-    public CompanyService(IUnitOfWork unitOfWork, ILogger<CompanyService> logger)
+    public CompanyService(IUnitOfWork unitOfWork,
+     ILogger<CompanyService> logger,
+     UserManager<Entities.AppUser> userManager)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _userManager = userManager;
     }
-    public async ValueTask<Result<Company>> CreateCompany(Company company)
+    public async ValueTask<Result<Company>> CreateCompany(Company company, string userId)
     {
         try
         {
             if(company is null)
             return new("Company model can't be null");
 
-            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company));
+
+            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company, userId,"nimadir"));
 
             if(createdCompany is null)
             return new("Company is not created");
@@ -35,14 +41,14 @@ public partial class CompanyService : ICompanyService
         }
     }
 
-    public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact)
+    public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact, string userId)
     {
         try
         {
             if(contact is null)
             return new("contacts can't be null");
 
-            var createdContact = await _unitOfWork.CompanyContacts.AddAsync(ToEntityContact(contact));
+            var createdContact = await _unitOfWork.CompanyContacts.AddAsync(ToEntityContact(contact,userId));
 
             if(createdContact is null)
             return new("contact is not created");
@@ -63,14 +69,29 @@ public partial class CompanyService : ICompanyService
         {
             if(companyLocation is null)
             return new("CompanyLocation can'y be null here");
+            
+            List<string> locations = new List<string>();
 
-            var createdLocation = await _unitOfWork.CompanyLocations
-            .AddAsync(ToEntityCompanyLocation(companyLocation));
+            for (int i = 0; i < companyLocation.Locations!.Count(); i++)
+            {
+                var createdLocation =  await _unitOfWork.CompanyLocations.AddAsync(
+                                        ToEntityCompanyLocation(companyLocation.Locations[i], 
+                                        companyLocation!.AppUserId!, companyLocation?.Description!));
 
-            if(createdLocation is null)
+                locations.Add(createdLocation.Location!);
+            }
+
+            
+            
+            
+            // var createdLocation =  await _unitOfWork.CompanyLocations
+            // .AddAsync(ToEntityCompanyLocation(companyLocation));
+             
+
+            if(locations is null)
             return new("Company Location is not created");
 
-            return new(true){ Data = ToModelCompanyLocation(createdLocation)};
+            return new(true){ Data = ToModelCompanyLocation(locations, companyLocation.AppUserId, companyLocation.Description)};
         }
         catch (System.Exception e)
         {
@@ -79,6 +100,26 @@ public partial class CompanyService : ICompanyService
         }
     }
 
+    public async ValueTask<Result<AppUser>> CreateCopmanyUser(AppUser user, string userId)
+    {
+        try
+        {
+            var appUser = _userManager.Users.FirstOrDefault(x => x.Id == userId);
+            
+            await _userManager.UpdateAsync(appUser);
+
+            var identityUser = _userManager.Users.FirstOrDefault(x => x.Id == userId);
+
+            return new(true){Data = ToModelUser(identityUser)};
+        }
+        catch (System.Exception e)
+        {
+            _logger.LogInformation($"User not created");
+            throw new Exception(e.Message);
+        }
+    }
+
+    
     public async ValueTask<Result<string>> UploadCompanyPhoto(IFormFile file)
     {
         try
