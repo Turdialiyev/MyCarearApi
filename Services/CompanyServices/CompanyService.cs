@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 
@@ -7,20 +8,56 @@ public partial class CompanyService : ICompanyService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CompanyService> _logger;
+    private readonly UserManager<Entities.AppUser> _userManager;
 
-    public CompanyService(IUnitOfWork unitOfWork, ILogger<CompanyService> logger)
+    public CompanyService(IUnitOfWork unitOfWork,
+     ILogger<CompanyService> logger,
+     UserManager<Entities.AppUser> userManager)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _userManager = userManager;
     }
-    public async ValueTask<Result<Company>> CreateCompany(Company company)
+
+    public  async ValueTask<Result<AppUser>> CrateCompanyUser(AppUser user, string userId)
+    {
+        try
+        {
+            if(user is null)
+            return new("user cant be null");
+
+            var identityUser = await _userManager.FindByIdAsync(userId);
+            
+            var result = await _userManager.UpdateAsync(ToEntityCompanyUser(user,identityUser));
+            if(!result.Succeeded)
+            {
+                result.Errors.ToList().ForEach(x => {
+                    System.Console.WriteLine("User Update Error: " + x.Code + "====>" + x.Description);
+                });
+            }
+            var updatedUser = await _userManager.FindByIdAsync(userId);
+
+            return new(true) {Data = ToModelUser(updatedUser)};
+
+        }
+        catch (System.Exception e)
+        {
+            
+            throw new Exception(e.Message);
+        }
+    }
+
+
+    public async ValueTask<Result<Company>> CreateCompany(Company company, string userId, IFormFile file)
     {
         try
         {
             if(company is null)
             return new("Company model can't be null");
+            
+            var filePath = UploadCompanyPhoto(file);
 
-            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company));
+            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company, filePath.ToString()));
 
             if(createdCompany is null)
             return new("Company is not created");
@@ -35,14 +72,14 @@ public partial class CompanyService : ICompanyService
         }
     }
 
-    public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact)
+    public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact, string userId)
     {
         try
         {
             if(contact is null)
             return new("contacts can't be null");
 
-            var createdContact = await _unitOfWork.CompanyContacts.AddAsync(ToEntityContact(contact));
+            var createdContact = await _unitOfWork.CompanyContacts.AddAsync(ToEntityContact(contact, userId));
 
             if(createdContact is null)
             return new("contact is not created");
@@ -57,7 +94,7 @@ public partial class CompanyService : ICompanyService
     }
 
 
-    public async ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation)
+    public async ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation, string userId)
     {
         try
         {
@@ -79,7 +116,7 @@ public partial class CompanyService : ICompanyService
         }
     }
 
-    public async ValueTask<Result<string>> UploadCompanyPhoto(IFormFile file)
+    public string UploadCompanyPhoto(IFormFile file)
     {
         try
         {
@@ -95,7 +132,7 @@ public partial class CompanyService : ICompanyService
 
             createdFile.Close();
             
-            return new(true)  {Data = path};
+            return path;
         }
         catch (System.Exception e)
         {

@@ -9,4 +9,7 @@ public class Contact
     public string?  Twitter { get; set; }
     public string?  Instagram { get; set; }
     public string?  WebSite { get; set; }
+
+    public string? AppUserId {get; set;}
+    public AppUser? AppUser {get; set;}
 }

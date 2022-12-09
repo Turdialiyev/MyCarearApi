@@ -13,34 +13,30 @@ public partial class CompanyController
         Id = company!.Id,
         Name = company.Name,
         PhoneNumber = company.PhoneNumber,
-        Email = company.Email,
-        Description = company.Description,
         Photo = company.Photo,
-        ContactId = company.ContactId
     };
 
     private  Company ToModelCompany(CreateCompanyDto company)
     => new()
     {
         Name = company.Name,
-        PhoneNumber = company.PhoneNumber,
-        Email = company.Email,
-        Description = company.Description,
+        PhoneNumber = company.PhoneNumber
     };
    
-   private CompanyLocation ToModelLocation(CreateCompanyLocation location)
+   private CompanyLocation ToModelLocation(string location, string description)
     => new()
     {
-        Location = location.Location,
+        Location = location,
+        Description = description
     };
     
-    private ReturnCreatedCompanyLocation ToDtoLocation(CompanyLocation? location)
-    => new()
-    {
-        Id = location!.Id,
-        CompanyId = location.CompanyId,
-        Location = location.Location
-    };
+    // private ReturnCreatedCompanyLocation ToDtoLocation(CompanyLocation? location)
+    // => new()
+    // {
+    //     Id = location!.Id,
+    //     CompanyId = location.CompanyId,
+    //     Location = location.Location
+    // };
     private ReturnCreatedCompanyContact? ToDtoCreatedContact(Contact? contact)
     => new()
     {
@@ -60,7 +56,18 @@ public partial class CompanyController
        Instagram = contact.Instagram,
        Facebook = contact.Facebook,
        WebSite = contact.WebSite,
+       GitHub = contact.GitHub,
        Telegram = contact.Telegram,
-       Twitter = contact.Twitter 
+       Twitter = contact.Twitter,
+       
+    };
+
+    private AppUser ToModelCompanyUser(CompanyUser companyUser)
+    => new()
+    {
+        FirstName = companyUser.FirstName,
+        LastName = companyUser.LastName,
+        CopmanyEmail = companyUser.CopmanyEmail,
+        PhoneNumber = companyUser.PhoneNumber
     };
  }
