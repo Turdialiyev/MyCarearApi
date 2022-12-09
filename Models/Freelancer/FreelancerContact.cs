@@ -1,4 +1,4 @@
-﻿namespace MyCarearApi.Entities;
+﻿namespace MyCarearApi.Models;
 public class FreelancerContact 
 { 
     public int Id { get; set; }
