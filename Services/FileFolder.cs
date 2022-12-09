@@ -1,5 +1,5 @@
-namespace  MyCarearApi.Services;
+namespace MyCarearApi.Services;
 public static class FileFolders
 {
-    public static string UserImage="FreelancerImages"; 
+    public static string UserImage = "FreelancerImages";
 }

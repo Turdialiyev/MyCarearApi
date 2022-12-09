@@ -10,6 +10,7 @@ public class FreelancerInformation
     public string? FreelancerImage { get; set; }
     public DateOnly Birthday { get; set; }
     public string? Description { get; set; }
+    public int possionId { get; set; }
     public string? Position { get; set; }
     public int ContactId { get; set; }
     public Contact? Contact { get; set;}

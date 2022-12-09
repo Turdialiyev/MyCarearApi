@@ -4,7 +4,7 @@ using MyCarearApi.Data;
 using MyCarearApi.Repositories;
 using MyCarearApi.Entities;
 
-namespace MyCarearApi.Repositoryies
+namespace MyCarearApi.Repositories
 {
     public class AddressRepository: GenericRepository<Address>, IAddressRepository
     {

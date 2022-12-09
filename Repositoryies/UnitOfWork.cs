@@ -23,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
         Hobbies = new HobbyRepository(context);
         Skills = new SkillRepository(context);
         CompanyContacts = new CompanyContactRepository(context);
+        Addresses = new AddressRepository(context);
         Jobs = new JobRepository(context);
         JobSkills = new JobSkillsRepository(context);
         Addresses = new AddressRepository(context);
@@ -45,6 +46,7 @@ public class UnitOfWork : IUnitOfWork
     public ISkillRepository Skills { get; set; }
     public ICompanyContactRepository CompanyContacts { get; set; }
     public IFreelancerHobbyRepository FreelancerHobbies { get; set; }
+    public IAddressRepository Addresses { get; set; }
 
     public IJobRepository Jobs { get; }
 
