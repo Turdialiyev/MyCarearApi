@@ -56,7 +56,6 @@ public partial class CompanyService : ICompanyService
         }
     }
 
-
     public async ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation)
     {
         try
@@ -78,6 +77,7 @@ public partial class CompanyService : ICompanyService
             throw new Exception(e.Message);
         }
     }
+
 
     public async ValueTask<Result<string>> UploadCompanyPhoto(IFormFile file)
     {
