@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Entities;
 using MyCarearApi.Models.Account;
 using MyCarearApi.Services.JwtServices;
+using MyCarearApi.Services.JwtServices.Interfaces;
 using System.Text.RegularExpressions;
 
 namespace MyCarearApi.Controllers;
@@ -16,14 +17,14 @@ public class AccountController: ControllerBase
     private readonly IPasswordValidator<AppUser> _passwordValidator;
     private readonly IUserValidator<AppUser> _userValidator;
     
-    private readonly JwtService _jwtService;
+    private readonly IJwtService _jwtService;
 
 
     ILogger<AccountController> _logger;
 
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
         RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger,
-        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator)
+        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator, IJwtService jwtService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -32,6 +33,7 @@ public class AccountController: ControllerBase
         _passwordValidator = passwordValidator;
         _userValidator = userValidator;
         _regex = new Regex(pattern);
+        _jwtService = jwtService;
     }
 
     private string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
@@ -89,7 +91,7 @@ public class AccountController: ControllerBase
             && (!errors.ContainsKey("OtherError") || !errors["OtherError"].Any());
     }
 
-
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
@@ -119,7 +121,7 @@ public class AccountController: ControllerBase
         return Ok(new
         {
             ErrorOccured = false,
-            Token = _jwtService.GenerateToken(user)
+            Token = await _jwtService.GenerateToken(user)
         });
     }
 

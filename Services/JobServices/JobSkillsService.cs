@@ -1,4 +1,5 @@
 ﻿using MyCarearApi.Entities;
+using MyCarearApi.Repositories;
 using MyCarearApi.Repositoryies.Interfaces;
 using MyCarearApi.Services.JobServices.Interfaces;
 
@@ -8,9 +9,9 @@ public class JobSkillsService: IJobSkillsService
 {
     private readonly IJobSkillsRepository _jobSkillsRepository;
 
-    public JobSkillsService(IJobSkillsRepository jobSkillsRepository)
+    public JobSkillsService(IUnitOfWork unitOfWork)
     {
-        _jobSkillsRepository= jobSkillsRepository;
+        _jobSkillsRepository= unitOfWork.JobSkills;
     }
 
     public int Add(int jobId, int skillId)
