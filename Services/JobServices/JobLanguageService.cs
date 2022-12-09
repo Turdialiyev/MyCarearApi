@@ -1,4 +1,5 @@
 ﻿using MyCarearApi.Entities;
+using MyCarearApi.Repositories;
 using MyCarearApi.Repositoryies.Interfaces;
 using MyCarearApi.Services.JobServices.Interfaces;
 
@@ -8,9 +9,9 @@ public class JobLanguageService: IJobLanguagesService
 {
     public IJobLanguageRepository _jobLanguageRepository;
 
-    public JobLanguageService(IJobLanguageRepository jobLanguageRepository)
+    public JobLanguageService(IUnitOfWork unitOfWork)
     {
-        _jobLanguageRepository = jobLanguageRepository;
+        _jobLanguageRepository = unitOfWork.JobLanguages;
     }
 
     public int Add(int jobId, int languageId)
