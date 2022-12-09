@@ -5,6 +5,10 @@ using MyCarearApi.Data;
 using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
 using MyCarearApi.Services;
+using MyCarearApi.Services.JwtServices.Interfaces;
+using MyCarearApi.Services.JwtServices;
+using MyCarearApi.Services.JobServices.Interfaces;
+using MyCarearApi.Services.JobServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +31,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 }).AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddTransient<ICompanyService, CompanyService>();
+builder.Services.AddTransient<IJwtService, JwtService>();
+builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
+builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
+builder.Services.AddTransient<IJobService, JobService>();
 
 
 var app = builder.Build();

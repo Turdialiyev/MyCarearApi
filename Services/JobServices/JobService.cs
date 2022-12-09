@@ -23,7 +23,7 @@ namespace MyCarearApi.Services.JobServices
             _jobLanguagesService = jobLanguagesService;
         }
 
-        IEnumerable<Job>? Jobs => _jobRepository.GetAll()
+        public IEnumerable<Job> Jobs => _jobRepository.GetAll()
             .Include(j => j.Currency)
             .Include(j => j.JobLanguages)
             .Include(j => j.JobSkills)
@@ -32,7 +32,7 @@ namespace MyCarearApi.Services.JobServices
             .Include(j => j.Company).ThenInclude(c => c.AppUser)
             .ToList();
 
-        Job? GetJob(int id) => _jobRepository.GetAll()
+        public Job? GetJob(int id) => _jobRepository.GetAll()
             .Include(j => j.Currency)
             .Include(j => j.JobLanguages)
             .Include(j => j.JobSkills)
@@ -41,15 +41,15 @@ namespace MyCarearApi.Services.JobServices
             .Include(j => j.Company).ThenInclude(c => c.AppUser).FirstOrDefault();
 
 
-        int AddJob(Job job) => _jobRepository.Add(job).Id;
+        public int AddJob(Job job) => _jobRepository.Add(job).Id;
 
-        int AddJob(string name, int PositionId)
+        public int AddJob(string name, int PositionId)
         {
-            var job = new Job {Id = 0, Name = name, PositionsId = PositionId };
+            var job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false };
             return _jobRepository.Add(job).Id;
         }
 
-        async Task<int> UpdateTitle(int id,string name, int PositionId)
+        public async Task<int> UpdateTitle(int id,string name, int PositionId)
         {
             var job = _jobRepository.GetById(id);
             job.Name = name;
@@ -97,15 +97,39 @@ namespace MyCarearApi.Services.JobServices
             return (await _jobRepository.Update(job)).Id;
         }
 
-        public int SetTalantRequirements(int id,Level reuiredCandidateLevel, IEnumerable<Skill> requiredSkills, 
+        public async Task<int> SetTalantRequirements(int id,Level reuiredCandidateLevel, IEnumerable<Skill> requiredSkills, 
             IEnumerable<Language> requiredLanguages)
         {
-
+            return await SetTalantRequirements(id, reuiredCandidateLevel, requiredSkills.Select(x => x.Id), requiredLanguages.Select(x => x.Id));
         }
 
-        int SetContractRequirements(int id,decimal price, Currency currency, PriceRate priceRate, int deadline, DeadlineRate deadlineRate);
+        public async Task<int> SetContractRequirements(int id,decimal price, int currencyId, PriceRate priceRate, int deadline,
+            DeadlineRate deadlineRate)
+        {
+            var job = GetJob(id);
 
-        void UpdateJob(Job job);
+            job.Price = price;
+            job.PriceRate = priceRate;
+
+            job.CurrencyId = currencyId;
+
+            job.DeadLine = deadline;
+            job.DeadlineRate = deadlineRate;
+
+            return (await _jobRepository.Update(job)).Id;
+        }
+
+        public async Task<int> SaveJob(int id)
+        {
+            var job = _jobRepository.GetById(id);
+            job.IsSaved = true;
+            return (await _jobRepository.Update(job)).Id;
+        }
+
+        public void UpdateJob(Job job)
+        {
+            _jobRepository.Update(job);
+        }
 
     }
 }

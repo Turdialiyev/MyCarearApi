@@ -20,6 +20,6 @@ public interface IUnitOfWork : IDisposable
     IJobRepository Jobs { get; }
     IJobSkillsRepository JobSkills { get; }
     IContractRepository Contracts { get; }
-
+    IJobLanguageRepository JobLanguages { get; }
     int Save();
 }
