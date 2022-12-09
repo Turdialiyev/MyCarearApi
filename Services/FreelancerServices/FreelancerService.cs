@@ -121,18 +121,6 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
-
-
-    public ValueTask<Result<Contact>> Contact(int freelancerId, List<Contact> contacts)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ValueTask<Result<Education>> Education(int freelancerId, List<Education> educations)
-    {
-        throw new NotImplementedException();
-    }
-
     public async ValueTask<Result<FreelancerInformation>> Position(int freelancerId, Position position)
     {
         var existFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
@@ -233,9 +221,14 @@ public partial class FreelancerService : IFreelancerService
     {
         throw new NotImplementedException();
     }
-
-    public ValueTask<Result<Experience>> WorkExperience(int freelancerId, List<Experience> experiences)
+    public ValueTask<Result<Contact>> Contact(int freelancerId, List<Contact> contacts)
     {
         throw new NotImplementedException();
     }
+
+    public ValueTask<Result<Education>> Education(int freelancerId, List<Education> educations)
+    {
+        throw new NotImplementedException();
+    }
+
 }

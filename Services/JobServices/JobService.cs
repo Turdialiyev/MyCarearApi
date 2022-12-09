@@ -14,6 +14,7 @@ namespace MyCarearApi.Services.JobServices
         public readonly IJobSkillsRepository _jobSkillsRepository;
         private readonly IJobSkillsService _jobSkillsService;
         private readonly IJobLanguagesService _jobLanguagesService;
+        private readonly IPositionRepository _positionRepository;
 
         public JobService(IUnitOfWork unitOfWork, IJobSkillsService jobSkillsService, IJobLanguagesService jobLanguagesService)
         {
@@ -21,6 +22,7 @@ namespace MyCarearApi.Services.JobServices
             _jobSkillsRepository = unitOfWork.JobSkills;
             _jobSkillsService = jobSkillsService;
             _jobLanguagesService = jobLanguagesService;
+            _positionRepository = unitOfWork.Positions;
         }
 
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
@@ -126,6 +128,8 @@ namespace MyCarearApi.Services.JobServices
             job.IsSaved = true;
             return (await _jobRepository.Update(job)).Id;
         }
+
+        public bool IsPositionExist(int positionId) => _positionRepository.GetById(positionId) is not null;
 
         public void UpdateJob(Job job)
         {
