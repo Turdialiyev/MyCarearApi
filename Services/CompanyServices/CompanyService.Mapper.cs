@@ -5,14 +5,12 @@ namespace MyCarearApi.Services;
 
 public partial class CompanyService
 {
-    private Entities.Company ToEntityCompany(Company company)
+    private Entities.Company ToEntityCompany(Company company, string filePath)
     => new()
     {
         Name = company.Name,
         PhoneNumber = company.PhoneNumber,
-        Email = company.Email,
-        Description = company.Description,
-        Photo = company.Photo
+        Photo = filePath
     };
     private Company ToModelCompany(Entities.Company company)
     => new()
@@ -20,8 +18,6 @@ public partial class CompanyService
         Id = company.Id,
         Name = company.Name,
         PhoneNumber = company.PhoneNumber,
-        Email = company.Email,
-        Description = company.Description,
         Photo = company.Photo,
     };
     private Contact ToModelContact(Entities.Contact contact)
@@ -33,11 +29,13 @@ public partial class CompanyService
          GitHub = contact.GitHub,
          Twitter = contact.Twitter,
          Instagram = contact.Instagram,
-         WebSite = contact.WebSite
+         WebSite = contact.WebSite,
+         AppUserId = contact.UserId
+         
     };
    
 
-    private Entities.Contact ToEntityContact(Contact contact)
+    private Entities.Contact ToEntityContact(Contact contact, string userId)
     => new()
     {
          Id = contact.Id,
@@ -47,16 +45,16 @@ public partial class CompanyService
          GitHub = contact.GitHub,
          Twitter = contact.Twitter,
          Instagram = contact.Instagram,
-         WebSite = contact.WebSite
+         WebSite = contact.WebSite,
+         UserId = userId
     };
 
     
     private CompanyLocation ToModelCompanyLocation(Entities.CompanyLocation location)
     => new()
     {
-       Id = location.Id,
        Location = location.Location,
-       CompanyId = location.CompanyId
+       UserId = location.UserId
     };
 
 
@@ -64,7 +62,26 @@ public partial class CompanyService
     => new()
     {
        Location = location.Location,
-       CompanyId = location.CompanyId
+       Description = location.Description,
+       UserId = location.UserId
+    };
+    private Entities.AppUser ToEntityCompanyUser(AppUser user, Entities.AppUser? identityUser)
+    {
+        identityUser.CopmanyEmail = user.CopmanyEmail;
+        identityUser.FirstName = user.FirstName;
+        identityUser.LastName = user.LastName;
+        identityUser.PhoneNumber = user.PhoneNumber;
+        return identityUser;
+    } 
+
+
+    private AppUser ToModelUser(Entities.AppUser? user)
+    => new()
+    {
+       FirstName = user.FirstName,
+       LastName = user.LastName,
+       CopmanyEmail = user.CopmanyEmail,
+       PhoneNumber = user.PhoneNumber
     };
 
 }
