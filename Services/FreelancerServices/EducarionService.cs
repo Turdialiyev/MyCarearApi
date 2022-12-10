@@ -43,7 +43,8 @@ public class EducationService : IEducationService
         StartDate = result.StartDate,
         EndDate = result.EndDate,
         CurrentStudy = result.CurrentStudy,
-        Location = result.Location
+        Location = result.Location,
+        FrelancerInfoId = result.FrelancerInfoId
     };
 
     public async ValueTask<Result<List<Education>>> GetAll()
@@ -76,7 +77,7 @@ public class EducationService : IEducationService
             if (exsitFreelancer is null)
                 return new("exsitFreelancer is not found");
 
-            var result = await _unitOfWork.Educations.AddAsync(ToEntity(education));
+            var result = await _unitOfWork.Educations.AddAsync(ToEntity(education, freelncerId));
 
             return new(true) { Data = ToModel(result) };
 
@@ -89,7 +90,7 @@ public class EducationService : IEducationService
         }
     }
 
-    private Entities.Education ToEntity(Education model) => new()
+    private Entities.Education ToEntity(Education model, int freelncerId) => new()
     {
         SchoolName = model.SchoolName,
         EducationDegree = model.EducationDegree,
@@ -97,7 +98,8 @@ public class EducationService : IEducationService
         StartDate = model.StartDate,
         EndDate = model.EndDate,
         CurrentStudy = model.CurrentStudy,
-        Location = model.Location
+        Location = model.Location,
+        FrelancerInfoId = freelncerId
     };
 
     public async ValueTask<Result<Education>> Update(int educationId, Education education)
