@@ -29,6 +29,8 @@ public interface IJobService
 
     public Company GetCompany(string userId);
 
+    bool IsCurrencyExist(int currencyId);
+
     void UpdateJob(Job job);
 
 }
