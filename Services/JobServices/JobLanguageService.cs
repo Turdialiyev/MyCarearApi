@@ -7,11 +7,13 @@ namespace MyCarearApi.Services.JobServices;
 
 public class JobLanguageService: IJobLanguagesService
 {
-    public IJobLanguageRepository _jobLanguageRepository;
+    private IJobLanguageRepository _jobLanguageRepository;
+    private ILanguageRepository _languageRepository;
 
     public JobLanguageService(IUnitOfWork unitOfWork)
     {
         _jobLanguageRepository = unitOfWork.JobLanguages;
+        _languageRepository = unitOfWork.Languages;
     }
 
     public int Add(int jobId, int languageId)
@@ -19,6 +21,12 @@ public class JobLanguageService: IJobLanguagesService
         var jobLanguage = new JobLanguage { JobId = jobId, LanguageId = languageId };
         return _jobLanguageRepository.Add(jobLanguage).Id;
 
+    }
+
+    public IEnumerable<int> CheckLanguageIds(IEnumerable<int> ids)
+    {
+        IEnumerable<int> existLanguageIds = _languageRepository.GetAll().Select(x => x.Id).ToList();
+        return ids.Where(id => !existLanguageIds.Contains(id));
     }
 
     public async Task Delete(int jobId, int languageId)

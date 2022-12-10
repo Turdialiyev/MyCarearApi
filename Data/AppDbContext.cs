@@ -47,6 +47,8 @@ namespace MyCarearApi.Data;
 
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
+    public DbSet<Currency> Currencys { get; set; }
+
  }
 
  

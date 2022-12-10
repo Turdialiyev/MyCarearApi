@@ -22,5 +22,7 @@ public interface IUnitOfWork : IDisposable
     IJobSkillsRepository JobSkills { get; }
     IContractRepository Contracts { get; }
     IJobLanguageRepository JobLanguages { get; }
+    ILanguageRepository Languages { get; }
+    ICurrencyRepository Currencies { get; }
     int Save();
 }
