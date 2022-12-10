@@ -27,7 +27,7 @@ public class ExperienceService : IExperienceService
             if (exsitFreelancer is null)
                 return new("exsitFreelancer is not found");
 
-            var result = await _unitOfWork.Experiences.AddAsync(ToEntity(experience));
+            var result = await _unitOfWork.Experiences.AddAsync(ToEntity(experience, freelncerId));
 
             return new(true) { Data = ToModel(result) };
 
@@ -50,10 +50,11 @@ public class ExperienceService : IExperienceService
         CurrentWorking = result.CurrentWorking,
         StartDate = result.StartDate,
         EndDate = result.EndDate,
-        Descripeion = result.Descripeion
+        Descripeion = result.Descripeion,
+        FrelancerInformationId = result.FrelancerInfoId
     };
 
-    private Entities.Experience ToEntity(Experience model) => new()
+    private Entities.Experience ToEntity(Experience model, int freelanserId) => new()
     {
         CompanyName = model.CompanyName,
         CurrentWorking = model.CurrentWorking,
@@ -61,6 +62,7 @@ public class ExperienceService : IExperienceService
         StartDate = model.StartDate,
         EndDate = model.EndDate,
         Descripeion = model.Descripeion,
+        FrelancerInfoId = freelanserId,
     };
 
     public async ValueTask<Result<Experience>> Delete(int experienceId, Experience experience)
