@@ -1,5 +1,6 @@
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
+using MyCareerApi.Entities;
 
 namespace MyCarearApi.Services;
 
@@ -216,19 +217,49 @@ public partial class FreelancerService : IFreelancerService
         return new(true) { Data = ToModelExistFreelancer(existFreelancer) };
     }
 
+    public async ValueTask<Result<FreelancerContact>> Contact(int freelancerId, FreelancerContact contacts)
+    {
+        if (freelancerId == 0)
+            return new("FreelancerId is invalid");
 
-    public ValueTask<Result<UserLanguage>> UserLanguage(int freelancerId, List<UserLanguage> userLanguage)
-    {
-        throw new NotImplementedException();
-    }
-    public ValueTask<Result<Contact>> Contact(int freelancerId, List<Contact> contacts)
-    {
-        throw new NotImplementedException();
-    }
+        if (contacts is null)
+            return new(false) { ErrorMessage = "Contact is null" };
 
-    public ValueTask<Result<Education>> Education(int freelancerId, List<Education> educations)
-    {
-        throw new NotImplementedException();
+        try
+        {
+            var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
+
+            if (exsitFreelancer is null)
+                return new("Freelancer is not found");
+
+            var existContact = _unitOfwork.FreelancerContacts.GetAll().Where(c => c.FreelancerInformationId == exsitFreelancer.Id).FirstOrDefault();
+
+            if (existContact is null)
+            {
+                existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, freelancerId));
+            }
+            if (existContact is not null)
+            {
+                existContact.Facebook = contacts.Facebook;
+                existContact.Instagram = contacts.Instagram;
+                existContact.Telegram = contacts.Telegram;
+                existContact.GitHub = contacts.GitHub;
+                existContact.Twitter = contacts.Twitter;
+                existContact.WatsApp = contacts.WatsApp;
+
+                existContact = await _unitOfwork.FreelancerContacts.Update(existContact);
+            }
+
+            return new(true) { Data = ToModelContact(existContact) };
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)}", e);
+
+            throw new("Couldn't create Contact. Plaese contact support", e);
+        }
+
     }
 
 }

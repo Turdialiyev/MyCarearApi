@@ -1,7 +1,6 @@
 ﻿using MyCarearApi.Entities.Enums;
 using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
-using MyCarearApi.Repositoryies.Interfaces;
 using MyCarearApi.Services.JobServices.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Dtos;
@@ -16,6 +15,7 @@ namespace MyCarearApi.Services.JobServices
         private readonly IJobLanguagesService _jobLanguagesService;
         private readonly IPositionRepository _positionRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly ICurrencyRepository _currencyRepository;
 
         public JobService(IUnitOfWork unitOfWork, IJobSkillsService jobSkillsService, IJobLanguagesService jobLanguagesService)
         {
@@ -25,6 +25,7 @@ namespace MyCarearApi.Services.JobServices
             _jobLanguagesService = jobLanguagesService;
             _positionRepository = unitOfWork.Positions;
             _companyRepository = unitOfWork.Companies;
+            _currencyRepository = unitOfWork.Currencies;
         }
 
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
@@ -134,6 +135,8 @@ namespace MyCarearApi.Services.JobServices
         public bool IsPositionExist(int positionId) => _positionRepository.GetById(positionId) is not null;
 
         public Company? GetCompany(string userId) => _companyRepository.Find(x => x.AppUserId == userId).FirstOrDefault();
+
+        public bool IsCurrencyExist(int currencyId) => _currencyRepository.GetById(currencyId) is not null;
 
         public void UpdateJob(Job job)
         {

@@ -1,7 +1,4 @@
 using MyCarearApi.Data;
-using MyCarearApi.Repositories.Interfaces;
-using MyCarearApi.Repositoryies;
-using MyCarearApi.Repositoryies.Interfaces;
 
 namespace MyCarearApi.Repositories;
 
@@ -12,6 +9,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
+        FreelancerContacts = new FreelancerContactRepository(context);
         Educations = new EducationRepository(context);
         FreelancerHobbies = new FreelancerHobbyRepository(context);
         Companies = new CompanyRepository(context);
@@ -30,6 +28,8 @@ public class UnitOfWork : IUnitOfWork
         JobSkills = new JobSkillsRepository(context);
         Contracts = new ContractRepository(context);
         JobLanguages = new JobLanguageRepository(context);
+        Languages= new LanguageRepository(context);
+        Currencies = new CurrencyRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -50,6 +50,7 @@ public class UnitOfWork : IUnitOfWork
     public IFreelancerHobbyRepository FreelancerHobbies { get; set; }
     public IAddressRepository Addresses { get; set; }
     public IEducationRepository Educations { get; set; }
+    public IFreelancerContactRepository FreelancerContacts { get; set; }
 
     public IJobRepository Jobs { get; }
 
@@ -59,6 +60,8 @@ public class UnitOfWork : IUnitOfWork
     public IContractRepository Contracts { get; }
 
     public IJobLanguageRepository JobLanguages { get; }
+    public ILanguageRepository Languages { get; }
+    public ICurrencyRepository Currencies { get; }
     public void Dispose()
     {
         _context.Dispose();

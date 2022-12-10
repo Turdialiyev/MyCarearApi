@@ -4,7 +4,7 @@ namespace MyCarearApi.Models
 {
     public class TalantRequirementsModel
     {
-        public int id;
+        public int JobId;
         public Level reuiredCandidateLevel;
         public IEnumerable<int> requiredSkillIds;
         public IEnumerable<int> requiredLanguageIds;

@@ -81,7 +81,9 @@ public class AccountController: ControllerBase
 
         var result = new { Succeded = isSuccess(errors), Errors = errors };        
 
-        return Ok( result );
+        if(result.Succeded) return Ok(result);
+
+        return BadRequest( result );
     }
 
     private bool isSuccess(Dictionary<string, List<string>> errors)
@@ -96,9 +98,9 @@ public class AccountController: ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
-        var errorResult = Ok(new
+        var errorResult = BadRequest(new
         {
-            ErrorOccured = true,
+            Succeded = false,
             Description = "Email or password incorrect"
         });
 
@@ -121,7 +123,7 @@ public class AccountController: ControllerBase
 
         return Ok(new
         {
-            ErrorOccured = false,
+            Succeded = true,
             Token = await _jwtService.GenerateToken(user)
         });
     }

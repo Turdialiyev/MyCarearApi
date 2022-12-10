@@ -1,7 +1,7 @@
 ﻿using MyCarearApi.Repositories;
 using MyCarearApi.Entities;
 
-namespace MyCarearApi.Repositoryies.Interfaces
+namespace MyCarearApi.Repositories
 {
     public interface IJobRepository: IGenericRepository<Job>
     {

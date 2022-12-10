@@ -1,9 +1,7 @@
-﻿using MyCarearApi.Repositoryies.Interfaces;
-using MyCarearApi.Data;
-using MyCarearApi.Repositories;
+﻿using MyCarearApi.Data;
 using MyCarearApi.Entities;
 
-namespace MyCarearApi.Repositoryies
+namespace MyCarearApi.Repositories
 {
     public class JobSkillsRepository: GenericRepository<JobSkill>, IJobSkillsRepository
     {

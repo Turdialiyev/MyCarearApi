@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Entities;
 using MyCarearApi.Entities.Enums;
 using MyCarearApi.Models;
+using MyCarearApi.Models.JobModels;
 using MyCarearApi.Services;
 using MyCarearApi.Services.JobServices;
 using MyCarearApi.Services.JobServices.Interfaces;
@@ -16,11 +17,16 @@ namespace MyCarearApi.Controllers;
 public class JobController: ControllerBase
 {
     private readonly IJobService _jobService;
+    private readonly IJobLanguagesService _jobLanguagesService;
+    private readonly IJobSkillsService _jobSkillsService;
     private readonly UserManager<Entities.AppUser> _userManager;
 
-    public JobController(IJobService jobService, UserManager<Entities.AppUser> userManager)
+    public JobController(IJobService jobService, UserManager<Entities.AppUser> userManager, 
+        IJobLanguagesService jobLanguagesService, IJobSkillsService jobSkillsService)
     {
         _jobService = jobService;
+        _jobLanguagesService = jobLanguagesService;
+        _jobSkillsService = jobSkillsService;
         _userManager= userManager;
     }
 
@@ -47,7 +53,7 @@ public class JobController: ControllerBase
 
         if(string.IsNullOrWhiteSpace(job.Title) || !_jobService.IsPositionExist(job.PositionId) || company is null)
         {
-            return Ok(new
+            return BadRequest(new
             {
                 Succeded = false,
                 TitleError = string.IsNullOrWhiteSpace(job.Title),
@@ -74,7 +80,7 @@ public class JobController: ControllerBase
         if (company is null || job.CompanyId !=company.Id || string.IsNullOrWhiteSpace(SpaceReplace(description)) 
             || string.IsNullOrEmpty(description))
         {
-            return Ok(new
+            return BadRequest(new
             {
                 Succeded = false,
                 DescriptionError = string.IsNullOrWhiteSpace(SpaceReplace(description)) || string.IsNullOrEmpty(description),
@@ -92,9 +98,61 @@ public class JobController: ControllerBase
     }
 
     [HttpPost("talant")]
-    public IActionResult SettalantRequirements(int jobId, Level level, IEnumerable<int> skills, IEnumerable<int> languages) 
+    [Authorize]  
+    public IActionResult SetTalantRequirements(TalantRequirementsModel talant) 
     {
-        return Ok();
+        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var job = _jobService.GetJob(talant.JobId);
+
+        var notFoundSkills = _jobSkillsService.CheckSkillIds(talant.requiredSkillIds);
+
+        var notFoundLanguages = _jobLanguagesService.CheckLanguageIds(talant.requiredLanguageIds);
+        //Validation
+        if (company is null || job is null || company.Id != job.CompanyId
+            || notFoundSkills.Count() > 0 || notFoundLanguages.Count() > 0)
+            return BadRequest(new
+            {
+                Succeded = false,
+                OwnerError = company is null || job is null || company.Id != job.CompanyId,
+                SkillError = notFoundSkills.Count() > 0,
+                NotFoundSkills = notFoundSkills,
+                LanguageError = notFoundLanguages.Count() > 0,
+                NotFoundLanguages = notFoundLanguages
+            });
+
+
+        return Ok(new
+        {
+            Succeded = true,
+            Id = _jobService.SetTalantRequirements(talant.JobId, talant.reuiredCandidateLevel,
+                                                   talant.requiredSkillIds, talant.requiredLanguageIds)
+        });
     }
 
+    [HttpGet("contract")]
+    [Authorize]
+    public async Task<IActionResult> SetContractRequirements(ContractRequirementsModel contract)
+    {
+        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var job = _jobService.GetJob(contract.JobId);
+
+        if(company is null || job is null || company.Id != job.CompanyId || _jobService.IsCurrencyExist(contract.CurrencyId)
+            || contract.Deadline < 1)
+        {
+            return BadRequest(new
+            {
+                Succeded = false,
+                OwnerError = company is null || job is null || company.Id != job.CompanyId,
+                CurrencyError = _jobService.IsCurrencyExist(contract.CurrencyId),
+                DeadlineError = contract.Deadline < 1
+            });
+        }
+
+        return Ok(new
+        {
+            Succeded = true,
+            Id = await _jobService.SetContractRequirements(contract.JobId, contract.Price, contract.CurrencyId,
+            contract.PriceRate, contract.Deadline, contract.DeadlineRate)
+        });
+    }
 }

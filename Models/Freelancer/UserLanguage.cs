@@ -1,4 +1,4 @@
-using MyCarearApi.Services.Enums;
+using MyCarearApi.Entities.Enums;
 
 namespace MyCarearApi.Models;
 public class UserLanguage

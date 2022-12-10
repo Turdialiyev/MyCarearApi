@@ -1,11 +1,11 @@
 using MyCarearApi.Repositories;
-using MyCarearApi.Repositories.Interfaces;
-using MyCarearApi.Repositoryies.Interfaces;
+
 
 namespace MyCarearApi.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
+    IFreelancerContactRepository FreelancerContacts { get; set; }
     IEducationRepository Educations { get; set; }
     IAddressRepository Addresses { get; set; }
     IFreelancerHobbyRepository FreelancerHobbies { get; set; }
@@ -24,5 +24,7 @@ public interface IUnitOfWork : IDisposable
     IJobSkillsRepository JobSkills { get; }
     IContractRepository Contracts { get; }
     IJobLanguageRepository JobLanguages { get; }
+    ILanguageRepository Languages { get; }
+    ICurrencyRepository Currencies { get; }
     int Save();
 }

@@ -2,10 +2,10 @@
 using MyCareerApi.Entities;
 
 
-namespace MyCarearApi.Repositories.Interfaces
+namespace MyCarearApi.Repositories
 {
     public interface IContractRepository: IGenericRepository<Contract>
     {
-
+      
     }
 }
