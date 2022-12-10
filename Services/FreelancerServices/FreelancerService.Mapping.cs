@@ -5,8 +5,8 @@ namespace MyCarearApi.Services;
 
 public partial class FreelancerService
 {
-    
-     private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
+
+    private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
     {
         CountryId = existAddress!.CountryId,
         RegionId = existAddress.RegionId,
@@ -40,7 +40,7 @@ public partial class FreelancerService
         AppUserId = userId
     };
 
-    
+
     private Models.FreelancerInformation ToModelExistFreelancer(Entities.FreelancerInformation existFreelancer)
     => new()
     {
@@ -59,5 +59,26 @@ public partial class FreelancerService
                 HobbyId = x.HobbyId,
                 FreelanceInformationId = x.FreelanceInformationId,
             })
+    };
+
+    private Models.FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()
+    {
+        Id = contacts!.Id,
+        Facebook = contacts.Facebook,
+        Instagram = contacts.Instagram,
+        Telegram = contacts.Telegram,
+        GitHub = contacts.GitHub,
+        Twitter = contacts.Twitter,
+        WatsApp = contacts.WatsApp,
+    };
+
+    private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts) => new()
+    {
+        Facebook = contacts.Facebook,
+        Instagram = contacts.Instagram,
+        Telegram = contacts.Telegram,
+        GitHub = contacts.GitHub,
+        Twitter = contacts.Twitter,
+        WatsApp = contacts.WatsApp,
     };
 }
