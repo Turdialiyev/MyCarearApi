@@ -17,7 +17,7 @@ public partial class FreelancerService : IFreelancerService
         _fileHelper = fileHelper;
     }
 
-    public async ValueTask<Result<FreelancerInformation>> Information(int userId, FreelancerInformation information, IFormFile image)
+    public async ValueTask<Result<FreelancerInformation>> Information(string userId, FreelancerInformation information, IFormFile image)
     {
         string? filePath = null;
         try
@@ -38,16 +38,19 @@ public partial class FreelancerService : IFreelancerService
                             return new("File is invalid only picture");
 
                         filePath = await _fileHelper.WriteFileAsync(image, FileFolders.UserImage);
+                        _logger.LogInformation($"=========> filrpath {filePath}");
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                     }
                 }
+                _logger.LogInformation($"  =======> =====> create {freelancerInformation}");
                 freelancerInformation = await _unitOfwork.FreelancerInformations.AddAsync(ToEntity(information, filePath!, userId));
             }
             else
             {
+                _logger.LogInformation("=======--------------------->");
                 if (image is not null)
                 {
                     try

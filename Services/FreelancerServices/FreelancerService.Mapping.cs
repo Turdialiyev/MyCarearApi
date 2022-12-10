@@ -30,7 +30,7 @@ public partial class FreelancerService
         FreelancerImage = freelancerInformation.FreelancerImage,
     };
 
-    private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, int userId) => new()
+    private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()
     {
         FirstName = information.FirstName,
         LastName = information.LastName,
