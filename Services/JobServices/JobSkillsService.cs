@@ -1,6 +1,5 @@
 ﻿using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
-using MyCarearApi.Repositoryies.Interfaces;
 using MyCarearApi.Services.JobServices.Interfaces;
 
 namespace MyCarearApi.Services.JobServices;

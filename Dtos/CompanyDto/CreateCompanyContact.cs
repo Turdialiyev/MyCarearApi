@@ -2,6 +2,7 @@ namespace MyCarearApi.Dtos;
 
 public class CreateCompanyContact
 {
+    public int Id { get; set; }
     public string?  WatsApp { get; set; }
     public string?  Facebook { get; set; }
     public string?  Telegram { get; set; }
