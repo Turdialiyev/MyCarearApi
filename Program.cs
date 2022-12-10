@@ -64,6 +64,9 @@ builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
 builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
 builder.Services.AddTransient<IJobService, JobService>();
 
+builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
+                                                              .AllowAnyHeader()
+                                                              .AllowAnyMethod()));
 
 var app = builder.Build();
 
@@ -80,7 +83,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseHttpsRedirection();
-
+app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
 
