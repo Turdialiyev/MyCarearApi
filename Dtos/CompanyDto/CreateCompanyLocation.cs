@@ -2,7 +2,8 @@ namespace MyCarearApi.Dtos;
 
 public class CreateCompanyLocation
 {
-    public List<string>? Location { get; set; }
-
+    public int CompnayId { get; set; }
+    
+    public List<CompanyLocationDto>? Locations { get; set; }
     public string? Description { get; set; }
 }

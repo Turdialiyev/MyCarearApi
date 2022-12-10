@@ -6,6 +6,6 @@ public class CompanyLocation
    public string? Location { get; set; }
    public string? Description { get; set; }
 
-   public string? UserId { get; set; }
-   public AppUser? AppUser {get; set;}
+   public int CompnayId { get; set; }
+   public Company? Company { get; set; }
 }

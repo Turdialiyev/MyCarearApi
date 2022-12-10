@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
+using MyCareerApi.Entities;
 
 namespace MyCarearApi.Services;
 
@@ -52,12 +53,25 @@ public partial class CompanyService : ICompanyService
     {
         try
         {
+            var filePath = UploadCompanyPhoto(file);
+            if(company.Id != 0)
+            {
+              var existCopany = _unitOfWork.Companies.GetById(company.Id);
+
+              if(existCopany is not null)
+              {
+                var updatedCompany = await _unitOfWork.Companies
+                .Update(UpdatedCompany(existCopany, filePath, company));
+
+                return new(true) {Data = ToModelCompany(updatedCompany)};
+              }
+
+            }
             if(company is null)
             return new("Company model can't be null");
             
-            var filePath = UploadCompanyPhoto(file);
 
-            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company, filePath.ToString()));
+            var createdCompany = await _unitOfWork.Companies.AddAsync(ToEntityCompany(company, filePath.ToString(), userId));
 
             if(createdCompany is null)
             return new("Company is not created");
@@ -72,12 +86,27 @@ public partial class CompanyService : ICompanyService
         }
     }
 
+    
+
     public async ValueTask<Result<Contact>> CreateCompanyContact(Contact contact, string userId)
     {
         try
         {
             if(contact is null)
             return new("contacts can't be null");
+
+            if(contact.Id != 0)
+            {
+                var existContact = _unitOfWork.CompanyContacts.GetById(contact.Id);
+
+                if(existContact is not null)
+                {
+                    var updatedContact = await _unitOfWork.CompanyContacts
+                    .Update(ToEntityUpdateContact(existContact, contact));
+
+                    return new(true) {Data = ToModelContact(updatedContact)};
+                }
+            }
 
             var createdContact = await _unitOfWork.CompanyContacts.AddAsync(ToEntityContact(contact, userId));
 
@@ -94,12 +123,26 @@ public partial class CompanyService : ICompanyService
     }
 
 
-    public async ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation, string userId)
+    public async ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation)
     {
         try
         {
             if(companyLocation is null)
             return new("CompanyLocation can'y be null here");
+
+            
+            if(companyLocation.Id != 0)
+            {
+               var existLocation = _unitOfWork.CompanyLocations.GetById(companyLocation.Id);
+
+               if(existLocation is not null)
+               {
+                var updatedLocation = await _unitOfWork.CompanyLocations
+                .Update(ToEntityUpdateLocation(existLocation, companyLocation));
+
+                return new(true) {Data = ToModelCompanyLocation(updatedLocation)};
+               }
+            }
 
             var createdLocation = await _unitOfWork.CompanyLocations
             .AddAsync(ToEntityCompanyLocation(companyLocation));
@@ -107,6 +150,8 @@ public partial class CompanyService : ICompanyService
             if(createdLocation is null)
             return new("Company Location is not created");
 
+            System.Console.WriteLine(createdLocation.Description + "=====================>");
+            
             return new(true){ Data = ToModelCompanyLocation(createdLocation)};
         }
         catch (System.Exception e)
@@ -116,6 +161,34 @@ public partial class CompanyService : ICompanyService
         }
     }
 
+    public async void DeleteEmptyLocations(List<int> Ids, int companyId)
+    {
+        try
+        {
+            var locations = _unitOfWork.CompanyLocations.GetAll().Where(x => x.CompanyId == companyId).ToList();
+
+            for (int i = 0; i < locations.Count(); i++)
+            {
+                bool exist = false;
+                for (int j = 0; j < Ids.Count(); j++)
+                {
+                    if(locations[i].Id == Ids[j])
+                    {
+                        exist = true;
+                    }
+                }
+                if(!exist)
+                {
+                  await  _unitOfWork.CompanyLocations.Remove(locations[i]);
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            _logger.LogInformation($"not deleted locations with : {Ids}");
+            throw new Exception(e.Message);
+        }
+    }
 
     public string UploadCompanyPhoto(IFormFile file)
     {
