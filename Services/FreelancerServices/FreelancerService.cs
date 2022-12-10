@@ -236,7 +236,7 @@ public partial class FreelancerService : IFreelancerService
 
             if (existContact is null)
             {
-                existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts));
+                existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, freelancerId));
             }
             if (existContact is not null)
             {

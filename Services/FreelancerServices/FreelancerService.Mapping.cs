@@ -72,7 +72,7 @@ public partial class FreelancerService
         WatsApp = contacts.WatsApp,
     };
 
-    private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts) => new()
+    private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts, int freelancerId) => new()
     {
         Facebook = contacts.Facebook,
         Instagram = contacts.Instagram,
@@ -80,5 +80,6 @@ public partial class FreelancerService
         GitHub = contacts.GitHub,
         Twitter = contacts.Twitter,
         WatsApp = contacts.WatsApp,
+        FreelancerInformationId = freelancerId,
     };
 }
