@@ -30,7 +30,7 @@ public class FreelancerController : ControllerBase
     {
         return Ok();
     }
-    
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
     public async Task<IActionResult> FreelancerInformation([FromForm] Freelancer freelancer)
@@ -39,7 +39,7 @@ public class FreelancerController : ControllerBase
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-                
+
             var result = await _freelancerService.Information("1231231", ToModel(freelancer), freelancer.Image!);
 
             if (!result.IsSuccess)
@@ -54,6 +54,37 @@ public class FreelancerController : ControllerBase
         }
 
     }
+
+    [HttpPost("Adress/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
+
+    public async Task<IActionResult> FreelancerAdress(int freelancerId, [FromBody] Adress address)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _freelancerService.Address(freelancerId, ToModelAddress(address));
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+    private Address ToModelAddress(Adress address) => new()
+    {
+        CountryId = address.CountryId,
+        RegionId = address.RegionId,
+        Home = address.Home,
+    };
 
     private FreelancerInformation ToModel(Freelancer freelancer) => new()
     {
