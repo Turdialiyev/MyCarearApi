@@ -217,11 +217,6 @@ public partial class FreelancerService : IFreelancerService
         return new(true) { Data = ToModelExistFreelancer(existFreelancer) };
     }
 
-
-    public ValueTask<Result<UserLanguage>> UserLanguage(int freelancerId, List<UserLanguage> userLanguage)
-    {
-        throw new NotImplementedException();
-    }
     public async ValueTask<Result<FreelancerContact>> Contact(int freelancerId, FreelancerContact contacts)
     {
         if (freelancerId == 0)
@@ -241,7 +236,7 @@ public partial class FreelancerService : IFreelancerService
 
             if (existContact is null)
             {
-                existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts));
+                existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, freelancerId));
             }
             if (existContact is not null)
             {
@@ -267,26 +262,4 @@ public partial class FreelancerService : IFreelancerService
 
     }
 
-    private FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()
-    {
-        Id = contacts!.Id,
-        Facebook = contacts.Facebook,
-        Instagram = contacts.Instagram,
-        Telegram = contacts.Telegram,
-        GitHub = contacts.GitHub,
-        Twitter = contacts.Twitter,
-        WatsApp = contacts.WatsApp,
-    };
-
-    private Entities.FreelancerContact ToEntityContact(FreelancerContact contacts) => new()
-    {
-        Facebook = contacts.Facebook,
-        Instagram = contacts.Instagram,
-        Telegram = contacts.Telegram,
-        GitHub = contacts.GitHub,
-        Twitter = contacts.Twitter,
-        WatsApp = contacts.WatsApp,
-    };
-
-    
 }
