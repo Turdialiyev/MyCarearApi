@@ -47,21 +47,21 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
+    // protected override void OnModelCreating(ModelBuilder builder)
+    // {
+    //     base.OnModelCreating(builder);
 
-        builder.Entity<FreelancerInformation>().HasData(
-            new
-            {
-                Id = 1,
-                Email = "sasasalnasls",
-                PhoneNumber = "sasasa",
-                FirstName = "salom",
-                LastName = "salom",
-            }
-        );
-    }
+    //     builder.Entity<FreelancerInformation>().HasData(
+    //         new
+    //         {
+    //             Id = 1,
+    //             Email = "sasasalnasls",
+    //             PhoneNumber = "sasasa",
+    //             FirstName = "salom",
+    //             LastName = "salom",
+    //         }
+    //     );
+    // }
 
 }
 

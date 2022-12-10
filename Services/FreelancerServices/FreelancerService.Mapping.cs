@@ -23,6 +23,7 @@ public partial class FreelancerService
     };
     private Models.FreelancerInformation ToModel(Entities.FreelancerInformation freelancerInformation) => new()
     {
+        Id = freelancerInformation.Id,
         FirstName = freelancerInformation.FirstName,
         LastName = freelancerInformation.LastName,
         Email = freelancerInformation.Email,

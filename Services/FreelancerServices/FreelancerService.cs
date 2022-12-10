@@ -19,14 +19,18 @@ public partial class FreelancerService : IFreelancerService
 
     public async ValueTask<Result<FreelancerInformation>> Information(string userId, FreelancerInformation information, IFormFile image)
     {
+        
         string? filePath = null;
+        // fake userId Null qilindi kegin haqiqiy user olinadi
+        userId = null;
         try
         {
             if (information is null)
                 return new("Null reference error");
             // UserId Tekshiriladi bu yerda bazada bormi yoki yo'q
-
-            var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+            
+            // fake uchun tekshirilib ko'rildi
+            var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.Id == 1);
 
             if (freelancerInformation is null)
             {
@@ -38,19 +42,16 @@ public partial class FreelancerService : IFreelancerService
                             return new("File is invalid only picture");
 
                         filePath = await _fileHelper.WriteFileAsync(image, FileFolders.UserImage);
-                        _logger.LogInformation($"=========> filrpath {filePath}");
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                     }
                 }
-                _logger.LogInformation($"  =======> =====> create {freelancerInformation}");
                 freelancerInformation = await _unitOfwork.FreelancerInformations.AddAsync(ToEntity(information, filePath!, userId));
             }
             else
             {
-                _logger.LogInformation("=======--------------------->");
                 if (image is not null)
                 {
                     try

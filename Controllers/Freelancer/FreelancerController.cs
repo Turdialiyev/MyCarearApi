@@ -39,7 +39,8 @@ public class FreelancerController : ControllerBase
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var result = await _freelancerService.Information("", ToModel(freelancer), freelancer.Image!);
+                
+            var result = await _freelancerService.Information("1231231", ToModel(freelancer), freelancer.Image!);
 
             if (!result.IsSuccess)
                 return NotFound(result);
