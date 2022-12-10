@@ -25,9 +25,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     //  options.UseInMemoryDatabase("TestDb");
 });
 
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IFileHelper, FileHelper>();
-
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = false;
@@ -54,7 +51,12 @@ builder.Services.AddAuthentication(opt => {
     });
 
 builder.Services.AddTransient<IJwtService, JwtService>();
-
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IFileHelper, FileHelper>();
+builder.Services.AddScoped<IFreelancerService, FreelancerService>();
+builder.Services.AddScoped<IEducationService, EducationService>();
+builder.Services.AddScoped<IExperienceService, ExperienceService>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
 
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IJwtService, JwtService>();

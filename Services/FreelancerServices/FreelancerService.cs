@@ -17,16 +17,20 @@ public partial class FreelancerService : IFreelancerService
         _fileHelper = fileHelper;
     }
 
-    public async ValueTask<Result<FreelancerInformation>> Information(int userId, FreelancerInformation information, IFormFile image)
+    public async ValueTask<Result<FreelancerInformation>> Information(string userId, FreelancerInformation information, IFormFile image)
     {
+
         string? filePath = null;
+        // fake userId Null qilindi kegin haqiqiy user olinadi
+        userId = null;
         try
         {
             if (information is null)
                 return new("Null reference error");
             // UserId Tekshiriladi bu yerda bazada bormi yoki yo'q
 
-            var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+            // fake uchun tekshirilib ko'rildi
+            var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.Id == 1);
 
             if (freelancerInformation is null)
             {
@@ -101,8 +105,11 @@ public partial class FreelancerService : IFreelancerService
             var existAddress = _unitOfwork.Addresses.GetAll().FirstOrDefault(a => a.FrelancerInformationId == existInformation.Id);
 
             if (existAddress is null)
+            {
                 existAddress = await _unitOfwork.Addresses.AddAsync(ToEntityAddress(freelancerId, address));
-
+                existInformation.AddressId = existAddress.Id;
+                await _unitOfwork.FreelancerInformations.Update(existInformation);
+            }
             if (existAddress is not null)
             {
                 existAddress.CountryId = address.CountryId;
@@ -111,6 +118,7 @@ public partial class FreelancerService : IFreelancerService
 
                 existAddress = await _unitOfwork.Addresses.Update(existAddress);
             }
+
 
             return new(true) { Data = ToModelAdress(existAddress) };
 

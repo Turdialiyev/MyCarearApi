@@ -7,8 +7,8 @@ using MyCareerApi.Entities;
 namespace MyCarearApi.Data;
 
 
- public class AppDbContext: IdentityDbContext<AppUser>
- {
+public class AppDbContext : IdentityDbContext<AppUser>
+{
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Address> Addresses { get; set; }
@@ -25,9 +25,9 @@ namespace MyCarearApi.Data;
 
     public DbSet<Experience> Experiences { get; set; }
 
-    public DbSet<FreelancerInformation> FreelancerInformations { get;set; }
+    public DbSet<FreelancerInformation> FreelancerInformations { get; set; }
 
-    public DbSet<FreelancerSkill> FreelancerSkills { get;set; }
+    public DbSet<FreelancerSkill> FreelancerSkills { get; set; }
 
     public DbSet<Hobby> Hobbies { get; set; }
 
@@ -48,7 +48,7 @@ namespace MyCarearApi.Data;
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
     public DbSet<Currency> Currencys { get; set; }
-
- }
+}
 
  
+
