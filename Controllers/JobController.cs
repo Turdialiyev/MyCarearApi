@@ -129,7 +129,7 @@ public class JobController: ControllerBase
         });
     }
 
-    [HttpGet("contract")]
+    [HttpPost("contract")]
     [Authorize]
     public async Task<IActionResult> SetContractRequirements(ContractRequirementsModel contract)
     {
@@ -153,6 +153,29 @@ public class JobController: ControllerBase
             Succeded = true,
             Id = await _jobService.SetContractRequirements(contract.JobId, contract.Price, contract.CurrencyId,
             contract.PriceRate, contract.Deadline, contract.DeadlineRate)
+        });
+    }
+
+    [HttpPost("save")]
+    [Authorize]
+    public async IActionResult SaveJob(int jobId)
+    {
+        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var job = _jobService.GetJob(jobId);
+
+        if (company is null || job is null || company.Id != job.CompanyId)
+        {
+            return BadRequest(new
+            {
+                Succeded = false,
+                OwnerError = company is null || job is null || company.Id != job.CompanyId
+            });
+        }
+        job.IsSaved = true;        
+        return Ok(new
+        {
+            Succeded = true,
+            JobId = await _jobService.UpdateJob(job)
         });
     }
 }

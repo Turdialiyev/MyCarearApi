@@ -5,6 +5,7 @@ using MyCarearApi.Entities;
 using MyCarearApi.Models.Account;
 using MyCarearApi.Services.JwtServices;
 using MyCarearApi.Services.JwtServices.Interfaces;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace MyCarearApi.Controllers;
@@ -43,6 +44,8 @@ public class AccountController: ControllerBase
     private Regex _regex;
 
     [HttpPost("register")]
+    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody]UserModel userModel)
     {
         var newUser = new AppUser { UserName = userModel.Email, Email = userModel.Email };
@@ -94,8 +97,52 @@ public class AccountController: ControllerBase
             && (!errors.ContainsKey("OtherError") || !errors["OtherError"].Any());
     }
 
-    
+
+    [HttpPost("addtocompany")]
+    [Authorize]
+    public async Task<IActionResult> AddToCompany() => await AddToRole("Company");
+
+
+    [HttpPost("addtofreelancer")]
+    [Authorize]
+    public async Task<IActionResult> AddToFreelancer() => await AddToRole("Freelancer");
+
+    private async Task<IActionResult> AddToRole(string role)
+    {
+        var user = await _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        if (await _userManager.IsInRoleAsync(user, "Company")) return BadRequest(new
+        {
+            Succeded = false,
+            CurrentRole = "Company",
+            Errors = new string[] { }
+        });
+        if (await _userManager.IsInRoleAsync(user, "Freelancer")) return BadRequest(new
+        {
+            Succeded = false,
+            CurrentRole = "Freelancer",
+            Errors = new string[] { }
+        });
+
+        var result = await _userManager.AddToRoleAsync(user, role);
+        if (!result.Succeeded) return BadRequest(new
+        {
+            Succeded = false,
+            CurrentRole = "",
+            Errors = result.Errors.Select(x => x.Description)
+        });
+
+        return Ok(new
+        {
+            Succeded = true,
+            CurrentRole = role
+        });
+    }
+
+
+
     [HttpPost("login")]
+    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
         var errorResult = BadRequest(new
@@ -129,6 +176,7 @@ public class AccountController: ControllerBase
     }
 
     [HttpPost("logout")]
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();

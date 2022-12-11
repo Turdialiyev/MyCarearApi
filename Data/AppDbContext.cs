@@ -48,6 +48,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
     public DbSet<Currency> Currencys { get; set; }
+
+
 }
 
  

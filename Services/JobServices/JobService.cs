@@ -138,9 +138,9 @@ namespace MyCarearApi.Services.JobServices
 
         public bool IsCurrencyExist(int currencyId) => _currencyRepository.GetById(currencyId) is not null;
 
-        public void UpdateJob(Job job)
+        public async Task<int> UpdateJob(Job job)
         {
-            _jobRepository.Update(job);
+            return (await _jobRepository.Update(job)).Id;
         }
 
     }
