@@ -31,6 +31,6 @@ public interface IJobService
 
     bool IsCurrencyExist(int currencyId);
 
-    void UpdateJob(Job job);
+    Task<int> UpdateJob(Job job);
 
 }
