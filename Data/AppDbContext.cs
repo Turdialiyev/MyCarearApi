@@ -48,6 +48,15 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
     public DbSet<Currency> Currencys { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Country>().HasData(
+            new Country
+            {
+
+            });
+    }
 }
 
  
