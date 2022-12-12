@@ -79,8 +79,11 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPost("Position/{Id}")]
-    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromForm] Dtos.Position position)
+
+    [HttpPost("Position/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Position))]
+
+    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromBody] Dtos.Position position)
     {
         try
         {
@@ -93,6 +96,7 @@ public class FreelancerController : ControllerBase
                 return NotFound(result);
 
             return Ok(result);
+
         }
         catch (Exception e)
         {
@@ -102,26 +106,20 @@ public class FreelancerController : ControllerBase
 
     private Models.Position ToModelPosition(Dtos.Position position) => new()
     {
-        PositionId = position.PositionId,
-        Description = position.Description,
-        PositionSkills = ToModelSkills(position.FreelancerSkills),
-        FreelancerHobbies = ToModelHobbies(position.FreelancerHobbies),
+      Description = position.Description,
+      PositionId = position.PositionId,
+      PositionSkills = ToModelSkills(position.FreelancerSkills),
+      FreelancerHobbies = TOModelHobbies(position.FreelancerHobbies), 
     };
 
-    private IEnumerable<Models.FreelancerHobby> ToModelHobbies(int[]? freelancerHobbiesId)
+    private IEnumerable<Models.FreelancerHobby> TOModelHobbies(int[]? freelancerHobbies)
     {
-        return freelancerHobbiesId!.Select(x => new Models.FreelancerHobby
-        {
-            HobbyId = x,
-        });
+        throw new NotImplementedException();
     }
 
-    private IEnumerable<Models.FreelancerSkill> ToModelSkills(int[]? freelancerSkillsId)
+    private IEnumerable<Models.FreelancerSkill> ToModelSkills(int[]? freelancerSkills)
     {
-        return freelancerSkillsId!.Select(x => new Models.FreelancerSkill
-        {
-            SkillId = x,
-        });
+        throw new NotImplementedException();
     }
 
     private Address ToModelAddress(Adress address) => new()
