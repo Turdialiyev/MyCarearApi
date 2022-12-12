@@ -113,8 +113,11 @@ public class FreelancerController : ControllerBase
     {
         try
         {
+
             if (!ModelState.IsValid)
                 return BadRequest();
+
+
 
             var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
 
@@ -126,14 +129,21 @@ public class FreelancerController : ControllerBase
         }
         catch (Exception e)
         {
+
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
     }
 
-    private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact)
+    private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
     {
-        throw new NotImplementedException();
-    }
+        WebSite = contact.WebSite,
+        WatsApp = contact.WatsApp,
+        Telegram = contact.Telegram,
+        Instagram = contact.Instagram,
+        Twitter = contact.Twitter,
+        GitHub = contact.GitHub,
+        Facebook = contact.Facebook,
+    };
 
     private Models.Position ToModelPosition(Dtos.Position position) => new()
     {

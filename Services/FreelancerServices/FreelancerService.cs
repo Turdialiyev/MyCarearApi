@@ -242,6 +242,7 @@ public partial class FreelancerService : IFreelancerService
 
     public async ValueTask<Result<FreelancerContact>> Contact(int freelancerId, FreelancerContact contacts)
     {
+        _logger.LogInformation("=============[================");
         if (freelancerId == 0)
             return new("FreelancerId is invalid");
 
@@ -258,9 +259,8 @@ public partial class FreelancerService : IFreelancerService
             var existContact = _unitOfwork.FreelancerContacts.GetAll().Where(c => c.FreelancerInformationId == exsitFreelancer.Id).FirstOrDefault();
 
             if (existContact is null)
-            {
                 existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, freelancerId));
-            }
+
             if (existContact is not null)
             {
                 existContact.WebSite = contacts.WebSite;

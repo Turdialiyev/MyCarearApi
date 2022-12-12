@@ -11,7 +11,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
-    public DbSet<FreelancerContact> freelancerContacts { get; set; }
+    public DbSet<FreelancerContact> FreelancerContacts { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
     public DbSet<Company> Companys { get; set; }
@@ -54,7 +54,18 @@ public class AppDbContext : IdentityDbContext<AppUser>
     {
         base.OnModelCreating(modelBuilder);
 
-      
+       modelBuilder.Entity<FreelancerContact>().HasData( 
+        new FreelancerContact
+        {
+            Id = 1,
+            WebSite = "sasasa",
+            WatsApp = "sasasa",
+            Telegram = "sasasa",
+            Instagram = "asasasa",
+            GitHub = "asasasa",
+            Twitter = "sasasa",
+            Facebook  ="eeeeeeeeeee"
+        });
 
         modelBuilder.Entity<Hobby>().HasData(
             new Hobby
