@@ -48,7 +48,49 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
     public DbSet<Currency> Currencys { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Position>().HasData(
+            new Position
+            {
+                Id = 1,
+                Name = "Web Desigin",
+            },
+            new Position
+            {
+                Id = 2,
+                Name = "Web Backend",
+            });
+
+        modelBuilder.Entity<Skill>().HasData(
+            new Skill
+            {
+                Id = 1,
+                Name = "Html",
+                PositionId = 1,
+
+            },
+            new Skill
+            {
+                Id = 2,
+                Name = "Figma",
+                PositionId = 1,
+            },
+            new Skill
+            {
+                Id = 3,
+                Name = "Html",
+                PositionId = 1,
+            },
+            new Skill
+            {
+                Id = 4,
+                Name = "Figma",
+                PositionId = 1,
+            });
+    }
 }
 
- 
+
 

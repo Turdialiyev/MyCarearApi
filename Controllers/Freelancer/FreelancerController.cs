@@ -58,7 +58,7 @@ public class FreelancerController : ControllerBase
     [HttpPost("Adress/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
 
-    public async Task<IActionResult> FreelancerAdress(int freelancerId, [FromBody] Adress address)
+    public async Task<IActionResult> FreelancerAdress(int freelancerId, [FromForm] Adress address)
     {
         try
         {
@@ -81,7 +81,7 @@ public class FreelancerController : ControllerBase
 
 
     [HttpPost("Position/{id}")]
-    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromBody] Dtos.Position position)
+    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromForm] Dtos.Position position)
     {
         try
         {
