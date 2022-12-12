@@ -10,7 +10,7 @@ namespace MyCarearApi.Data;
 public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
+    
     public DbSet<Address> Addresses { get; set; }
 
     public DbSet<Company> Companys { get; set; }

@@ -26,6 +26,8 @@ public class FreelancerController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Models.FreelancerInformation))]
+
     public async Task<IActionResult> GetAll()
     {
         return Ok();
@@ -81,6 +83,8 @@ public class FreelancerController : ControllerBase
 
 
     [HttpPost("Position/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dtos.Position))]
+
     public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromForm] Dtos.Position position)
     {
         try
@@ -102,15 +106,44 @@ public class FreelancerController : ControllerBase
         }
     }
 
+    [HttpPost("Contact/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dtos.FreelancerContact))]
+
+    public async Task<IActionResult> FreelancerContact(int freelancerId, [FromForm] Dtos.FreelancerContact contact)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+    private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact)
+    {
+        throw new NotImplementedException();
+    }
+
     private Models.Position ToModelPosition(Dtos.Position position) => new()
     {
         Description = position.Description,
         PositionId = position.PositionId,
         PositionSkills = ToModelSkills(position.FreelancerSkills),
-        FreelancerHobbies = TOModelHobbies(position.FreelancerHobbies),
+        FreelancerHobbies = ToModelHobbies(position.FreelancerHobbies),
     };
 
-    private IEnumerable<Models.FreelancerHobby> TOModelHobbies(int[]? freelancerHobbies)
+    private IEnumerable<Models.FreelancerHobby> ToModelHobbies(int[]? freelancerHobbies)
     {
         return freelancerHobbies!.Select(x => new Models.FreelancerHobby
         {
