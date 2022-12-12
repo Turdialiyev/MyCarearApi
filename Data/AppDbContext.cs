@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Writers;
 using MyCarearApi.Entities;
 using MyCareerApi.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace MyCarearApi.Data;
 
@@ -48,6 +51,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<JobLanguage> JobLanguages { get; set; }
 
     public DbSet<Currency> Currencys { get; set; }
+
+    public DbSet<Message> Messages { get; set; }
 
 
 }

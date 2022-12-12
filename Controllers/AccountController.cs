@@ -18,7 +18,7 @@ public class AccountController: ControllerBase
 
     private readonly IPasswordValidator<AppUser> _passwordValidator;
     private readonly IUserValidator<AppUser> _userValidator;
-    
+    private readonly IServiceProvider serviceProvider;
     private readonly IJwtService _jwtService;
 
 
@@ -26,7 +26,7 @@ public class AccountController: ControllerBase
 
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
         RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger,
-        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator, IJwtService jwtService)
+        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator, IJwtService jwtService, IServiceProvider serviceProvider)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -36,6 +36,7 @@ public class AccountController: ControllerBase
         _userValidator = userValidator;
         _regex = new Regex(pattern);
         _jwtService = jwtService;
+        this.serviceProvider = serviceProvider;
     }
 
     private string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
@@ -100,26 +101,26 @@ public class AccountController: ControllerBase
 
     [HttpPost("addtocompany")]
     [Authorize]
-    public async Task<IActionResult> AddToCompany() => await AddToRole("Company");
+    public async Task<IActionResult> AddToCompany() => await AddToRole(StaticRoles.Company);
 
 
     [HttpPost("addtofreelancer")]
     [Authorize]
-    public async Task<IActionResult> AddToFreelancer() => await AddToRole("Freelancer");
+    public async Task<IActionResult> AddToFreelancer() => await AddToRole(StaticRoles.Freelancer);
 
     private async Task<IActionResult> AddToRole(string role)
     {
         var user = await _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        if (await _userManager.IsInRoleAsync(user, "Company")) return BadRequest(new
+        if (await _userManager.IsInRoleAsync(user, StaticRoles.Company)) return BadRequest(new
         {
             Succeded = false,
-            CurrentRole = "Company",
+            CurrentRole = StaticRoles.Company,
             Errors = new string[] { }
         });
-        if (await _userManager.IsInRoleAsync(user, "Freelancer")) return BadRequest(new
+        if (await _userManager.IsInRoleAsync(user, StaticRoles.Freelancer)) return BadRequest(new
         {
             Succeded = false,
-            CurrentRole = "Freelancer",
+            CurrentRole = StaticRoles.Freelancer,
             Errors = new string[] { }
         });
 
@@ -184,12 +185,10 @@ public class AccountController: ControllerBase
     }
 
     [HttpGet("CLAIMS")]
-    [Authorize]
     public IActionResult Claims()
     {
-        return Ok(new
-        {
-            Claims=User.Claims.Select(x => new {x.Type, x.Value})
-        });
+        SeedData.SeedUserData(serviceProvider);
+
+        return Ok();
     }
 }

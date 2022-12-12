@@ -158,7 +158,7 @@ public class JobController: ControllerBase
 
     [HttpPost("save")]
     [Authorize]
-    public async IActionResult SaveJob(int jobId)
+    public async Task<IActionResult> SaveJob(int jobId)
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(jobId);

@@ -26,5 +26,6 @@ public interface IUnitOfWork : IDisposable
     IJobLanguageRepository JobLanguages { get; }
     ILanguageRepository Languages { get; }
     ICurrencyRepository Currencies { get; }
+    IMessageRepository Messages { get; }
     int Save();
 }
