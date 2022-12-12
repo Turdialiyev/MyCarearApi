@@ -51,6 +51,44 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Hobby>().HasData(
+            new Hobby
+            {
+                Id = 1,
+                Name = "Football"
+            },
+            new Hobby
+            {
+                Id = 2,
+                Name = "Reading"
+            },
+            new Hobby
+            {
+                Id = 3,
+                Name = "Tenis"
+            });
+
+        modelBuilder.Entity<Language>().HasData(
+            new Language
+            {
+                Id = 1,
+                Name = "Russion",
+                LanguageCode = "Nimadur",
+            },
+             new Language
+             {
+                 Id = 2,
+                 Name = "Eglish",
+                 LanguageCode = "Nimadur",
+             },
+              new Language
+              {
+                  Id = 3,
+                  Name = "Uzbek",
+                  LanguageCode = "Nimadur",
+              });
         modelBuilder.Entity<Position>().HasData(
             new Position
             {
