@@ -81,8 +81,6 @@ public class FreelancerController : ControllerBase
 
 
     [HttpPost("Position/{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Position))]
-
     public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromBody] Dtos.Position position)
     {
         try
@@ -106,20 +104,26 @@ public class FreelancerController : ControllerBase
 
     private Models.Position ToModelPosition(Dtos.Position position) => new()
     {
-      Description = position.Description,
-      PositionId = position.PositionId,
-      PositionSkills = ToModelSkills(position.FreelancerSkills),
-      FreelancerHobbies = TOModelHobbies(position.FreelancerHobbies), 
+        Description = position.Description,
+        PositionId = position.PositionId,
+        PositionSkills = ToModelSkills(position.FreelancerSkills),
+        FreelancerHobbies = TOModelHobbies(position.FreelancerHobbies),
     };
 
     private IEnumerable<Models.FreelancerHobby> TOModelHobbies(int[]? freelancerHobbies)
     {
-        throw new NotImplementedException();
+        return freelancerHobbies!.Select(x => new Models.FreelancerHobby
+        {
+            HobbyId = x
+        });
     }
 
     private IEnumerable<Models.FreelancerSkill> ToModelSkills(int[]? freelancerSkills)
     {
-        throw new NotImplementedException();
+        return freelancerSkills!.Select(x => new Models.FreelancerSkill
+        {
+            SkillId = x
+        });
     }
 
     private Address ToModelAddress(Adress address) => new()
