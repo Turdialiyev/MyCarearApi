@@ -263,6 +263,7 @@ public partial class FreelancerService : IFreelancerService
             }
             if (existContact is not null)
             {
+                existContact.WebSite = contacts.WebSite;
                 existContact.Facebook = contacts.Facebook;
                 existContact.Instagram = contacts.Instagram;
                 existContact.Telegram = contacts.Telegram;

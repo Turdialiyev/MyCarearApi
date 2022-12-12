@@ -65,6 +65,7 @@ public partial class FreelancerService
 
     private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts, int freelancerId) => new()
     {
+        WebSite = contacts.WebSite,
         Facebook = contacts.Facebook,
         Instagram = contacts.Instagram,
         Telegram = contacts.Telegram,
