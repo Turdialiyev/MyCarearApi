@@ -53,6 +53,26 @@ public class AppDbContext : IdentityDbContext<AppUser>
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Language>().HasData( 
+            new Language
+            {
+                Id = 1,
+                Name = "English",
+                LanguageCode = "nimadur",
+            },
+            new Language
+            {
+                Id = 2,
+                Name = "Russion",
+                LanguageCode = "nimadur",
+            },
+            new Language
+            {
+                Id = 3,
+                Name = "Uzbek",
+                LanguageCode = "nimadur",
+            });
+
         modelBuilder.Entity<Hobby>().HasData(
             new Hobby
             {
