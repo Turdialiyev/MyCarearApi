@@ -65,7 +65,7 @@ public class ExperienceService : IExperienceService
         FrelancerInfoId = freelanserId,
     };
 
-    public async ValueTask<Result<Experience>> Delete(int experienceId, Experience experience)
+    public async ValueTask<Result<Experience>> Delete(int experienceId)
     {
         try
         {
@@ -126,7 +126,7 @@ public class ExperienceService : IExperienceService
         {
             var experiences = await _unitOfWork.Experiences.GetAll().ToListAsync();
 
-            if (experiences is null)
+            if (!experiences.Any())
                 return new(false) { ErrorMessage = "Any Experience not found" };
 
             return new(true) { Data = experiences.Select(ToModel).ToList() };
