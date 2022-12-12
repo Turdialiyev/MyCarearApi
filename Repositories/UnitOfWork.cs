@@ -30,6 +30,7 @@ public class UnitOfWork : IUnitOfWork
         JobLanguages = new JobLanguageRepository(context);
         Languages= new LanguageRepository(context);
         Currencies = new CurrencyRepository(context);
+        Messages = new MessageRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -62,6 +63,7 @@ public class UnitOfWork : IUnitOfWork
     public IJobLanguageRepository JobLanguages { get; }
     public ILanguageRepository Languages { get; }
     public ICurrencyRepository Currencies { get; }
+    public IMessageRepository Messages { get; }
     public void Dispose()
     {
         _context.Dispose();

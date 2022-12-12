@@ -12,6 +12,9 @@ using MyCarearApi.Services.JobServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.SignalR;
+using MyCarearApi.Services.Chat;
+using MyCarearApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +30,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
-    options.User.RequireUniqueEmail = false;
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
 }).AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddAuthentication(opt => {
@@ -49,7 +52,7 @@ builder.Services.AddAuthentication(opt => {
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
         };
     });
-
+builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
@@ -63,6 +66,9 @@ builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
 builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
 builder.Services.AddTransient<IJobService, JobService>();
+builder.Services.AddTransient<IMessageService, MessageService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
@@ -86,7 +92,7 @@ app.UseHttpsRedirection();
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 app.Run();
