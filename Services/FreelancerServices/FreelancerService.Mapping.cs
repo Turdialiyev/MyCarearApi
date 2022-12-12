@@ -8,7 +8,8 @@ public partial class FreelancerService
 
     private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
     {
-        CountryId = existAddress!.CountryId,
+        Id = existAddress!.Id,
+        CountryId = existAddress.CountryId,
         RegionId = existAddress.RegionId,
         Home = existAddress.Home,
         FrelancerInformationId = existAddress.FrelancerInformationId
@@ -48,18 +49,7 @@ public partial class FreelancerService
         Birthday = existFreelancer.Birthday,
         Description = existFreelancer.Description,
         possionId = existFreelancer.PositionId,
-        FreelancerSkills = existFreelancer.FreelancerSkills!.Select(x =>
-            new Models.FreelancerSkill
-            {
-                SkillId = x.SkillId,
-                FrelanceInformationId = x.FrelanceInformationId
-            }),
-        Hobbies = existFreelancer.Hobbies!.Select(x =>
-            new Models.Hobby
-            {
-                HobbyId = x.HobbyId,
-                FreelanceInformationId = x.FreelanceInformationId,
-            })
+      
     };
 
     private Models.FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()

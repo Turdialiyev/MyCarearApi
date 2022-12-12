@@ -21,7 +21,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
+    options.UseSqlite("Data Source = Data.sqlite;");
     //  options.UseInMemoryDatabase("TestDb");
 });
 

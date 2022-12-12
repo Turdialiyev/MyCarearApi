@@ -79,6 +79,51 @@ public class FreelancerController : ControllerBase
         }
     }
 
+    [HttpPost("Position/{Id}")]
+    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromForm] Dtos.Position position)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _freelancerService.Position(freelancerId, ToModelPosition(position));
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+    private Models.Position ToModelPosition(Dtos.Position position) => new()
+    {
+        PositionId = position.PositionId,
+        Description = position.Description,
+        PositionSkills = ToModelSkills(position.FreelancerSkills),
+        FreelancerHobbies = ToModelHobbies(position.FreelancerHobbies),
+    };
+
+    private IEnumerable<Models.FreelancerHobby> ToModelHobbies(int[]? freelancerHobbiesId)
+    {
+        return freelancerHobbiesId!.Select(x => new Models.FreelancerHobby
+        {
+            HobbyId = x,
+        });
+    }
+
+    private IEnumerable<Models.FreelancerSkill> ToModelSkills(int[]? freelancerSkillsId)
+    {
+        return freelancerSkillsId!.Select(x => new Models.FreelancerSkill
+        {
+            SkillId = x,
+        });
+    }
+
     private Address ToModelAddress(Adress address) => new()
     {
         CountryId = address.CountryId,
