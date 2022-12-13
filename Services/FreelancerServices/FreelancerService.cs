@@ -27,9 +27,9 @@ public partial class FreelancerService : IFreelancerService
         string? filePath = null;
         // fake userId Null qilindi kegin haqiqiy user olinadi
         userId = null;
-        var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.Id == 1);
         try
         {
+            var freelancerInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.Id == 1);
             if (information is null)
                 return new("Null reference error");
             // UserId Tekshiriladi bu yerda bazada bormi yoki yo'q
@@ -82,7 +82,7 @@ public partial class FreelancerService : IFreelancerService
                 freelancerInformation = await _unitOfwork.FreelancerInformations.Update(freelancerInformation);
             }
 
-            return new(true) { Data = ToModel(freelancerInformation) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(freelancerInformation.Id).Result) };
         }
         catch (Exception e)
         {
@@ -93,7 +93,7 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
-    public async ValueTask<Result<Address>> Address(int freelancerId, Address address)
+    public async ValueTask<Result<FreelancerInformation>> Address(int freelancerId, Address address)
     {
         var existInformation = _unitOfwork.FreelancerInformations.GetById(freelancerId);
 
@@ -124,7 +124,7 @@ public partial class FreelancerService : IFreelancerService
             }
 
 
-            return new(true) { Data = ToModelAdress(existAddress) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(existInformation.Id).Result) };
 
         }
         catch (Exception e)
@@ -134,7 +134,7 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
-    public async ValueTask<Result<Position>> Position(int freelancerId, Position position)
+    public async ValueTask<Result<FreelancerInformation>> Position(int freelancerId, Position position)
     {
         var existFreelancer = _unitOfwork.FreelancerInformations.GetAll().Where(a => a.Id == freelancerId)
             .Include(x => x.Hobbies).Include(x => x.FreelancerSkills).FirstOrDefault();
@@ -212,7 +212,7 @@ public partial class FreelancerService : IFreelancerService
 
             await _unitOfwork.FreelancerHobbies.RemoveRange(hobbiesToDelete);
 
-            return new(true) { Data = ToModelPostion(existFreelancer) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(existFreelancer.Id).Result) };
         }
         catch (Exception e)
         {
@@ -241,7 +241,7 @@ public partial class FreelancerService : IFreelancerService
             })
     };
 
-    public async ValueTask<Result<FreelancerContact>> Contact(int freelancerId, FreelancerContact contacts)
+    public async ValueTask<Result<FreelancerInformation>> Contact(int freelancerId, FreelancerContact contacts)
     {
         if (freelancerId == 0)
             return new("FreelancerId is invalid");
@@ -273,8 +273,8 @@ public partial class FreelancerService : IFreelancerService
 
                 existContact = await _unitOfwork.FreelancerContacts.Update(existContact);
             }
-            
-            return new(true) { Data = ToModelContact(existContact) };
+
+            return new(true) { Data = ToModel(GetByIdFreelancer(exsitFreelancer.Id).Result) };
 
         }
         catch (Exception e)
@@ -290,9 +290,10 @@ public partial class FreelancerService : IFreelancerService
     {
         if (freelancerId == 0)
             return new("FreelancerId is invalid");
+
+        var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
         try
         {
-            var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
 
             if (exsitFreelancer is null)
                 return new("Freelancer is not found");
@@ -300,7 +301,7 @@ public partial class FreelancerService : IFreelancerService
             exsitFreelancer.TypeResume = resume;
             await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);
 
-            return new(true) { Data = ToModel(exsitFreelancer) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(exsitFreelancer.Id).Result) };
 
         }
         catch (Exception e)
@@ -325,7 +326,7 @@ public partial class FreelancerService : IFreelancerService
             exsitFreelancer.Finish = finish;
             await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);
 
-            return new(true) { Data = ToModel(exsitFreelancer) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(exsitFreelancer.Id).Result) };
 
         }
         catch (Exception e)
@@ -349,7 +350,7 @@ public partial class FreelancerService : IFreelancerService
                             .Include(x => x.Address)!.ThenInclude(r => r!.Region)
                             .Include(x => x.Experiences)
                             .Include(x => x.Educations)
-                            // .Include(x => x.FreelancerContact)
+                            .Include(x => x.FreelancerContact)
                             .ToListAsync();
 
             if (!freelancers.Any())
@@ -362,5 +363,21 @@ public partial class FreelancerService : IFreelancerService
             _logger.LogError($"Error occured at {nameof(FreelancerService)} .", e);
             throw new("Couldn't get Freelancers GetAll Please contact support");
         }
+    }
+
+    private async ValueTask<Entities.FreelancerInformation> GetByIdFreelancer(int freelancerId)
+    {
+        var freelancer = await _unitOfwork.FreelancerInformations.GetAll().Where(x => x.Id == freelancerId)
+                                .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
+                                .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
+                                .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
+                                .Include(x => x.Address)
+                                .Include(x => x.Address)!.ThenInclude(c => c!.Country)
+                                .Include(x => x.Address)!.ThenInclude(r => r!.Region)
+                                .Include(x => x.Experiences)
+                                .Include(x => x.Educations)
+                                .Include(x => x.FreelancerContact)
+                                .FirstOrDefaultAsync();
+        return freelancer!;
     }
 }

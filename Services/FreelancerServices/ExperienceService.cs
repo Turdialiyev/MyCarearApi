@@ -51,7 +51,7 @@ public class ExperienceService : IExperienceService
         StartDate = result.StartDate,
         EndDate = result.EndDate,
         Descripeion = result.Descripeion,
-        FrelancerInformationId = result.FrelancerInfoId
+        FrelancerInformationId = result.FreelancerInformationId
     };
 
     private Entities.Experience ToEntity(Experience model, int freelanserId) => new()
@@ -62,7 +62,7 @@ public class ExperienceService : IExperienceService
         StartDate = model.StartDate,
         EndDate = model.EndDate,
         Descripeion = model.Descripeion,
-        FrelancerInfoId = freelanserId,
+        FreelancerInformationId = freelanserId,
     };
 
     public async ValueTask<Result<Experience>> Delete(int experienceId)

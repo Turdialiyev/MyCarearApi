@@ -120,89 +120,87 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    // [HttpPost("Contact/{id}")]
-    // [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dtos.FreelancerContact))]
+    [HttpPut("Contact/{id}")]
+    public async Task<IActionResult> FreelancerContact(int freelancerId, [FromForm] Dtos.FreelancerContact contact)
+    {
+        try
+        {
 
-    // public async Task<IActionResult> FreelancerContact(int freelancerId, [FromForm] Dtos.FreelancerContact contact)
-    // {
-    //     try
-    //     {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
-    //         if (!ModelState.IsValid)
-    //             return BadRequest();
+            var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
 
-    //         var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
+            if (!result.IsSuccess)
+                return NotFound(result);
 
-    //         if (!result.IsSuccess)
-    //             return NotFound(result);
+            return Ok(result);
 
-    //         return Ok(result);
+        }
+        catch (Exception e)
+        {
 
-    //     }
-    //     catch (Exception e)
-    //     {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
 
-    //         return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
-    //     }
-    // }
+    [HttpPut("Resume/{id}")]
+    public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
+    {
+        try
+        {
 
-    // [HttpPut("Resume/{id}")]
-    // public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
-    // {
-    //     try
-    //     {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
-    //         if (!ModelState.IsValid)
-    //             return BadRequest();
+            var result = await _freelancerService.Resume(freelancerId, resume);
 
-    //         var result = await _freelancerService.Resume(freelancerId, resume);
+            if (!result.IsSuccess)
+                return NotFound(result);
 
-    //         if (!result.IsSuccess)
-    //             return NotFound(result);
+            return Ok(result);
 
-    //         return Ok(result);
+        }
+        catch (Exception e)
+        {
 
-    //     }
-    //     catch (Exception e)
-    //     {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
 
-    //         return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
-    //     }
-    // }
+    [HttpPut("Finish/{id}")]
+    public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
+    {
+        try
+        {
 
-    // [HttpPut("Finish/{id}")]
-    // public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
-    // {
-    //     try
-    //     {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
-    //         if (!ModelState.IsValid)
-    //             return BadRequest();
+            var result = await _freelancerService.FinishResume(freelancerId, finish);
 
-    //         var result = await _freelancerService.FinishResume(freelancerId, finish);
+            if (!result.IsSuccess)
+                return NotFound(result);
 
-    //         if (!result.IsSuccess)
-    //             return NotFound(result);
+            return Ok(result);
 
-    //         return Ok(result);
+        }
+        catch (Exception e)
+        {
 
-    //     }
-    //     catch (Exception e)
-    //     {
-
-    //         return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
-    //     }
-    // }
-    // private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
-    // {
-    //     WebSite = contact.WebSite,
-    //     WatsApp = contact.WatsApp,
-    //     Telegram = contact.Telegram,
-    //     Instagram = contact.Instagram,
-    //     Twitter = contact.Twitter,
-    //     GitHub = contact.GitHub,
-    //     Facebook = contact.Facebook,
-    // };
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+    private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
+    {
+        WebSite = contact.WebSite,
+        WatsApp = contact.WatsApp,
+        Telegram = contact.Telegram,
+        Instagram = contact.Instagram,
+        Twitter = contact.Twitter,
+        GitHub = contact.GitHub,
+        Facebook = contact.Facebook,
+    };
 
     private Models.Position ToModelPosition(Dtos.Position position) => new()
     {

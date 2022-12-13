@@ -8,7 +8,7 @@ public partial class FreelancerService
 
     private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
     {
-        Id = existAddress!.Id,
+        // Id = existAddress!.Id,
         CountryId = existAddress.CountryId,
         RegionId = existAddress.RegionId,
         Home = existAddress.Home,
@@ -34,39 +34,34 @@ public partial class FreelancerService
         Birthday = freelancerInformation.Birthday,
         TypeResume = freelancerInformation.TypeResume,
         Finish = freelancerInformation.Finish,
+        Description = freelancerInformation.Description,
         AddressId = freelancerInformation.AddressId,
         Address = new Models.Address
         {
-            Id = freelancerInformation.Address!.Id,
-            Home = freelancerInformation.Address.Home,
-            FrelancerInformationId = freelancerInformation.Address.FrelancerInformationId,
-            CountryId = freelancerInformation.Address.CountryId,
-            RegionId = freelancerInformation.Address.RegionId,
-            CountryName = freelancerInformation.Address.Country!.Name,
-            RegionName = freelancerInformation.Address.Region!.Name,
+            Id = freelancerInformation.Address == null ? 0 : freelancerInformation.Address.Id,
+            Home = freelancerInformation.Address == null ? null : freelancerInformation.Address.Home,
+            FrelancerInformationId = freelancerInformation.Address == null ? 0 : freelancerInformation.Address.FrelancerInformationId,
+            CountryId = freelancerInformation.Address == null ? 0 : freelancerInformation.Address.CountryId,
+            RegionId = freelancerInformation.Address == null ? 0 : freelancerInformation.Address.RegionId,
+            CountryName = freelancerInformation.Address == null ? null : freelancerInformation.Address.Country!.Name,
+            RegionName = freelancerInformation.Address == null ? null : freelancerInformation.Address.Region!.Name,
         },
-        // FreelancerContactId = freelancerInformation.FreelancerContactId,
+
         FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x =>
             new Models.FreelancerSkill
             {
                 Id = x.Id,
                 SkillId = x.SkillId,
-                Skill = new Models.Skill
-                {
-                    Id = x.Skill!.Id,
-                    Name = x.Skill!.Name,
-                    PositionId = x.Skill.PositionId,
-                },
+                Name = x.Skill!.Name,
+                PossitionId = x.Skill.PositionId
             }),
         FreelancerHobbies = freelancerInformation.Hobbies!.Select(x =>
             new Models.FreelancerHobby
             {
                 Id = x.Id,
-                Hobby = new Models.Hobby
-                {
-                    Id = x.Hobby!.Id,
-                    Name = x.Hobby!.Name,
-                }
+                HobbyId = x.HobbyId,
+                Name = x.Hobby!.Name,
+                FreelancerInformationId = x.FreelancerInformationId
             }),
         UserLanguages = freelancerInformation.UserLanguages!.Select(x =>
             new Models.UserLanguage
@@ -90,6 +85,7 @@ public partial class FreelancerService
         Educations = freelancerInformation.Educations!.Select(x =>
             new Models.Education
             {
+                Id = x.Id,
                 SchoolName = x.SchoolName,
                 EducationDegree = x.EducationDegree,
                 TypeStudy = x.TypeStudy,
@@ -97,8 +93,20 @@ public partial class FreelancerService
                 CurrentStudy = x.CurrentStudy,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
+                FreelancerInformationId = x.FreelancerInformationId
             }),
-        // FreelancerContact = ToModelContact(freelancerInformation.FreelancerContact)
+        FreelancerContact = new Models.FreelancerContact
+        {
+            Id = freelancerInformation.FreelancerContact == null ? 0 : freelancerInformation.FreelancerContact.Id,
+            WebSite = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.WebSite,
+            Facebook = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.Facebook,
+            Instagram = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.Instagram,
+            GitHub = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.GitHub,
+            Telegram = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.Telegram,
+            Twitter = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.Twitter,
+            WatsApp = freelancerInformation.FreelancerContact == null ? null : freelancerInformation.FreelancerContact.WatsApp,
+            FreelancerInformationId = freelancerInformation.FreelancerContact == null ? 0 : freelancerInformation.FreelancerContact.FreelancerInformationId,
+        }
     };
 
     private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()

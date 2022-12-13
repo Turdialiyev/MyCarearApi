@@ -19,17 +19,12 @@ using MyCarearApi.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// .AddNewtonsoftJson(o =>
-// {
-//     o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-// });
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.sqlite;");
+    options.UseSqlite("Data Source = Data.db;");
     //  options.UseInMemoryDatabase("TestDb");
 });
 

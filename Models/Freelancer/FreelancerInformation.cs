@@ -21,7 +21,7 @@ public class FreelancerInformation
     public int? AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
     public int? AddressId { get; set; }
-    public Address? Address { get; set; }
+    public Address Address { get; set; }
     public IEnumerable<FreelancerHobby>? FreelancerHobbies { get; set; }
     public IEnumerable<FreelancerSkill>? FreelancerSkills { get; set; }
     public IEnumerable<Experience>? Experiences { get; set; }

@@ -10,21 +10,7 @@ public class Address
     public Region? Region { get; set; }
     public string? Home { get; set; }
 
-    public int FrelancerInformationId { get; set; }
+    public int? FrelancerInformationId { get; set; }
 
     public FreelancerInformation? FreelancerInformation { get; set; }
 }
-
-
-
-/*
- * 
- * 
-Table Address{
-  Id int [PK]
-  Country nvarchar
-  Region nvarchar
-  Home nvarchar
-  FrenaceInfoId nvarchar [ref: > FrenaceInfo.Id]
-}
- * */
