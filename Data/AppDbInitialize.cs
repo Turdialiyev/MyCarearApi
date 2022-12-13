@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Entities;
 
 namespace MyCarearApi.Data;
 
 public class AppDbInitialize
 {
-    public static void Seed(IApplicationBuilder applicationBuilder)
+    public static async Task Seed(IApplicationBuilder applicationBuilder)
     {
         using var serviceScope = applicationBuilder.ApplicationServices.CreateScope();
         var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
@@ -13,7 +14,8 @@ public class AppDbInitialize
             .GetRequiredService<IServiceScopeFactory>()
             .CreateScope();
 
-        context!.Database.EnsureCreated();
+        context.Database.EnsureCreated();
+
 
         // If Countries table is not added this adds it 
         if (!context.Countries.Any())
@@ -30,6 +32,7 @@ public class AppDbInitialize
                         Name = "Russia"
                     }
                 });
+            context.SaveChanges();
         }
 
         // If Regions table is not added this adds it 
@@ -139,8 +142,8 @@ public class AppDbInitialize
                       Name = "Surkhandarya",
                       CountryId = 1
                     },
-
                 });
+            context.SaveChanges();
         }
 
         // If Positions table is not added this adds it
@@ -158,6 +161,7 @@ public class AppDbInitialize
                         Name = "Backend Programmer "
                     },
                 });
+            context.SaveChanges();
         }
 
         // If Skills table is not added this adds it
@@ -208,8 +212,8 @@ public class AppDbInitialize
                         Name = "c#",
                         PositionId = 2
                     },
-
                 });
+            context.SaveChanges();
         }
 
         // If Languages table is not added this adds it
@@ -231,7 +235,7 @@ public class AppDbInitialize
                         Name = "Rus"
                     }
                 });
-
+            context.SaveChanges();
         }
     }
 }
