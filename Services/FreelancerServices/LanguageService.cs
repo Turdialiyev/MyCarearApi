@@ -14,11 +14,12 @@ public class LanguageService : ILanguageService
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
-    public async ValueTask<Result<UserLanguage>> Delete(int id, UserLanguage language)
+    public async ValueTask<Result<UserLanguage>> Delete(int id)
     {
         try
         {
             var existLanguage = _unitOfWork.UserLanguages.GetById(id);
+            
             if (existLanguage is null)
                 return new("Language with given Id Not Found");
 
@@ -30,7 +31,6 @@ public class LanguageService : ILanguageService
         {
             _logger.LogError($"Error occured at {nameof(LanguageService)}", e);
             throw new("Couldn't delete Langauge. Plaese contact support", e);
-
         }
     }
 
@@ -63,7 +63,7 @@ public class LanguageService : ILanguageService
 
             if (exsitFreelancer is null)
                 return new("Freelancer is not found");
-
+            
             var result = await _unitOfWork.UserLanguages.AddAsync(ToEntity(langauge, freelancerId));
 
             return new(true) { Data = ToModel(result) };
@@ -81,7 +81,7 @@ public class LanguageService : ILanguageService
     {
         LanguageId = result.LanguageId,
         Level = result.Level,
-        FrelanceInfoId = id
+        FreelancerInformationId = id
     };
 
     private UserLanguage ToModel(Entities.UserLanguage result) => new()
@@ -89,6 +89,6 @@ public class LanguageService : ILanguageService
         Id = result.Id,
         LanguageId = result.LanguageId,
         Level = result.Level,
-        FrelanceInformationId = result.FrelanceInfoId
+      
     };
 }

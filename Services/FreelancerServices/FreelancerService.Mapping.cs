@@ -8,7 +8,8 @@ public partial class FreelancerService
 
     private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
     {
-        CountryId = existAddress!.CountryId,
+        Id = existAddress!.Id,
+        CountryId = existAddress.CountryId,
         RegionId = existAddress.RegionId,
         Home = existAddress.Home,
         FrelancerInformationId = existAddress.FrelancerInformationId
@@ -29,6 +30,8 @@ public partial class FreelancerService
         Email = freelancerInformation.Email,
         PhoneNumber = freelancerInformation.PhoneNumber,
         FreelancerImage = freelancerInformation.FreelancerImage,
+        TypeResume = freelancerInformation.TypeResume,
+        Finish = freelancerInformation.Finish,
     };
 
     private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()
@@ -48,18 +51,7 @@ public partial class FreelancerService
         Birthday = existFreelancer.Birthday,
         Description = existFreelancer.Description,
         possionId = existFreelancer.PositionId,
-        FreelancerSkills = existFreelancer.FreelancerSkills!.Select(x =>
-            new Models.FreelancerSkill
-            {
-                SkillId = x.SkillId,
-                FrelanceInformationId = x.FrelanceInformationId
-            }),
-        Hobbies = existFreelancer.Hobbies!.Select(x =>
-            new Models.Hobby
-            {
-                HobbyId = x.HobbyId,
-                FreelanceInformationId = x.FreelanceInformationId,
-            })
+      
     };
 
     private Models.FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()
@@ -71,10 +63,13 @@ public partial class FreelancerService
         GitHub = contacts.GitHub,
         Twitter = contacts.Twitter,
         WatsApp = contacts.WatsApp,
+        WebSite = contacts.WebSite,
+        FreelancerInformationId = contacts.FreelancerInformationId,
     };
 
     private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts, int freelancerId) => new()
     {
+        WebSite = contacts.WebSite,
         Facebook = contacts.Facebook,
         Instagram = contacts.Instagram,
         Telegram = contacts.Telegram,

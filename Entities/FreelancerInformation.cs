@@ -1,4 +1,6 @@
-﻿namespace MyCarearApi.Entities;
+﻿using MyCarearApi.Entities.Enums;
+
+namespace MyCarearApi.Entities;
 
 public class FreelancerInformation
 {
@@ -10,6 +12,8 @@ public class FreelancerInformation
     public string? FreelancerImage { get; set; }
     public DateOnly? Birthday { get; set; }
     public string? Description { get; set; }
+    public TypeResume? TypeResume { get; set; }
+    public bool? Finish { get; set; }
     public int? PositionId { get; set; }
     public Position? Position { get; set; }
     public int? ContactId { get; set; }

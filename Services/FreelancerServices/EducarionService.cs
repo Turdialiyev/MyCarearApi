@@ -14,7 +14,7 @@ public class EducationService : IEducationService
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
-    public async ValueTask<Result<Education>> Delete(int educationId, Education education)
+    public async ValueTask<Result<Education>> Delete(int educationId)
     {
         try
         {
