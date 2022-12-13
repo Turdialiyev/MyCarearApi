@@ -4,6 +4,7 @@ using MyCareerApi.Entities;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using MyCarearApi.Entities.Enums;
 
 namespace MyCarearApi.Services;
 
@@ -242,7 +243,6 @@ public partial class FreelancerService : IFreelancerService
 
     public async ValueTask<Result<FreelancerContact>> Contact(int freelancerId, FreelancerContact contacts)
     {
-        _logger.LogInformation("=============[================");
         if (freelancerId == 0)
             return new("FreelancerId is invalid");
 
@@ -286,4 +286,28 @@ public partial class FreelancerService : IFreelancerService
 
     }
 
+    public async ValueTask<Result<FreelancerInformation>> Resume(int freelancerId, TypeResume resume)
+    {
+        if (freelancerId == 0)
+            return new("FreelancerId is invalid");
+        try
+        {
+            var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
+
+            if (exsitFreelancer is null)
+                return new("Freelancer is not found");
+
+            exsitFreelancer.TypeResume = resume;
+            await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);    
+
+            return new(true) { Data = ToModel(exsitFreelancer) };
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)}", e);
+
+            throw new("Couldn't create Contact. Plaese contact support", e);
+        }
+    }
 }
