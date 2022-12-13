@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
+using MyCarearApi.Entities.Enums;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
 
@@ -117,8 +118,6 @@ public class FreelancerController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest();
 
-
-
             var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
 
             if (!result.IsSuccess)
@@ -134,6 +133,53 @@ public class FreelancerController : ControllerBase
         }
     }
 
+    [HttpPost("FreelancerResume/{id}")]
+    public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
+    {
+        try
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _freelancerService.Resume(freelancerId, resume);
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+     [HttpPost("FreelancerResume/{id}")]
+    public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
+    {
+        try
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _freelancerService.FinishResume(freelancerId, finish);
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
     private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
     {
         WebSite = contact.WebSite,
