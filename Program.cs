@@ -33,7 +33,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
 }).AddEntityFrameworkStores<AppDbContext>();
 
-builder.Services.AddAuthentication(opt => {
+builder.Services.AddAuthentication(opt =>
+{
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     Console.WriteLine("JwtBearerDefaults.AuthenticationScheme: " + JwtBearerDefaults.AuthenticationScheme);
@@ -94,5 +95,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");
 app.MapControllers();
+
+AppDbInitialize.Seed(app);
 
 app.Run();

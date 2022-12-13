@@ -14,6 +14,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
+    public DbSet<Country> Countries { get; set; }
+    public DbSet<Region> Regions { get; set; }
     public DbSet<FreelancerContact> FreelancerContacts { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
