@@ -298,7 +298,7 @@ public partial class FreelancerService : IFreelancerService
                 return new("Freelancer is not found");
 
             exsitFreelancer.TypeResume = resume;
-            await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);    
+            await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);
 
             return new(true) { Data = ToModel(exsitFreelancer) };
 
@@ -307,7 +307,32 @@ public partial class FreelancerService : IFreelancerService
         {
             _logger.LogError($"Error occured at {nameof(FreelancerService)}", e);
 
-            throw new("Couldn't create Contact. Plaese contact support", e);
+            throw new("Couldn't create Resume Type . Plaese contact support", e);
+        }
+    }
+
+    public async ValueTask<Result<FreelancerInformation>> FinishResume(int freelancerId, bool finish)
+    {
+        if (freelancerId == 0)
+            return new("FreelancerId is invalid");
+        try
+        {
+            var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
+
+            if (exsitFreelancer is null)
+                return new("Freelancer is not found");
+
+            exsitFreelancer.Finish = finish;
+            await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);
+
+            return new(true) { Data = ToModel(exsitFreelancer) };
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)}", e);
+
+            throw new("Couldn't update Resuume Finish. Plaese contact support", e);
         }
     }
 }

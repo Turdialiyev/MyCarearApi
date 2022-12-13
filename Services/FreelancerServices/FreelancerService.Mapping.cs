@@ -30,7 +30,8 @@ public partial class FreelancerService
         Email = freelancerInformation.Email,
         PhoneNumber = freelancerInformation.PhoneNumber,
         FreelancerImage = freelancerInformation.FreelancerImage,
-        TypeResume = freelancerInformation.TypeResume
+        TypeResume = freelancerInformation.TypeResume,
+        Finish = freelancerInformation.Finish,
     };
 
     private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()
