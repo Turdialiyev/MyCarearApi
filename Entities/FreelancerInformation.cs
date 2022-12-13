@@ -16,8 +16,7 @@ public class FreelancerInformation
     public bool? Finish { get; set; }
     public int? PositionId { get; set; }
     public Position? Position { get; set; }
-    public int? ContactId { get; set; }
-    public Contact? Contact { get; set;}
+    public FreelancerContact? FreelancerContact { get; set;}
     public string? AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
     public int? AddressId { get; set; }
@@ -25,6 +24,6 @@ public class FreelancerInformation
     public IEnumerable<FreelancerHobby>? Hobbies { get; set; }
     public IEnumerable<FreelancerSkill>? FreelancerSkills { get; set;}
     public IEnumerable<Experience>? Experiences { get; set;}
-    public IEnumerable<UserLanguage>? userLanguages { get; set;}
+    public IEnumerable<UserLanguage>? UserLanguages { get; set;}
     public IEnumerable<Education>? Educations { get; set; }
 }

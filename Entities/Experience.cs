@@ -10,7 +10,7 @@ public class Experience
   public DateOnly? EndDate { get; set; }
   public string? Descripeion { get; set; }
 
-  public int FrelancerInfoId { get; set; }
+  public int FreelancerInformationId { get; set; }
   public FreelancerInformation? FreelancerInformation { get; set; }
 
  }
