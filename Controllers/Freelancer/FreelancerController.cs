@@ -31,7 +31,20 @@ public class FreelancerController : ControllerBase
 
     public async Task<IActionResult> GetAll()
     {
-        return Ok();
+        try
+        {
+            var result = await _freelancerService.GetAll();
+
+            if (!result.IsSuccess)
+                return NotFound(new { ErrorMessage = result.ErrorMessage });
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
     }
 
     [HttpPost]
@@ -157,7 +170,7 @@ public class FreelancerController : ControllerBase
         }
     }
 
-     [HttpPut("Finish/{id}")]
+    [HttpPut("Finish/{id}")]
     public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
     {
         try

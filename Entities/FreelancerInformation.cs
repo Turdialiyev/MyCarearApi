@@ -25,6 +25,6 @@ public class FreelancerInformation
     public IEnumerable<FreelancerHobby>? Hobbies { get; set; }
     public IEnumerable<FreelancerSkill>? FreelancerSkills { get; set;}
     public IEnumerable<Experience>? Experiences { get; set;}
-    public IEnumerable<UserLanguage>? userLanguages { get; set;}
+    public IEnumerable<UserLanguage>? UserLanguages { get; set;}
     public IEnumerable<Education>? Educations { get; set; }
 }

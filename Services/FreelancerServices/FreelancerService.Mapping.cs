@@ -30,8 +30,41 @@ public partial class FreelancerService
         Email = freelancerInformation.Email,
         PhoneNumber = freelancerInformation.PhoneNumber,
         FreelancerImage = freelancerInformation.FreelancerImage,
+        PossionId = freelancerInformation.PositionId,
+        Birthday = freelancerInformation.Birthday,
         TypeResume = freelancerInformation.TypeResume,
         Finish = freelancerInformation.Finish,
+        FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x =>
+            new Models.FreelancerSkill
+            {
+                Id = x.Id,
+                SkillId = x.SkillId,
+                Skill = new Models.Skill
+                {
+                    Id = x.Skill!.Id,
+                    Name = x.Skill!.Name,
+                    PositionId = x.Skill.PositionId,
+                },
+            }),
+        FreelancerHobbies = freelancerInformation.Hobbies!.Select(x =>
+            new Models.FreelancerHobby
+            {
+                Id = x.Id,
+                Hobby = new Models.Hobby
+                {
+                    Id = x.Hobby!.Id,
+                    Name = x.Hobby!.Name,
+                }
+            }),
+        UserLanguages = freelancerInformation.UserLanguages!.Select(x => 
+            new Models.UserLanguage 
+            {
+                LanguageId = x.LanguageId,
+                Level = x.Level,
+                Name = x.Language!.Name,
+            })    
+
+
     };
 
     private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()
@@ -50,8 +83,8 @@ public partial class FreelancerService
     {
         Birthday = existFreelancer.Birthday,
         Description = existFreelancer.Description,
-        possionId = existFreelancer.PositionId,
-      
+        PossionId = existFreelancer.PositionId,
+
     };
 
     private Models.FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()

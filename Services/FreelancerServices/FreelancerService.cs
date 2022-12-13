@@ -274,6 +274,9 @@ public partial class FreelancerService : IFreelancerService
                 existContact = await _unitOfwork.FreelancerContacts.Update(existContact);
             }
 
+            exsitFreelancer.ContactId = existContact!.Id;
+            await _unitOfwork.FreelancerInformations.Update(exsitFreelancer);
+
             return new(true) { Data = ToModelContact(existContact) };
 
         }
@@ -333,6 +336,32 @@ public partial class FreelancerService : IFreelancerService
             _logger.LogError($"Error occured at {nameof(FreelancerService)}", e);
 
             throw new("Couldn't update Resuume Finish. Plaese contact support", e);
+        }
+    }
+
+    public async ValueTask<Result<List<FreelancerInformation>>> GetAll()
+    {
+        try
+        {
+            var freelancers = await _unitOfwork.FreelancerInformations.GetAll()
+                            .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
+                            .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
+                            .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
+                            .Include(x => x.Address)
+                            .Include(x => x.Experiences)
+                            .Include(x => x.Educations)
+                            .Include(x => x.Contact)
+                            .ToListAsync();
+
+            if (!freelancers.Any())
+                return new(false) { ErrorMessage = "Any freelancers not found" };
+
+            return new(true) { Data = freelancers.Select(ToModel).ToList() };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)} .", e);
+            throw new("Couldn't get Freelancers Please contact support");
         }
     }
 }
