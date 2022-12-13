@@ -133,7 +133,7 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPost("FreelancerResume/{id}")]
+    [HttpPut("Resume/{id}")]
     public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
     {
         try
@@ -157,7 +157,7 @@ public class FreelancerController : ControllerBase
         }
     }
 
-     [HttpPost("FreelancerResume/{id}")]
+     [HttpPut("Finish/{id}")]
     public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
     {
         try

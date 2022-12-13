@@ -63,6 +63,8 @@ public partial class FreelancerService
         GitHub = contacts.GitHub,
         Twitter = contacts.Twitter,
         WatsApp = contacts.WatsApp,
+        WebSite = contacts.WebSite,
+        FreelancerInformationId = contacts.FreelancerInformationId,
     };
 
     private Entities.FreelancerContact ToEntityContact(Models.FreelancerContact contacts, int freelancerId) => new()
