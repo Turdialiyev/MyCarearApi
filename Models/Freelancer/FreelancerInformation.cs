@@ -16,8 +16,8 @@ public class FreelancerInformation
     public bool? Finish { get; set; }
     public int? PossionId { get; set; }
     public string? Position { get; set; }
-    public int? ContactId { get; set; }
-    public Contact? Contact { get; set; }
+    public int? FreelancerContactId { get; set; }
+    public FreelancerContact? FreelancerContact { get; set; }
     public int? AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
     public int? AddressId { get; set; }

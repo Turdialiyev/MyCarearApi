@@ -34,6 +34,18 @@ public partial class FreelancerService
         Birthday = freelancerInformation.Birthday,
         TypeResume = freelancerInformation.TypeResume,
         Finish = freelancerInformation.Finish,
+        AddressId = freelancerInformation.AddressId,
+        Address = new Models.Address
+        {
+            Id = freelancerInformation.Address!.Id,
+            Home = freelancerInformation.Address.Home,
+            FrelancerInformationId = freelancerInformation.Address.FrelancerInformationId,
+            CountryId = freelancerInformation.Address.CountryId,
+            RegionId = freelancerInformation.Address.RegionId,
+            CountryName = freelancerInformation.Address.Country!.Name,
+            RegionName = freelancerInformation.Address.Region!.Name,
+        },
+        // FreelancerContactId = freelancerInformation.FreelancerContactId,
         FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x =>
             new Models.FreelancerSkill
             {
@@ -56,15 +68,37 @@ public partial class FreelancerService
                     Name = x.Hobby!.Name,
                 }
             }),
-        UserLanguages = freelancerInformation.UserLanguages!.Select(x => 
-            new Models.UserLanguage 
+        UserLanguages = freelancerInformation.UserLanguages!.Select(x =>
+            new Models.UserLanguage
             {
+                Id = x.Id,
                 LanguageId = x.LanguageId,
                 Level = x.Level,
                 Name = x.Language!.Name,
-            })    
-
-
+            }),
+        Experiences = freelancerInformation.Experiences!.Select(x =>
+            new Models.Experience
+            {
+                Id = x.Id,
+                CompanyName = x.CompanyName,
+                Job = x.Job,
+                CurrentWorking = x.CurrentWorking,
+                Descripeion = x.Descripeion,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+            }),
+        Educations = freelancerInformation.Educations!.Select(x =>
+            new Models.Education
+            {
+                SchoolName = x.SchoolName,
+                EducationDegree = x.EducationDegree,
+                TypeStudy = x.TypeStudy,
+                Location = x.Location,
+                CurrentStudy = x.CurrentStudy,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+            }),
+        // FreelancerContact = ToModelContact(freelancerInformation.FreelancerContact)
     };
 
     private Entities.FreelancerInformation ToEntity(Models.FreelancerInformation information, string filePath, string userId) => new()

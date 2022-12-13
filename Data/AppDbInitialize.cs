@@ -16,6 +16,30 @@ public class AppDbInitialize
 
         context.Database.EnsureCreated();
 
+        // If Hobbies table is not added this adds it 
+        if (!context.Hobbies.Any())
+        {
+            context.Hobbies.AddRange(
+                new List<Hobby>()
+                {
+                    new Hobby
+                    {
+                        Name = "Reading"
+                    },
+                    new Hobby
+                    {
+                        Name = "Listening"
+                    },
+                    new Hobby
+                    {
+                        Name = "Play Football"
+                    },
+                    new Hobby
+                    {
+                        Name = "swimming"
+                    }
+                });
+        }
 
         // If Countries table is not added this adds it 
         if (!context.Countries.Any())
