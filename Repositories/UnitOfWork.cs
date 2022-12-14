@@ -9,6 +9,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
+        Countries = new CountryRepository(context);
         FreelancerContacts = new FreelancerContactRepository(context);
         Educations = new EducationRepository(context);
         FreelancerHobbies = new FreelancerHobbyRepository(context);
@@ -64,6 +65,8 @@ public class UnitOfWork : IUnitOfWork
     public ILanguageRepository Languages { get; }
     public ICurrencyRepository Currencies { get; }
     public IMessageRepository Messages { get; }
+    public ICountryRepository Countries { get; set; }
+
     public void Dispose()
     {
         _context.Dispose();

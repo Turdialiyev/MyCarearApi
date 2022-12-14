@@ -5,6 +5,7 @@ namespace MyCarearApi.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
+    ICountryRepository Countries { get; set; }
     IFreelancerContactRepository FreelancerContacts { get; set; }
     IEducationRepository Educations { get; set; }
     IAddressRepository Addresses { get; set; }
