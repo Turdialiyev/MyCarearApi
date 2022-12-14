@@ -93,17 +93,19 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPost("Adress/{id}")]
+    [HttpPost("Adress")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
 
-    public async Task<IActionResult> FreelancerAdress(int freelancerId, [FromForm] Adress address)
+    public async Task<IActionResult> FreelancerAdress([FromForm] Adress address)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Address(freelancerId, ToModelAddress(address));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _freelancerService.Address(userId!, ToModelAddress(address));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -118,17 +120,20 @@ public class FreelancerController : ControllerBase
     }
 
 
-    [HttpPost("Position/{id}")]
+    [HttpPost("Position")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dtos.Position))]
 
-    public async Task<IActionResult> FreelancerPosition(int freelancerId, [FromForm] Dtos.Position position)
+    public async Task<IActionResult> FreelancerPosition([FromBody] Dtos.Position position)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Position(freelancerId, ToModelPosition(position));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.Position(userId!, ToModelPosition(position));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -142,8 +147,8 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPut("Contact/{id}")]
-    public async Task<IActionResult> FreelancerContact(int freelancerId, [FromForm] Dtos.FreelancerContact contact)
+    [HttpPut("Contact")]
+    public async Task<IActionResult> FreelancerContact([FromForm]Dtos.FreelancerContact contact)
     {
         try
         {
@@ -151,7 +156,10 @@ public class FreelancerController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Contact(freelancerId, ToModelContact(contact));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.Contact(userId, ToModelContact(contact));
 
             if (!result.IsSuccess)
                 return NotFound(result);
