@@ -11,6 +11,6 @@ public interface IFreelancerService
     ValueTask<Result<FreelancerInformation>> FinishResume(int freelancerId, bool finish);
     ValueTask<Result<FreelancerInformation>>  Resume(int freelancerId, TypeResume resume);
     ValueTask<Result<FreelancerInformation>> Address(string userId, Address address);
-    ValueTask<Result<FreelancerInformation>> Position(int freelancerId, Position possion);
-    ValueTask<Result<FreelancerInformation>> Contact(int freelancerId, FreelancerContact contacts);
+    ValueTask<Result<FreelancerInformation>> Position(string userId, Position possion);
+    ValueTask<Result<FreelancerInformation>> Contact(string userId, FreelancerContact contacts);
 }

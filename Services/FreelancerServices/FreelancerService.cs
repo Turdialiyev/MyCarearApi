@@ -154,39 +154,45 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
-    public async ValueTask<Result<FreelancerInformation>> Position(int freelancerId, Position position)
+    public async ValueTask<Result<FreelancerInformation>> Position(string userId, Position position)
     {
-        var existFreelancer = _unitOfwork.FreelancerInformations.GetAll().Where(a => a.Id == freelancerId)
-            .Include(x => x.Hobbies).Include(x => x.FreelancerSkills).FirstOrDefault();
-
-        var skills = position.PositionSkills;
-        var hobbies = position.FreelancerHobbies;
-        var createdSkill = _unitOfwork.FreelancerSkills;
-
-        if (existFreelancer is null)
-            return new("Freelancer could not be found");
-
-        if (position is null)
-            return new("Posstion could not be been null");
-
-        if (position.PositionSkills is null)
-            return new("Skills should not be null");
         try
         {
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
 
-            existFreelancer.Birthday = position.Birthday;
-            existFreelancer.Description = position.Description;
-            existFreelancer.PositionId = position.PositionId;
+            if (position is null)
+                return new("position Null reference error");
 
-            await _unitOfwork.FreelancerInformations.Update(existFreelancer);
+            var existUser = await _userManager.FindByIdAsync(userId);
 
-            var existSkills = _unitOfwork.FreelancerSkills.GetAll().Where(s => s.FreelancerInformationId == freelancerId);
-            var existHobbies = _unitOfwork.FreelancerHobbies.GetAll().Where(h => h.FreelancerInformationId == freelancerId);
+            if (existUser is null)
+                return new(false) { ErrorMessage = "userId not found" };
 
+            var existInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
 
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
 
+            var skills = position.PositionSkills;
+            var hobbies = position.FreelancerHobbies;
+            var createdSkill = _unitOfwork.FreelancerSkills;
+
+            if (position is null)
+                return new("Posstion could not be been null");
+
+            if (position.PositionSkills is null)
+                return new("Skills should not be null");
+
+            existInformation.Birthday = position.Birthday;
+            existInformation.Description = position.Description;
+            existInformation.PositionId = position.PositionId;
+
+            await _unitOfwork.FreelancerInformations.Update(existInformation);
+
+            var existSkills = _unitOfwork.FreelancerSkills.GetAll().Where(s => s.FreelancerInformationId == existInformation.Id);
+            var existHobbies = _unitOfwork.FreelancerHobbies.GetAll().Where(h => h.FreelancerInformationId == existInformation.Id);
             var frelanceSkills = _unitOfwork.FreelancerSkills.GetAll().ToList();
-
 
             // bazadagi va kelgan skillarni solishtiradi va bazada yo'q skilni qaytaradi bazaga saqlash uchun
             var newSkills = skills!
@@ -211,7 +217,6 @@ public partial class FreelancerService : IFreelancerService
                     .Contains(hobby.HobbyId)).ToList();
 
 
-
             if (skillIdsToDelete is not null)
                 await _unitOfwork.FreelancerSkills.RemoveRange(skillIdsToDelete);
 
@@ -220,19 +225,19 @@ public partial class FreelancerService : IFreelancerService
                     new Entities.FreelancerSkill
                     {
                         SkillId = s.SkillId,
-                        FreelancerInformationId = freelancerId
+                        FreelancerInformationId = existInformation.Id
                     }));
 
             await _unitOfwork.FreelancerHobbies.AddRange(newHobbiess.Select(x =>
                 new Entities.FreelancerHobby
                 {
                     HobbyId = x.HobbyId,
-                    FreelancerInformationId = freelancerId
+                    FreelancerInformationId = existInformation.Id
                 }));
 
             await _unitOfwork.FreelancerHobbies.RemoveRange(hobbiesToDelete);
 
-            return new(true) { Data = ToModel(GetByIdFreelancer(existFreelancer.Id).Result) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(existInformation.Id).Result) };
         }
         catch (Exception e)
         {
@@ -261,28 +266,30 @@ public partial class FreelancerService : IFreelancerService
             })
     };
 
-    public async ValueTask<Result<FreelancerInformation>> Contact(int freelancerId, FreelancerContact contacts)
+    public async ValueTask<Result<FreelancerInformation>> Contact(string userId, FreelancerContact contacts)
     {
-        if (freelancerId == 0)
-            return new("FreelancerId is invalid");
-
-        if (contacts is null)
-            return new(false) { ErrorMessage = "Contact is null" };
-
         try
         {
-            var exsitFreelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
 
-            if (exsitFreelancer is null)
-                return new("Freelancer is not found");
+            var existUser = await _userManager.FindByIdAsync(userId);
 
-            var existContact = _unitOfwork.FreelancerContacts.GetAll().Where(c => c.FreelancerInformationId == exsitFreelancer.Id).FirstOrDefault();
+            if (existUser is null)
+                return new(false) { ErrorMessage = "User Id not found" };
+
+            var existInformation = _unitOfwork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
+
+            var existContact = _unitOfwork.FreelancerContacts.GetAll().Where(c => c.FreelancerInformationId == existInformation.Id).FirstOrDefault();
 
             if (contacts is not null)
             {
                 if (existContact is null)
                 {
-                    existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, freelancerId));
+                    existContact = await _unitOfwork.FreelancerContacts.AddAsync(ToEntityContact(contacts, existInformation.Id));
                 }
 
                 if (existContact is not null)
@@ -304,7 +311,7 @@ public partial class FreelancerService : IFreelancerService
                 existContact = await _unitOfwork.FreelancerContacts.Remove(existContact);
             }
 
-            return new(true) { Data = ToModel(GetByIdFreelancer(exsitFreelancer.Id).Result) };
+            return new(true) { Data = ToModel(GetByIdFreelancer(existInformation.Id).Result) };
 
         }
         catch (Exception e)
