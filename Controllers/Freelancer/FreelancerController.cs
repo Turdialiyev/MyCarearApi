@@ -93,17 +93,19 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPost("Adress/{id}")]
+    [HttpPost("Adress")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
 
-    public async Task<IActionResult> FreelancerAdress(int freelancerId, [FromForm] Adress address)
+    public async Task<IActionResult> FreelancerAdress([FromForm] Adress address)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Address(freelancerId, ToModelAddress(address));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _freelancerService.Address(userId!, ToModelAddress(address));
 
             if (!result.IsSuccess)
                 return NotFound(result);
