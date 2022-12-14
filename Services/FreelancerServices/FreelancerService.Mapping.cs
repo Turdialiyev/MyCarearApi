@@ -35,7 +35,7 @@ public partial class FreelancerService
         TypeResume = freelancerInformation.TypeResume,
         Finish = freelancerInformation.Finish,
         Description = freelancerInformation.Description,
-        AddressId = freelancerInformation.AddressId,
+        AddressId = freelancerInformation.AddressId,       
         Address = new Models.Address
         {
             Id = freelancerInformation.Address == null ? 0 : freelancerInformation.Address.Id,
@@ -47,19 +47,19 @@ public partial class FreelancerService
             RegionName = freelancerInformation.Address == null ? null : freelancerInformation.Address.Region!.Name,
         },
         FreelancerPosition = new Models.FreelancerPosition
+        {
+            Id = freelancerInformation.Position == null ? 0 : freelancerInformation.Position!.Id,
+            Name = freelancerInformation.Position == null ? null : freelancerInformation.Position.Name,
+            FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x =>
+            new Models.FreelancerSkill
             {
-                Id = freelancerInformation.Position!.Id,
-                Name = freelancerInformation.Position.Name,
-                FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x => 
-                new Models.FreelancerSkill
-                {
-                    Id = x.Id,
-                    SkillId = x.SkillId,
-                    Name = x.Skill!.Name,
-                    PossitionId = x.Skill.PositionId,
-                })
+                Id = x.Id,
+                SkillId = x.SkillId,
+                Name = x.Skill!.Name,
+                PossitionId = x.Skill.PositionId,
+            })
 
-            },
+        },
         FreelancerHobbies = freelancerInformation.Hobbies!.Select(x =>
             new Models.FreelancerHobby
             {
@@ -100,6 +100,7 @@ public partial class FreelancerService
                 EndDate = x.EndDate,
                 FreelancerInformationId = x.FreelancerInformationId
             }),
+        FreelancerContactId = freelancerInformation.FreelancerContact == null ? 0 : freelancerInformation.FreelancerContact.Id,
         FreelancerContact = new Models.FreelancerContact
         {
             Id = freelancerInformation.FreelancerContact == null ? 0 : freelancerInformation.FreelancerContact.Id,
@@ -131,7 +132,6 @@ public partial class FreelancerService
         Birthday = existFreelancer.Birthday,
         Description = existFreelancer.Description,
         FreelancerPositionId = existFreelancer.PositionId,
-
     };
 
     private Models.FreelancerContact ToModelContact(Entities.FreelancerContact? contacts) => new()

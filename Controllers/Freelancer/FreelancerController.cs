@@ -14,6 +14,7 @@ public class FreelancerController : ControllerBase
 {
     private readonly ILogger<FreelancerController> _logger;
     private readonly IFileHelper _fileHelper;
+
     private readonly IFreelancerService _freelancerService;
 
     public FreelancerController(
@@ -70,12 +71,16 @@ public class FreelancerController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
     public async Task<IActionResult> FreelancerInformation([FromForm] Freelancer freelancer)
     {
+        _logger.LogInformation("================>>>>>>>>>>>>>>");
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Information("1231231", ToModel(freelancer), freelancer.Image!);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.Information(userId!, ToModel(freelancer), freelancer.Image!);
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -87,7 +92,6 @@ public class FreelancerController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
-
     }
 
     [HttpPost("Adress/{id}")]

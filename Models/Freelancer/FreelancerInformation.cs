@@ -18,12 +18,9 @@ public class FreelancerInformation
     public FreelancerPosition? FreelancerPosition { get; set; }
     public int? FreelancerContactId { get; set; }
     public FreelancerContact? FreelancerContact { get; set; }
-    public int? AppUserId { get; set; }
-    public AppUser? AppUser { get; set; }
     public int? AddressId { get; set; }
     public Address? Address { get; set; }
     public IEnumerable<FreelancerHobby>? FreelancerHobbies { get; set; }
-    public IEnumerable<FreelancerSkill>? FreelancerSkills { get; set; }
     public IEnumerable<Experience>? Experiences { get; set; }
     public IEnumerable<UserLanguage>? UserLanguages { get; set; }
     public IEnumerable<Education>? Educations { get; set; }
