@@ -47,6 +47,25 @@ public class FreelancerController : ControllerBase
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int freelancerId)
+    {
+        try
+        {
+            var result = await _freelancerService.GetById(freelancerId);
+
+            if (!result.IsSuccess)
+                return NotFound(new { ErrorMessage = result.ErrorMessage });
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
     public async Task<IActionResult> FreelancerInformation([FromForm] Freelancer freelancer)

@@ -341,7 +341,7 @@ public partial class FreelancerService : IFreelancerService
     {
         try
         {
-            var freelancers = await _unitOfwork.FreelancerInformations.GetAll()
+            var freelancers = await _unitOfwork.FreelancerInformations.GetAll().Where(x => x.Finish == true)
                             .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
                             .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
                             .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
@@ -369,6 +369,7 @@ public partial class FreelancerService : IFreelancerService
     {
         var freelancer = await _unitOfwork.FreelancerInformations.GetAll().Where(x => x.Id == freelancerId)
                                 .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
+                                .Include(x => x.Position)
                                 .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
                                 .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
                                 .Include(x => x.Address)
@@ -379,5 +380,23 @@ public partial class FreelancerService : IFreelancerService
                                 .Include(x => x.FreelancerContact)
                                 .FirstOrDefaultAsync();
         return freelancer!;
+    }
+
+    public async ValueTask<Result<FreelancerInformation>> GetById(int freelancerId)
+    {
+        try
+        {
+            var freelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
+
+            if (freelancer == null)
+                return new(false) { ErrorMessage = "Freelancer not found" };
+
+            return new(true) { Data = ToModel(GetByIdFreelancer(freelancerId).Result) };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)} .", e);
+            throw new("Couldn't get Freelancers GetAll Please contact support");
+        }
     }
 }

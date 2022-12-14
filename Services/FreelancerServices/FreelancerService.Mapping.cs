@@ -30,7 +30,7 @@ public partial class FreelancerService
         Email = freelancerInformation.Email,
         PhoneNumber = freelancerInformation.PhoneNumber,
         FreelancerImage = freelancerInformation.FreelancerImage,
-        PossionId = freelancerInformation.PositionId,
+        FreelancerPositionId = freelancerInformation.PositionId,
         Birthday = freelancerInformation.Birthday,
         TypeResume = freelancerInformation.TypeResume,
         Finish = freelancerInformation.Finish,
@@ -46,15 +46,20 @@ public partial class FreelancerService
             CountryName = freelancerInformation.Address == null ? null : freelancerInformation.Address.Country!.Name,
             RegionName = freelancerInformation.Address == null ? null : freelancerInformation.Address.Region!.Name,
         },
-
-        FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x =>
-            new Models.FreelancerSkill
+        FreelancerPosition = new Models.FreelancerPosition
             {
-                Id = x.Id,
-                SkillId = x.SkillId,
-                Name = x.Skill!.Name,
-                PossitionId = x.Skill.PositionId
-            }),
+                Id = freelancerInformation.Position!.Id,
+                Name = freelancerInformation.Position.Name,
+                FreelancerSkills = freelancerInformation.FreelancerSkills!.Select(x => 
+                new Models.FreelancerSkill
+                {
+                    Id = x.Id,
+                    SkillId = x.SkillId,
+                    Name = x.Skill!.Name,
+                    PossitionId = x.Skill.PositionId,
+                })
+
+            },
         FreelancerHobbies = freelancerInformation.Hobbies!.Select(x =>
             new Models.FreelancerHobby
             {
@@ -125,7 +130,7 @@ public partial class FreelancerService
     {
         Birthday = existFreelancer.Birthday,
         Description = existFreelancer.Description,
-        PossionId = existFreelancer.PositionId,
+        FreelancerPositionId = existFreelancer.PositionId,
 
     };
 
