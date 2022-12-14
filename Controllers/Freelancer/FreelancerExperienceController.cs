@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
@@ -25,7 +26,9 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
-            var result = await _experienceService.GetAll();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _experienceService.GetAll(userId!);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });
@@ -39,15 +42,18 @@ public class FreelancerExperienceController : ControllerBase
         }
     }
 
-    [HttpPost("{freelancerId}")]
-    public async Task<IActionResult> Save(int freelancerId, [FromForm] FreelancerExperience experience)
+    [HttpPost]
+    public async Task<IActionResult> Save([FromForm] FreelancerExperience experience)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _experienceService.Save(freelancerId, ToModel(experience));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _experienceService.Save(userId!, ToModel(experience));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -72,9 +78,9 @@ public class FreelancerExperienceController : ControllerBase
 
             if (id < 0)
                 return BadRequest();
-            
+
             var result = await _experienceService.Update(id, ToModel(experience));
-            
+
             if (!result.IsSuccess)
                 return BadRequest(result);
 

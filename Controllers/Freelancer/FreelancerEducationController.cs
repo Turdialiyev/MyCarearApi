@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
@@ -25,7 +26,9 @@ public class FreelancerEducationController : ControllerBase
     {
         try
         {
-            var result = await _educationService.GetAll();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _educationService.GetAll(userId!);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });
@@ -39,15 +42,18 @@ public class FreelancerEducationController : ControllerBase
         }
     }
 
-    [HttpPost("{freelancerId}")]
-    public async Task<IActionResult> Save(int freelancerId, [FromForm] FreelancerEducation rducation)
+    [HttpPost]
+    public async Task<IActionResult> Save([FromForm] FreelancerEducation education)
     {
         try
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _educationService.Save(freelancerId, ToModel(rducation));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _educationService.Save(userId!, ToModel(education));
 
             if (!result.IsSuccess)
                 return NotFound(result);
