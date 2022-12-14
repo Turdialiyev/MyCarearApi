@@ -57,6 +57,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<Message> Messages { get; set; }
 
+    public DbSet<Chat> Chats { get; set; }
+
 }
 
 

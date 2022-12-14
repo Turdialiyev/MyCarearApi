@@ -28,6 +28,7 @@
   <ItemGroup>
     <Folder Include="Models\SignalRModels\" />
     <Folder Include="wwwroot\JobFiles\" />
+    <Folder Include="wwwroot\MessageFiles\" />
   </ItemGroup>
 
 
