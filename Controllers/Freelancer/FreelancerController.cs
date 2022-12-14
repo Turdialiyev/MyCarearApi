@@ -71,7 +71,6 @@ public class FreelancerController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Freelancer))]
     public async Task<IActionResult> FreelancerInformation([FromForm] Freelancer freelancer)
     {
-        _logger.LogInformation("================>>>>>>>>>>>>>>");
         try
         {
             if (!ModelState.IsValid)
