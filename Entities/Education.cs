@@ -13,8 +13,8 @@ public class Education
    public DateOnly? EndDate { get; set; }
    public bool CurrentStudy { get; set; } = false;
 
-   public int FrelancerInfoId { get; set; }
-   public FreelancerInformation? FrelaceInfo { get; set; }
+   public int FreelancerInformationId { get; set; }
+   public FreelancerInformation FreelancerInformation { get; set; }
 
  }
 

@@ -14,7 +14,7 @@ public class EducationService : IEducationService
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
-    public async ValueTask<Result<Education>> Delete(int educationId, Education education)
+    public async ValueTask<Result<Education>> Delete(int educationId)
     {
         try
         {
@@ -44,7 +44,7 @@ public class EducationService : IEducationService
         EndDate = result.EndDate,
         CurrentStudy = result.CurrentStudy,
         Location = result.Location,
-        FrelancerInfoId = result.FrelancerInfoId
+        FreelancerInformationId = result.FreelancerInformationId
     };
 
     public async ValueTask<Result<List<Education>>> GetAll()
@@ -99,7 +99,7 @@ public class EducationService : IEducationService
         EndDate = model.EndDate,
         CurrentStudy = model.CurrentStudy,
         Location = model.Location,
-        FrelancerInfoId = freelncerId
+        FreelancerInformationId = freelncerId
     };
 
     public async ValueTask<Result<Education>> Update(int educationId, Education education)

@@ -33,7 +33,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
 }).AddEntityFrameworkStores<AppDbContext>();
 
-builder.Services.AddAuthentication(opt => {
+builder.Services.AddAuthentication(opt =>
+{
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     Console.WriteLine("JwtBearerDefaults.AuthenticationScheme: " + JwtBearerDefaults.AuthenticationScheme);
@@ -76,6 +77,7 @@ builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
 
 var app = builder.Build();
 
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -88,11 +90,14 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
+
 app.UseHttpsRedirection();
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");
 app.MapControllers();
+
+AppDbInitialize.Seed(app);
 
 app.Run();

@@ -1,5 +1,5 @@
 ﻿namespace MyCarearApi.Entities;
-public class FreelancerContact 
+public class FreelancerContact
 { 
     public int Id { get; set; }
     public string?  WatsApp { get; set; }

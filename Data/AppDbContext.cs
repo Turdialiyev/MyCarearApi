@@ -14,6 +14,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    public DbSet<Country> Countries { get; set; }
+    public DbSet<Region> Regions { get; set; }
+    public DbSet<FreelancerContact> Connections { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
     public DbSet<Company> Companys { get; set; }
@@ -55,7 +58,8 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Message> Messages { get; set; }
 
     public DbSet<Chat> Chats { get; set; }
+
 }
 
- 
+
 

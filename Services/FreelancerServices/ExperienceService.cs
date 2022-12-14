@@ -51,7 +51,7 @@ public class ExperienceService : IExperienceService
         StartDate = result.StartDate,
         EndDate = result.EndDate,
         Descripeion = result.Descripeion,
-        FrelancerInformationId = result.FrelancerInfoId
+        FrelancerInformationId = result.FreelancerInformationId
     };
 
     private Entities.Experience ToEntity(Experience model, int freelanserId) => new()
@@ -62,10 +62,10 @@ public class ExperienceService : IExperienceService
         StartDate = model.StartDate,
         EndDate = model.EndDate,
         Descripeion = model.Descripeion,
-        FrelancerInfoId = freelanserId,
+        FreelancerInformationId = freelanserId,
     };
 
-    public async ValueTask<Result<Experience>> Delete(int experienceId, Experience experience)
+    public async ValueTask<Result<Experience>> Delete(int experienceId)
     {
         try
         {
@@ -126,7 +126,7 @@ public class ExperienceService : IExperienceService
         {
             var experiences = await _unitOfWork.Experiences.GetAll().ToListAsync();
 
-            if (experiences is null)
+            if (!experiences.Any())
                 return new(false) { ErrorMessage = "Any Experience not found" };
 
             return new(true) { Data = experiences.Select(ToModel).ToList() };
