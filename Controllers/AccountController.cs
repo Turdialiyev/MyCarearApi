@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Entities;
@@ -6,6 +7,7 @@ using MyCarearApi.Models.Account;
 using MyCarearApi.Services.JwtServices;
 using MyCarearApi.Services.JwtServices.Interfaces;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace MyCarearApi.Controllers;
@@ -134,9 +136,9 @@ public class AccountController: ControllerBase
 
         return Ok(new
         {
-            Succeded = true,
+            Succeded = true,//08269523
             CurrentRole = role
-        });
+        });//
     }
 
 
@@ -146,6 +148,8 @@ public class AccountController: ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
+        Console.WriteLine(JsonSerializer.Serialize(userModel));
+
         var errorResult = BadRequest(new
         {
             Succeded = false,
@@ -169,11 +173,13 @@ public class AccountController: ControllerBase
             return errorResult;
         }
 
-        return Ok(new
+        var anonymousResult = new
         {
             Succeded = true,
             Token = await _jwtService.GenerateToken(user)
-        });
+        };
+        Console.WriteLine(JsonSerializer.Serialize(anonymousResult));
+        return Ok(anonymousResult);
     }
 
     [HttpPost("logout")]
@@ -185,9 +191,9 @@ public class AccountController: ControllerBase
     }
 
     [HttpGet("CLAIMS")]
-    public IActionResult Claims()
+    public async Task<IActionResult> Claims()
     {
-        SeedData.SeedUserData(serviceProvider);
+        await SeedData.SeedUserData(serviceProvider);
 
         return Ok();
     }
