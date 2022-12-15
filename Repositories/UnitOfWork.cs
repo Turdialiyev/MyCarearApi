@@ -1,8 +1,9 @@
 using MyCarearApi.Data;
+using MyCarearApi.Repositories.Interfaces;
 
 namespace MyCarearApi.Repositories;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly AppDbContext _context;
 
@@ -32,6 +33,7 @@ public class UnitOfWork : IUnitOfWork
         Languages= new LanguageRepository(context);
         Currencies = new CurrencyRepository(context);
         Messages = new MessageRepository(context);
+        Chats = new ChatRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -65,7 +67,10 @@ public class UnitOfWork : IUnitOfWork
     public ILanguageRepository Languages { get; }
     public ICurrencyRepository Currencies { get; }
     public IMessageRepository Messages { get; }
+
     public ICountryRepository Countries { get; set; }
+
+    public IChatRepository Chats { get; }
 
     public void Dispose()
     {

@@ -1,5 +1,5 @@
 using MyCarearApi.Repositories;
-
+using MyCarearApi.Repositories.Interfaces;
 
 namespace MyCarearApi.Repositories;
 
@@ -28,5 +28,6 @@ public interface IUnitOfWork : IDisposable
     ILanguageRepository Languages { get; }
     ICurrencyRepository Currencies { get; }
     IMessageRepository Messages { get; }
+    IChatRepository Chats { get; }
     int Save();
 }
