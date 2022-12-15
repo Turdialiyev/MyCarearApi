@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
+    options.UseSqlite("Data Source = Data.sqlite;");
     //  options.UseInMemoryDatabase("TestDb");
 });
 
@@ -61,6 +61,7 @@ builder.Services.AddScoped<IFreelancerService, FreelancerService>();
 builder.Services.AddScoped<IEducationService, EducationService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IJwtService, JwtService>();

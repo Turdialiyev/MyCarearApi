@@ -148,7 +148,7 @@ public class FreelancerController : ControllerBase
     }
 
     [HttpPut("Contact")]
-    public async Task<IActionResult> FreelancerContact([FromForm]Dtos.FreelancerContact contact)
+    public async Task<IActionResult> FreelancerContact([FromForm] Dtos.FreelancerContact contact)
     {
         try
         {
@@ -159,7 +159,7 @@ public class FreelancerController : ControllerBase
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
 
-            var result = await _freelancerService.Contact(userId, ToModelContact(contact));
+            var result = await _freelancerService.Contact(userId!, ToModelContact(contact));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -174,8 +174,8 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPut("Resume/{id}")]
-    public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
+    [HttpPut("Resume")]
+    public async Task<IActionResult> FreelancerResume([FromForm] int resume)
     {
         try
         {
@@ -183,7 +183,10 @@ public class FreelancerController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Resume(freelancerId, resume);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.Resume(userId!, resume);
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -198,8 +201,8 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPut("Finish/{id}")]
-    public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
+    [HttpPut("Finish")]
+    public async Task<IActionResult> FreelancerFinish([FromForm] bool finish)
     {
         try
         {
@@ -207,7 +210,10 @@ public class FreelancerController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.FinishResume(freelancerId, finish);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.FinishResume(userId!, finish);
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -221,6 +227,7 @@ public class FreelancerController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
     }
+
     private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
     {
         WebSite = contact.WebSite,
