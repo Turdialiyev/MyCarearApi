@@ -323,7 +323,7 @@ public partial class FreelancerService : IFreelancerService
 
     }
 
-    public async ValueTask<Result<FreelancerInformation>> Resume(string userId, TypeResume resume)
+    public async ValueTask<Result<FreelancerInformation>> Resume(string userId, int resume)
     {
         try
         {

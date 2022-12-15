@@ -581,8 +581,8 @@ namespace MyCarearApi.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SchoolName = table.Column<string>(type: "TEXT", nullable: true),
-                    EducationDegree = table.Column<int>(type: "INTEGER", nullable: true),
-                    TypeStudy = table.Column<int>(type: "INTEGER", nullable: true),
+                    EducationDegree = table.Column<string>(type: "TEXT", nullable: true),
+                    TypeStudy = table.Column<string>(type: "TEXT", nullable: true),
                     Location = table.Column<string>(type: "TEXT", nullable: true),
                     StartDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
                     EndDate = table.Column<DateOnly>(type: "TEXT", nullable: true),
@@ -703,7 +703,7 @@ namespace MyCarearApi.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     LanguageId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Level = table.Column<int>(type: "INTEGER", nullable: true),
+                    Level = table.Column<string>(type: "TEXT", nullable: true),
                     FreelancerInformationId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

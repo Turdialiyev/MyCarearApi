@@ -376,8 +376,8 @@ namespace MyCarearApi.Migrations
                     b.Property<bool>("CurrentStudy")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("EducationDegree")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("EducationDegree")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("TEXT");
@@ -394,8 +394,8 @@ namespace MyCarearApi.Migrations
                     b.Property<DateOnly?>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("TypeStudy")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("TypeStudy")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -813,8 +813,8 @@ namespace MyCarearApi.Migrations
                     b.Property<int?>("LanguageId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Level")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Level")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

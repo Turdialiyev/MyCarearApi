@@ -175,7 +175,7 @@ public class FreelancerController : ControllerBase
     }
 
     [HttpPut("Resume")]
-    public async Task<IActionResult> FreelancerResume([FromForm] TypeResume resume)
+    public async Task<IActionResult> FreelancerResume([FromForm] int resume)
     {
         try
         {
