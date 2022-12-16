@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Entities;
-using MyCarearApi.Migrations;
+// using MyCarearApi.Migrations;
 using MyCarearApi.Repositories;
 using MyCarearApi.Repositories.Interfaces;
 using System.Collections;

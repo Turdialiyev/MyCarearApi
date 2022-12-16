@@ -15,6 +15,9 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +78,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
                                                               .AllowAnyMethod()));
+
 
 var app = builder.Build();
 
