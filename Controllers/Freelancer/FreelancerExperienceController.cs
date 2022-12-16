@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
+using MyCarearApi.Validations;
 
 namespace MyCarearApi.Controllers;
 
@@ -47,8 +48,10 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            var validation = new ExperienceDtoValidation().Validate(experience);
+
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
@@ -72,12 +75,14 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
+            var validation = new ExperienceDtoValidation().Validate(experience);
 
-            if (!ModelState.IsValid)
-                return BadRequest();
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
 
             if (id < 0)
-                return BadRequest();
+                return BadRequest(error: "id invalid");
 
             var result = await _experienceService.Update(id, ToModel(experience));
 
@@ -98,6 +103,9 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
+            if (id < 0)
+                return BadRequest(error: "id invalid");
+
             var result = await _experienceService.Delete(id);
 
             if (!result.IsSuccess)
