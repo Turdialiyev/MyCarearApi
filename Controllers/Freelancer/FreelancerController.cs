@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Entities.Enums;
@@ -14,7 +15,6 @@ namespace MyCarearApi.Controllers;
 
 public partial class FreelancerController : ControllerBase
 {
-    private readonly IValidator<Adress> _adressValidator;
     private readonly ILogger<FreelancerController> _logger;
     private readonly IFileHelper _fileHelper;
 
@@ -23,10 +23,8 @@ public partial class FreelancerController : ControllerBase
     public FreelancerController(
         ILogger<FreelancerController> logger,
         IFileHelper fileHepler,
-        IFreelancerService freelancerService,
-        IValidator<Adress> adressValidator)
+        IFreelancerService freelancerService)
     {
-        _adressValidator = adressValidator;
         _logger = logger;
         _fileHelper = fileHepler;
         _freelancerService = freelancerService;
@@ -78,10 +76,10 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
-            var validator = new FreelancerDtoValidation().Validate(freelancer);
+            // var validator = new FreelancerDtoValidation().Validate(freelancer);
 
-            if (!validator.IsValid)
-                return BadRequest(validator.Errors);
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
@@ -108,7 +106,8 @@ public partial class FreelancerController : ControllerBase
 
         try
         {
-            var valid = _adressValidator.Validate(address);
+            var valid = new AdressDtoValidation().Validate(address);
+
             if (!valid.IsValid)
                 return BadRequest(valid.Errors);
 
@@ -139,10 +138,10 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
-            var validator = new PositionDtoValidation().Validate(position);
+            // var validator = new PositionDtoValidation().Validate(position);
 
-            if (!validator.IsValid)
-                return BadRequest(validator.Errors);
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
@@ -166,10 +165,10 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
-            var validator = new ContactDtoValidation().Validate(contact);
+            // var validator = new ContactDtoValidation().Validate(contact);
 
-            if (!validator.IsValid)
-                return BadRequest(validator.Errors);
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
