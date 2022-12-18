@@ -5,11 +5,9 @@ namespace MyCarearApi.Hubs
 {
     public interface IChatHub
     {
-        Task RecieveMessage(Message message);
-        Task InitializeChats(IList profils);
+        Task RecieveMessage<T>(T message);
         Task IsOnlineChanged(object user);
-        Task SearchUser(IList users);
-        Task ReadMessage(Message message);
-
+        Task ReadMessage<T>(T message);
+        Task InitializeChats();
     }
 }

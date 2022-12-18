@@ -14,4 +14,5 @@ public interface IMessageService
     IList SearchUsers(string key, Dictionary<string, List<string>> users);
     string LocateFile(IFormFile file);
     Task<Message> ReadMessage(int id);
+    Task<dynamic> GetChat(int id, Dictionary<string, List<string>> users);
 }
