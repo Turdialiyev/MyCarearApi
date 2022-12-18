@@ -15,6 +15,8 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
+using MyCarearApi.Services.Chat.Interfaces;
+using System.Text.Json;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using System.Reflection;
@@ -22,7 +24,10 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -57,6 +62,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source = Data.sqlite;");
     //  options.UseInMemoryDatabase("TestDb");
 });
+
+
+
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase("ChatConnections"));
+
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -99,8 +109,17 @@ builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
 builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
 builder.Services.AddTransient<IJobService, JobService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IConnectionService, ConnectionService>();
 
-builder.Services.AddSignalR();
+
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumParallelInvocationsPerClient = 5;
+    options.MaximumReceiveMessageSize= 512000;
+    
+    Console.WriteLine("************\n\n\n");
+    Console.WriteLine(JsonSerializer.Serialize(options));
+}).AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
@@ -122,14 +141,26 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
+AppDbInitialize.Seed(app).Wait();
 
 app.UseHttpsRedirection();
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<ChatHub>("/chat");
+
 app.MapControllers();
 
-AppDbInitialize.Seed(app);
+app.MapHub<ChatHub>("/chat", options =>
+{
+    options.WebSockets.CloseTimeout = TimeSpan.FromSeconds(300);
+    options.LongPolling.PollTimeout = TimeSpan.FromSeconds(900);
+    options.TransportMaxBufferSize = 512000;
+    options.TransportSendTimeout = TimeSpan.FromSeconds(150);
+    Console.WriteLine(options.Transports);
+    Console.WriteLine("*********************\n\n\nOptions");
+    Console.WriteLine(JsonSerializer.Serialize(options));
+    
+});
+
 
 app.Run();

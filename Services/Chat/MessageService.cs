@@ -61,7 +61,8 @@ public class MessageService: IMessageService
             {
                 x.Id,
                 x.DateTime,
-                x.Messages,
+                Messages = x.Messages.Select(m => new Message { Id = m.Id, ChatId = m.ChatId, DateTime = m.DateTime, FileMessage = m.FileMessage,
+                                             FileName = m.FileName, FromId = m.FromId, IsRead = m.IsRead, Text = m.Text, ToId = m.ToId }),
                 Member1 = new
                 {
                     Member1.Id,
@@ -119,7 +120,8 @@ public class MessageService: IMessageService
 
     public IList SearchUsers(string key, Dictionary<string, List<string>> users)
     {
-        return _userManager.Users.Where(x => x.UserName.Contains(key) || x.FirstName.Contains(key) || x.LastName.Contains(key))
+        return _userManager.Users.Where(x => x.UserName.Contains(key) || x.FirstName.Contains(key) || x.LastName.Contains(key) 
+            || x.Email.Contains(key) || x.PhoneNumber.Contains(key))
             .Select(x => new
             {
                 x.Id,
@@ -145,7 +147,52 @@ public class MessageService: IMessageService
     {
         var message = _messageRepository.GetById(id);
         message.IsRead = true;
-        return await _messageRepository.Update(message);
+        await _messageRepository.Update(message);
+        return await Task.FromResult(_messageRepository.GetAll().Where(x => x.Id == id).Include(x => x.Chat).FirstOrDefault());
+    }
+
+    public async Task<dynamic> GetChat(int chatId, Dictionary<string, List<string>> users)
+    {
+        var chat = _chatRepository.GetAll().Include(x => x.Messages).FirstOrDefault(x => x.Id == chatId);
+        var Member1 = await _userManager.FindByIdAsync(chat.Member1);
+        var Member2 = await _userManager.FindByIdAsync(chat.Member2);
+        return new
+        {
+            chat.Id,
+            chat.DateTime,
+            Messages = chat.Messages.Select(m => new Message
+            {
+                Id = m.Id,
+                ChatId = m.ChatId,
+                DateTime = m.DateTime,
+                FileMessage = m.FileMessage,
+                FileName = m.FileName,
+                FromId = m.FromId,
+                IsRead = m.IsRead,
+                Text = m.Text,
+                ToId = m.ToId
+            }),
+            Member1 = new
+            {
+                Member1.Id,
+                Member1.UserName,
+                Member1.FirstName,
+                Member1.LastName,
+                Member1.Email,
+                Member1.PhoneNumber,
+                IsOnline = users.ContainsKey(chat.Member1) && users[chat.Member1].Count > 0
+            },
+            Member2 = new
+            {
+                Member2.Id,
+                Member2.UserName,
+                Member2.FirstName,
+                Member2.LastName,
+                Member2.Email,
+                Member2.PhoneNumber,
+                IsOnline = users.ContainsKey(chat.Member2) && users[chat.Member2].Count > 0
+            }
+        };
     }
 }
 

@@ -4,8 +4,8 @@ namespace MyCarearApi.Hubs
 {
     public interface IHubBase
     {
-        Task SendMessage(Message message);
-        Task SearchUsers(string key);
+        Task WriteMessage(Message message);
+        IAsyncEnumerable<byte> SearchUsers(string key, CancellationToken cancellationToken);
         Task ReadMessage(int id);
     }
 }
