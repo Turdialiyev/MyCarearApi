@@ -115,8 +115,8 @@ builder.Services.AddTransient<IConnectionService, ConnectionService>();
 builder.Services.AddSignalR(options =>
 {
     options.MaximumParallelInvocationsPerClient = 5;
-    options.MaximumReceiveMessageSize= 512000;
-    
+    options.MaximumReceiveMessageSize = 512000;
+
     Console.WriteLine("************\n\n\n");
     Console.WriteLine(JsonSerializer.Serialize(options));
 }).AddNewtonsoftJsonProtocol(options => options.PayloadSerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -159,7 +159,7 @@ app.MapHub<ChatHub>("/chat", options =>
     Console.WriteLine(options.Transports);
     Console.WriteLine("*********************\n\n\nOptions");
     Console.WriteLine(JsonSerializer.Serialize(options));
-    
+
 });
 
 
