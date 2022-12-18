@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
@@ -8,11 +9,16 @@ public class EducationService : IEducationService
 {
     private readonly ILogger<EducationService> _logger;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UserManager<Entities.AppUser> _userManager;
 
-    public EducationService(ILogger<EducationService> logger, IUnitOfWork unitOfWork)
+    public EducationService(
+        ILogger<EducationService> logger,
+        IUnitOfWork unitOfWork,
+        UserManager<Entities.AppUser> userManager)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _userManager = userManager;
     }
     public async ValueTask<Result<Education>> Delete(int educationId)
     {
@@ -47,11 +53,24 @@ public class EducationService : IEducationService
         FreelancerInformationId = result.FreelancerInformationId
     };
 
-    public async ValueTask<Result<List<Education>>> GetAll()
+    public async ValueTask<Result<List<Education>>> GetAll(string userId)
     {
         try
         {
-            var educations = await _unitOfWork.Educations.GetAll().ToListAsync();
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
+
+            var existUser = await _userManager.FindByIdAsync(userId);
+
+            if (existUser is null)
+                return new(false) { ErrorMessage = "User Id not found" };
+
+            var existInformation = _unitOfWork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
+
+            var educations = await _unitOfWork.Educations.GetAll().Where(x => x.FreelancerInformationId == existInformation.Id).ToListAsync();
 
             if (educations is null)
                 return new(false) { ErrorMessage = "Any Education not found" };
@@ -65,19 +84,24 @@ public class EducationService : IEducationService
         }
     }
 
-    public async ValueTask<Result<Education>> Save(int freelncerId, Education education)
+    public async ValueTask<Result<Education>> Save(string userId, Education education)
     {
-        if (education is null)
-            return new("Education null exseption");
-
         try
         {
-            var exsitFreelancer = _unitOfWork.FreelancerInformations.GetById(freelncerId);
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
 
-            if (exsitFreelancer is null)
-                return new("exsitFreelancer is not found");
+            var existUser = await _userManager.FindByIdAsync(userId);
 
-            var result = await _unitOfWork.Educations.AddAsync(ToEntity(education, freelncerId));
+            if (existUser is null)
+                return new(false) { ErrorMessage = "User Id not found" };
+
+            var existInformation = _unitOfWork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
+
+            var result = await _unitOfWork.Educations.AddAsync(ToEntity(education, existInformation.Id));
 
             return new(true) { Data = ToModel(result) };
 

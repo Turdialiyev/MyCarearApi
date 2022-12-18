@@ -17,6 +17,10 @@ using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
 using MyCarearApi.Services.Chat.Interfaces;
 using System.Text.Json;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +29,37 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
+    options.UseSqlite("Data Source = Data.sqlite;");
     //  options.UseInMemoryDatabase("TestDb");
 });
 
@@ -71,6 +101,7 @@ builder.Services.AddScoped<IFreelancerService, FreelancerService>();
 builder.Services.AddScoped<IEducationService, EducationService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IJwtService, JwtService>();
@@ -93,6 +124,7 @@ builder.Services.AddSignalR(options =>
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
                                                               .AllowAnyMethod()));
+
 
 var app = builder.Build();
 
