@@ -2,5 +2,5 @@
 
 public enum JobState
 {
-    Active, Completed
+    Active, Processing, Completed
 }

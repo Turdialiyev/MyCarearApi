@@ -61,7 +61,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
     
     public DbSet<Chat> Chats { get; set; }
 
-
+    public DbSet<Offer> Offers { get; set; }
 }
 
 
