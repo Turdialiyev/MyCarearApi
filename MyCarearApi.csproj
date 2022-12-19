@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Entityframeworkcore.sqlite" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Entityframeworkcore.sqlite" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
       <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
@@ -29,6 +31,7 @@
   <ItemGroup>
     <Folder Include="Models\SignalRModels\" />
     <Folder Include="wwwroot\JobFiles\" />
+    <Folder Include="wwwroot\MessageFiles\" />
   </ItemGroup>
 
 

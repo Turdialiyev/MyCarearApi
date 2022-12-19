@@ -1,10 +1,11 @@
 using MyCarearApi.Repositories;
-
+using MyCarearApi.Repositories.Interfaces;
 
 namespace MyCarearApi.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
+    ICountryRepository Countries { get; set; }
     IFreelancerContactRepository FreelancerContacts { get; set; }
     IEducationRepository Educations { get; set; }
     IAddressRepository Addresses { get; set; }
@@ -27,5 +28,6 @@ public interface IUnitOfWork : IDisposable
     ILanguageRepository Languages { get; }
     ICurrencyRepository Currencies { get; }
     IMessageRepository Messages { get; }
+    IChatRepository Chats { get; }
     int Save();
 }

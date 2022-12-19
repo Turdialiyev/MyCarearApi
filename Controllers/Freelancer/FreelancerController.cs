@@ -1,16 +1,19 @@
 using System.Security.Claims;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Entities.Enums;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
+using MyCarearApi.Validations;
 
 namespace MyCarearApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 
-public class FreelancerController : ControllerBase
+public partial class FreelancerController : ControllerBase
 {
     private readonly ILogger<FreelancerController> _logger;
     private readonly IFileHelper _fileHelper;
@@ -73,8 +76,10 @@ public class FreelancerController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            // var validator = new FreelancerDtoValidation().Validate(freelancer);
+
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
@@ -98,8 +103,14 @@ public class FreelancerController : ControllerBase
 
     public async Task<IActionResult> FreelancerAdress([FromForm] Adress address)
     {
+
         try
         {
+            var valid = new AdressDtoValidation().Validate(address);
+
+            if (!valid.IsValid)
+                return BadRequest(valid.Errors);
+
             if (!ModelState.IsValid)
                 return BadRequest();
 
@@ -127,8 +138,10 @@ public class FreelancerController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            // var validator = new PositionDtoValidation().Validate(position);
+
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
 
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
@@ -148,7 +161,35 @@ public class FreelancerController : ControllerBase
     }
 
     [HttpPut("Contact")]
-    public async Task<IActionResult> FreelancerContact([FromForm]Dtos.FreelancerContact contact)
+    public async Task<IActionResult> FreelancerContact([FromForm] Dtos.FreelancerContact contact)
+    {
+        try
+        {
+            // var validator = new ContactDtoValidation().Validate(contact);
+
+            // if (!validator.IsValid)
+            //     return BadRequest(validator.Errors);
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.Contact(userId!, ToModelContact(contact));
+
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+    [HttpPut("Resume")]
+    public async Task<IActionResult> FreelancerResume([FromForm] int resume)
     {
         try
         {
@@ -159,7 +200,7 @@ public class FreelancerController : ControllerBase
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
 
-            var result = await _freelancerService.Contact(userId, ToModelContact(contact));
+            var result = await _freelancerService.Resume(userId!, resume);
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -174,8 +215,8 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPut("Resume/{id}")]
-    public async Task<IActionResult> FreelancerResume(int freelancerId, TypeResume resume)
+    [HttpPut("Finish")]
+    public async Task<IActionResult> FreelancerFinish([FromForm] bool finish)
     {
         try
         {
@@ -183,7 +224,10 @@ public class FreelancerController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _freelancerService.Resume(freelancerId, resume);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.FinishResume(userId!, finish);
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -198,29 +242,6 @@ public class FreelancerController : ControllerBase
         }
     }
 
-    [HttpPut("Finish/{id}")]
-    public async Task<IActionResult> FreelancerFinish(int freelancerId, bool finish)
-    {
-        try
-        {
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var result = await _freelancerService.FinishResume(freelancerId, finish);
-
-            if (!result.IsSuccess)
-                return NotFound(result);
-
-            return Ok(result);
-
-        }
-        catch (Exception e)
-        {
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
-        }
-    }
     private Models.FreelancerContact ToModelContact(Dtos.FreelancerContact contact) => new()
     {
         WebSite = contact.WebSite,

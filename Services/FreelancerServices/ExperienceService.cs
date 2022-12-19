@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
@@ -8,26 +9,39 @@ public class ExperienceService : IExperienceService
 {
     private readonly ILogger<ExperienceService> _logger;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UserManager<Entities.AppUser> _userManager;
 
-    public ExperienceService(ILogger<ExperienceService> logger, IUnitOfWork unitOfWork)
+    public ExperienceService(
+        ILogger<ExperienceService> logger,
+        IUnitOfWork unitOfWork,
+        UserManager<Entities.AppUser> userManager)
     {
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _userManager = userManager;
 
     }
-    public async ValueTask<Result<Experience>> Save(int freelncerId, Experience experience)
+    public async ValueTask<Result<Experience>> Save(string userId, Experience experience)
     {
-        if (experience is null)
-            return new("Experience null exseption");
-
         try
         {
-            var exsitFreelancer = _unitOfWork.FreelancerInformations.GetById(freelncerId);
+            if (experience is null)
+                return new(false) { ErrorMessage = "experience Null exception" };
 
-            if (exsitFreelancer is null)
-                return new("exsitFreelancer is not found");
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
 
-            var result = await _unitOfWork.Experiences.AddAsync(ToEntity(experience, freelncerId));
+            var existUser = await _userManager.FindByIdAsync(userId);
+
+            if (existUser is null)
+                return new(false) { ErrorMessage = "User Id not found" };
+
+            var existInformation = _unitOfWork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
+
+            var result = await _unitOfWork.Experiences.AddAsync(ToEntity(experience, existInformation.Id));
 
             return new(true) { Data = ToModel(result) };
 
@@ -120,11 +134,24 @@ public class ExperienceService : IExperienceService
         }
     }
 
-    public async ValueTask<Result<List<Experience>>> GetAll()
+    public async ValueTask<Result<List<Experience>>> GetAll(string userId)
     {
         try
         {
-            var experiences = await _unitOfWork.Experiences.GetAll().ToListAsync();
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id invalid" };
+
+            var existUser = await _userManager.FindByIdAsync(userId);
+
+            if (existUser is null)
+                return new(false) { ErrorMessage = "User Id not found" };
+
+            var existInformation = _unitOfWork.FreelancerInformations.GetAll().FirstOrDefault(f => f.AppUserId == userId);
+
+            if (existInformation is null)
+                return new(false) { ErrorMessage = "Freelancer information not found" };
+
+            var experiences = await _unitOfWork.Experiences.GetAll().Where(x => x.FreelancerInformationId == existInformation.Id).ToListAsync();
 
             if (!experiences.Any())
                 return new(false) { ErrorMessage = "Any Experience not found" };

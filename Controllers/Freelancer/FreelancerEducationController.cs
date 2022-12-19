@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
+using MyCarearApi.Validations;
 
 namespace MyCarearApi.Controllers;
 
@@ -25,7 +27,9 @@ public class FreelancerEducationController : ControllerBase
     {
         try
         {
-            var result = await _educationService.GetAll();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _educationService.GetAll(userId!);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });
@@ -39,15 +43,20 @@ public class FreelancerEducationController : ControllerBase
         }
     }
 
-    [HttpPost("{freelancerId}")]
-    public async Task<IActionResult> Save(int freelancerId, [FromForm] FreelancerEducation rducation)
+    [HttpPost]
+    public async Task<IActionResult> Save([FromForm] FreelancerEducation education)
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            var validator = new EducationDtoValidation().Validate(education);
 
-            var result = await _educationService.Save(freelancerId, ToModel(rducation));
+            if (!validator.IsValid)
+                return BadRequest(validator.Errors);
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _educationService.Save(userId!, ToModel(education));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -62,18 +71,19 @@ public class FreelancerEducationController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromForm] FreelancerEducation educarion)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromForm] FreelancerEducation education)
     {
         try
         {
+            var validator = new EducationDtoValidation().Validate(education);
 
-            if (!ModelState.IsValid)
-                return BadRequest();
+            if (!validator.IsValid)
+                return BadRequest(validator.Errors);
 
             if (id < 0)
                 return BadRequest();
 
-            var result = await _educationService.Update(id, ToModel(educarion));
+            var result = await _educationService.Update(id, ToModel(education));
 
             if (!result.IsSuccess)
                 return BadRequest(result);

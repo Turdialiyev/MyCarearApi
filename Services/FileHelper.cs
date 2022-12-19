@@ -85,5 +85,5 @@ public class FileHelper : IFileHelper
         return reversedString;
     }
     //    file Pathni ko'rsatadi 
-    public string Folder(string fileFolder) => Path.Combine(Directory.GetCurrentDirectory(), @"Data\Folders\" + fileFolder);
+    public string Folder(string fileFolder) => Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Folders\" + fileFolder);
 }

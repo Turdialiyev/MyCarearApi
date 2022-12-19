@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
+using MyCarearApi.Validations;
 
 namespace MyCarearApi.Controllers;
 
@@ -25,7 +27,9 @@ public class FreelancerLanguageController : ControllerBase
     {
         try
         {
-            var result = await _languageService.GetAll();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _languageService.GetAll(userId!);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });
@@ -39,15 +43,20 @@ public class FreelancerLanguageController : ControllerBase
         }
     }
 
-    [HttpPost("{id}")]
-    public async Task<IActionResult> Save(int freelancerId, [FromForm] FreelancerLanguage language)
+    [HttpPost]
+    public async Task<IActionResult> Save([FromForm] FreelancerLanguage language)
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            var validate = new LanguageDtoValidation().Validate(language);
+            
+            if (!validate.IsValid)
+                return BadRequest(validate.Errors);
 
-            var result = await _languageService.Save(freelancerId, ToModel(language));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _languageService.Save(userId!, ToModel(language));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -66,6 +75,9 @@ public class FreelancerLanguageController : ControllerBase
     {
         try
         {
+            if (id < 0)
+                return BadRequest(error:"Id invalid");
+
             var result = await _languageService.Delete(id);
 
             if (!result.IsSuccess)

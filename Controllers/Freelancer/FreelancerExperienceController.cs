@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
+using MyCarearApi.Validations;
 
 namespace MyCarearApi.Controllers;
 
@@ -25,7 +27,9 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
-            var result = await _experienceService.GetAll();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = await _experienceService.GetAll(userId!);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });
@@ -39,15 +43,20 @@ public class FreelancerExperienceController : ControllerBase
         }
     }
 
-    [HttpPost("{freelancerId}")]
-    public async Task<IActionResult> Save(int freelancerId, [FromForm] FreelancerExperience experience)
+    [HttpPost]
+    public async Task<IActionResult> Save([FromForm] FreelancerExperience experience)
     {
         try
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            var validation = new ExperienceDtoValidation().Validate(experience);
 
-            var result = await _experienceService.Save(freelancerId, ToModel(experience));
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _experienceService.Save(userId!, ToModel(experience));
 
             if (!result.IsSuccess)
                 return NotFound(result);
@@ -66,15 +75,17 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
+            var validation = new ExperienceDtoValidation().Validate(experience);
 
-            if (!ModelState.IsValid)
-                return BadRequest();
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
 
             if (id < 0)
-                return BadRequest();
-            
+                return BadRequest(error: "id invalid");
+
             var result = await _experienceService.Update(id, ToModel(experience));
-            
+
             if (!result.IsSuccess)
                 return BadRequest(result);
 
@@ -92,6 +103,9 @@ public class FreelancerExperienceController : ControllerBase
     {
         try
         {
+            if (id < 0)
+                return BadRequest(error: "id invalid");
+
             var result = await _experienceService.Delete(id);
 
             if (!result.IsSuccess)
