@@ -33,39 +33,37 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         _messageService = messageService;
         _userManager = userManager;
         _connectionService = connectionService;
-        
     }
 
-    public async Task WriteMessage(Message message)
+    public async Task WriteMessage(Message message, List<string> filePaths)
     {
         message.FromId = Context.UserIdentifier;
-         var msg = _messageService.AddMessage(message);
-        var messageToClient = new
-        {
-            msg.Id,
-            msg.FromId,
-            msg.ToId,
-            msg.DateTime,
-            msg.Text,
-            msg.FileMessage,
-            msg.FileName,
-            msg.IsRead,
-            msg.ChatId,
-            Chat = new
-            {
-                msg.Chat.Id,
-                Member1 = await _userManager.FindByIdAsync(msg.Chat.Member1),
-                Member2 = await _userManager.FindByIdAsync(msg.Chat.Member2),
-                msg.Chat.DateTime,
-                Messages = new List<string>()
-            }
-        };
+        var msg = _messageService.AddMessage(message, filePaths);
+        var messageToClient = await MessageToReturn(msg);
+        
         var connectionIds = _connectionService.GetConnections(message.ToId);
         connectionIds.ForEach(async x =>
         {
             var proxy = Clients.Client(x);
             await proxy.RecieveMessage(messageToClient);
         });
+    }
+
+    public async Task DeleteMessage(int messageId)
+    {
+        var message = _messageService.GetMessage(messageId);
+        if (message is null || (message.FromId != Context.UserIdentifier && message.ToId != Context.UserIdentifier)) return;
+        _messageService.RemoveMessage(messageId);
+        await Clients.Users(message.FromId, message.ToId)
+            .MessageRemoved(new {MessageId = message.Id, message.ChatId, RemovedBy = Context.UserIdentifier});
+    }
+
+    public async Task ClearHistory(int chatId)
+    {
+        var chat = _messageService.GetChat(chatId);
+        if (chat is null || (chat.Member1 != Context.UserIdentifier && chat.Member2 != Context.UserIdentifier)) return;
+        _messageService.ClearHistory(chatId);
+        await Clients.Users(chat.Member1, chat.Member2).HistoryCleared(new {ChatId = chatId, ClearedBy = Context.UserIdentifier });
     }
 
     public async IAsyncEnumerable<Chat> GetChat(int id)
@@ -80,7 +78,7 @@ public class ChatHub:Hub<IChatHub>, IHubBase
 
     public async IAsyncEnumerable<byte> SearchUsers(string key, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var users = JsonSerializer.Serialize(_messageService.SearchUsers(key, Users));
+        var users = JsonSerializer.Serialize(_messageService.SearchUsers(key, Users, Context.UserIdentifier));
         foreach (var b in Encoding.UTF8.GetBytes(users))
         {
             yield return b;
@@ -98,10 +96,12 @@ public class ChatHub:Hub<IChatHub>, IHubBase
             message.ToId,
             message.DateTime,
             message.Text,
-            message.FileMessage,
-            message.FileName,
             message.IsRead,
             message.ChatId,
+            message.ChatFiles,
+            message.HasFile,
+            message.HasLink,
+            message.HasMedia,
             Chat = new
             {
                 message.Chat.Id,
@@ -119,6 +119,60 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         {
             yield return chat;
         }
+    }
+
+    public async Task RemoveFilesFromMessage(List<int> fileIds, int messageId)
+    {
+        await _messageService.RemoveFiles(fileIds);
+        var message = _messageService.GetMessage(messageId);
+        Clients.Users(message.FromId, message.ToId).MessageEdited(new
+        {
+            EditedBy = Context.UserIdentifier,
+            Message = await MessageToReturn(message)
+        });
+    }
+
+    public async Task AddFilesToMessage(List<string> paths, int messsageId)
+    {
+        var addedFiles = _messageService.SaveFiles(messsageId, paths);
+        var message = _messageService.GetMessage(messsageId);
+
+    }
+
+    private async Task<dynamic> MessageToReturn(Message message) => new
+    {
+        message.Id,
+        message.FromId,
+        message.ToId,
+        message.DateTime,
+        message.Text,
+        message.IsRead,
+        message.ChatId,
+        ChatFiles = message.ChatFiles.Select(x => new
+        {
+            x.Id,
+            x.Path,
+            x.MessageId,
+            x.MediType
+        }),
+        Chat = new
+        {
+            message.Chat.Id,
+            Member1 = await _userManager.FindByIdAsync(message.Chat.Member1),
+            Member2 = await _userManager.FindByIdAsync(message.Chat.Member2),
+            message.Chat.DateTime,
+            Messages = new List<string>()
+        }
+    };
+
+    public async Task UpdateMessageText(string text, int messageId)
+    {
+        var message = await _messageService.UpdateText(text, messageId);
+        Clients.Users(message.FromId, message.ToId).MessageEdited(new
+        {
+            EditedBy = Context.UserIdentifier,
+            Message = await MessageToReturn(message)
+        });
     }
 
     public override async Task OnConnectedAsync()
@@ -148,7 +202,6 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         
         base.OnConnectedAsync();
     }
-
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {

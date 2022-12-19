@@ -29,5 +29,6 @@ public interface IUnitOfWork : IDisposable
     ICurrencyRepository Currencies { get; }
     IMessageRepository Messages { get; }
     IChatRepository Chats { get; }
+    IChatFileRepository ChatFiles { get; }
     int Save();
 }
