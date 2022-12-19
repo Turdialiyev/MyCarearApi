@@ -94,6 +94,9 @@ builder.Services.AddAuthentication(opt =>
         };
     });
 
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+builder.Services.AddScoped<IProjectService, Projectservice>();    
+
 builder.Services.AddAuthorization(options =>
 {
 });

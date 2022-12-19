@@ -111,9 +111,6 @@ public partial class FreelancerController : ControllerBase
             if (!valid.IsValid)
                 return BadRequest(valid.Errors);
 
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
             var result = await _freelancerService.Address(userId!, ToModelAddress(address));
