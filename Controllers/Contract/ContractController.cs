@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
 using MyCarearApi.Models;
@@ -27,12 +28,15 @@ public partial class ContractController : ControllerBase
         
         return BadRequest("This properties can't be null");
 
-        var cereatedContract = await _contractService.CreateContract(ToModelContractDto(contract));
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+        var cereatedContract = await _contractService.CreateContract(ToModelContractDto(contract,userId));
 
         if(cereatedContract.Data is null)
         return BadRequest("This contact didn't created");
         
-        return Ok(ContractModelToDto(cereatedContract.Data));
+        return Ok(cereatedContract.Data);
     }
 
     [HttpGet("DagavorItems")]
@@ -44,9 +48,10 @@ public partial class ContractController : ControllerBase
     }
 
     [HttpPost("Save/Dagavor")]
-    public IActionResult Save(string html)
+    public async Task<IActionResult> Save(string html)
     {
-        
-        return Ok();
+        var imj = await _contractService.SaveContract(html);
+
+        return Ok(imj);
     }
 }
