@@ -24,8 +24,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
-    //  options.UseInMemoryDatabase("TestDb");
+    // options.UseSqlite("Data Source = Data.db;");
+     options.UseInMemoryDatabase("TestDb");
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -61,7 +61,7 @@ builder.Services.AddScoped<IFreelancerService, FreelancerService>();
 builder.Services.AddScoped<IEducationService, EducationService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
-
+builder.Services.AddTransient<IContractService, ContractService>();
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();

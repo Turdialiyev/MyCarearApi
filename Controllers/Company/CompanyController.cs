@@ -84,7 +84,6 @@ public partial class CompanyController : ControllerBase
       }
 
        
-       
        if(notEmptyLocationsId.Count() > 0)
        {
           _companyService.DeleteEmptyLocations(notEmptyLocationsId, location.CompnayId);

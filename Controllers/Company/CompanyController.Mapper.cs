@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MyCarearApi.Dtos;
 using MyCarearApi.Models;
+using MyCarearApi.Dtos;
 
 namespace MyCarearApi.Controllers;
 

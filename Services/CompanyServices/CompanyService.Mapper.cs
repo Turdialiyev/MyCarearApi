@@ -80,7 +80,6 @@ public partial class CompanyService
        CompnayId = location.CompanyId
     };
 
-
     private Entities.CompanyLocation ToEntityCompanyLocation(CompanyLocation location)
     => new()
     {

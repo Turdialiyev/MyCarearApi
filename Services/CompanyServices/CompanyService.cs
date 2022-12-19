@@ -43,7 +43,7 @@ public partial class CompanyService : ICompanyService
         }
         catch (System.Exception e)
         {
-            
+            _logger.LogInformation("Company didn't crated");
             throw new Exception(e.Message);
         }
     }
@@ -53,7 +53,11 @@ public partial class CompanyService : ICompanyService
     {
         try
         {
-            var filePath = UploadCompanyPhoto(file);
+            var filePath = "";
+            if(file is null) {  filePath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","DefaultCompany.png");}
+            
+            else  {filePath = UploadCompanyPhoto(file);}
+            
             if(company.Id != 0)
             {
               var existCopany = _unitOfWork.Companies.GetById(company.Id);
