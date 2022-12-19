@@ -5,6 +5,9 @@ namespace MyCarearApi.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
+    IFreelancerProjectRepository FreelancerProjects { get; set; }
+    IProjectImageRepository ProjectImages { get; set; }
+    IFreelancerPortfolioRepository FreelancerPortfolios { get; set; }
     ICountryRepository Countries { get; set; }
     IFreelancerContactRepository FreelancerContacts { get; set; }
     IEducationRepository Educations { get; set; }
@@ -30,5 +33,6 @@ public interface IUnitOfWork : IDisposable
     IMessageRepository Messages { get; }
     IChatRepository Chats { get; }
     IChatFileRepository ChatFiles { get; }
+    IOfferRepository Offers { get; }
     int Save();
 }
