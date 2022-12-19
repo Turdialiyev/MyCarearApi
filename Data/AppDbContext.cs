@@ -13,9 +13,9 @@ namespace MyCarearApi.Data;
 public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    // public DbSet<FreelancerPortfolio> FreelancerPartfolios { get; set; }
-    // public DbSet<FreelancerProject> FreelancerProjects { get; set; }
-    // public DbSet<ProjectImage> ProjectImages { get; set; }
+    public DbSet<FreelancerPortfolio> FreelancerPartfolios { get; set; }
+    public DbSet<FreelancerProject> FreelancerProjects { get; set; }
+    public DbSet<ProjectImage> ProjectImages { get; set; }
     public DbSet<Country> Countries { get; set; }
     public DbSet<Region> Regions { get; set; }
     public DbSet<FreelancerContact> Connections { get; set; }

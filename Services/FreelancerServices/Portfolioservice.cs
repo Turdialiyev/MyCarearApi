@@ -40,24 +40,55 @@ public class PortfolioService : IPortfolioService
             if (existUser is null)
                 return new(false) { ErrorMessage = "User Id not found" };
 
-            if (image is not null)
+            var existPortfolio = _unitOfWork.FreelancerPortfolios.GetAll().FirstOrDefault(x => x.AppUserId == userId);
+
+            if (existPortfolio is null)
+            {
+                if (image is not null)
+                {
+                    try
+                    {
+                        if (!_fileHelper.FileValidateImage(image))
+                            return new("File invalid recive only picture");
+
+                        imageName = await _fileHelper.WriteFileAsync(image, FileFolders.PortfolioImage);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+
+                existPortfolio = await _unitOfWork.FreelancerPortfolios.AddAsync(ToEntity(userId, imageName, portfolio));
+            }
+            else
             {
                 try
                 {
-                    if (!_fileHelper.FileValidateImage(image))
-                        return new("File invalid recive only picture");
+                    if (File.Exists(existPortfolio!.ImageName))
+                        _fileHelper.DeleteFileByName(existPortfolio.ImageName!);
 
-                    imageName = await _fileHelper.WriteFileAsync(image, FileFolders.PortfolioImage);
+                    if (!_fileHelper.FileValidateImage(image))
+                        return new("File is invalid recive only picture");
+
+                    if (image is not null)
+                        imageName = await _fileHelper.WriteFileAsync(image, FileFolders.PortfolioImage);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
+                existPortfolio!.FirstName = portfolio!.FirstName;
+                existPortfolio.LastName = portfolio.LastName;
+                existPortfolio.PositionId = portfolio.PositionId;
+                existPortfolio.Price = portfolio.Price;
+                existPortfolio.ImageName = imageName;
+
+                existPortfolio = await _unitOfWork.FreelancerPortfolios.Update(existPortfolio!);
+
             }
-            var result = await _unitOfWork.FreelancerPortfolios.AddAsync(ToEntity(userId, imageName, portfolio));
 
-
-            return new(true) { Data = ToModel(result) };
+            return new(true) { Data = ToModel(existPortfolio) };
 
         }
         catch (Exception e)
@@ -91,69 +122,19 @@ public class PortfolioService : IPortfolioService
 
     };
 
-    public async ValueTask<Result<FreelancerPortfolio>> UpdateAsync(int Id, IFormFile image, FreelancerPortfolio portfolio)
-    {
-
-        string? filePath = null;
-        try
-        {
-            if (Id <= 0)
-                return new(false) { ErrorMessage = "Id is invalid" };
-
-            var existPortfolio = _unitOfWork.FreelancerPortfolios.GetById(Id);
-
-            if (existPortfolio is not null)
-                return new(false) { ErrorMessage = "Portfolio is not found" };
-
-            if (portfolio is not null)
-                return new(false) { ErrorMessage = "portfolio Null exseption" };
-            try
-            {
-                if (File.Exists(existPortfolio!.ImageName))
-                    _fileHelper.DeleteFileByName(existPortfolio.ImageName!);
-
-                if (!_fileHelper.FileValidateImage(image))
-                    return new("File is invalid recive only picture");
-
-                if (image is not null)
-                    filePath = await _fileHelper.WriteFileAsync(image, FileFolders.PortfolioImage);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            existPortfolio!.FirstName = portfolio!.FirstName;
-            existPortfolio.LastName = portfolio.LastName;
-            existPortfolio.PositionId = portfolio.PositionId;
-            existPortfolio.Price = portfolio.Price;
-            existPortfolio.ImageName = filePath;
-
-            var result = await _unitOfWork.FreelancerPortfolios.Update(existPortfolio);
-
-            return new(true) { Data = ToModel(result) };
-        }
-        catch (Exception e)
-        {
-
-            _logger.LogError($"Error occured at {nameof(PortfolioService)}", e);
-
-            throw new("Couldn't Portfolio update. Plaese contact support", e);
-        }
-    }
-
-    public async ValueTask<Result<FreelancerPortfolio>> UpdateAsync(int Id, string available)
+    public async ValueTask<Result<FreelancerPortfolio>> UpdateAsync(string userId, string available)
     {
         try
         {
-            if (Id <= 0)
-                return new(false) { ErrorMessage = "Id is invalid" };
+            if (string.IsNullOrWhiteSpace(userId))
+                return new(false) { ErrorMessage = "User Id is invalid" };
 
-            if (!string.IsNullOrWhiteSpace(available))
+            if (string.IsNullOrWhiteSpace(available))
                 return new(false) { ErrorMessage = "Available is invalid" };
 
-            var existPortfolio = _unitOfWork.FreelancerPortfolios.GetById(Id);
+            var existPortfolio = _unitOfWork.FreelancerPortfolios.GetAll().FirstOrDefault(x => x.AppUserId == userId);
 
-            if (existPortfolio is not null)
+            if (existPortfolio is null)
                 return new(false) { ErrorMessage = "Portfolio is not found" };
 
             existPortfolio!.Available = available;
@@ -167,6 +148,24 @@ public class PortfolioService : IPortfolioService
             _logger.LogError($"Error occured at {nameof(PortfolioService)}", e);
 
             throw new("Couldn't update Portfolio Available. Plaese contact support", e);
+        }
+    }
+
+    public Result<FreelancerPortfolio> GetById(string userId)
+    {
+        try
+        {
+            var portfolio = _unitOfWork.FreelancerPortfolios.GetAll().FirstOrDefault(x => x.AppUserId == userId);
+
+            if (portfolio == null)
+                return new(false) { ErrorMessage = "portfolio is not found" };
+
+            return new(true) { Data = ToModel(portfolio) };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(FreelancerService)} .", e);
+            throw new("Couldn't get Portfolio GetAll Please contact support");
         }
     }
 }

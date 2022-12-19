@@ -16,6 +16,27 @@ public class PortfolioController : ControllerBase
         _portfolioService = portfolioService;
     }
 
+    [HttpGet]
+    public IActionResult Get()
+    {
+        try
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var result = _portfolioService.GetById(userId!);
+
+            if (!result.IsSuccess)
+                return NotFound(new { ErrorMessage = result.ErrorMessage });
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> Save([FromForm] FreelancerPortfolio portfolio)
     {
@@ -37,31 +58,14 @@ public class PortfolioController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm] FreelancerPortfolio portfolio)
+    [HttpPut("Available")]
+    public async Task<IActionResult> Update(string available)
     {
         try
         {
-            var result = await _portfolioService.UpdateAsync(id, portfolio.Image!, ToModel(portfolio));
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            if (!result.IsSuccess)
-                return NotFound(result);
-
-            return Ok(result);
-
-        }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
-        }
-    }
-
-    [HttpPut("Available/{id}")]
-    public async Task<IActionResult> Update(int id, string available)
-    {
-        try
-        {
-            var result = await _portfolioService.UpdateAsync(id, available);
+            var result = await _portfolioService.UpdateAsync(userId, available);
 
             if (!result.IsSuccess)
                 return NotFound(result);
