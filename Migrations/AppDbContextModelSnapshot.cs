@@ -596,6 +596,80 @@ namespace MyCarearApi.Migrations
                     b.ToTable("FreelancerInformations");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerPortfolio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Available")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PositionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PositionId");
+
+                    b.ToTable("FreelancerPartfolios");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerProject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Project")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProjectImageId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ProjectImageId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tools")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectImageId1");
+
+                    b.ToTable("FreelancerProjects");
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerSkill", b =>
                 {
                     b.Property<int>("Id")
@@ -792,6 +866,40 @@ namespace MyCarearApi.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.Offer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Deadline")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DeadlineRate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Downpayment")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("Offers");
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.Position", b =>
                 {
                     b.Property<int>("Id")
@@ -804,6 +912,23 @@ namespace MyCarearApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Positions");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.ProjectImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("FreelancerProjectId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectImages");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.Region", b =>
@@ -1133,6 +1258,26 @@ namespace MyCarearApi.Migrations
                     b.Navigation("Position");
                 });
 
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerPortfolio", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.Position", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Position");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerProject", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.ProjectImage", "ProjectImage")
+                        .WithMany()
+                        .HasForeignKey("ProjectImageId1");
+
+                    b.Navigation("ProjectImage");
+                });
+
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerSkill", b =>
                 {
                     b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
@@ -1218,6 +1363,25 @@ namespace MyCarearApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.Offer", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyCarearApi.Entities.Job", "Job")
+                        .WithMany()
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Job");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.Region", b =>
