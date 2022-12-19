@@ -71,9 +71,10 @@ public partial class ContractService : IContractService
           return new("Freelancer is not found");
           
           var job = _unitOfWork.Jobs.GetById(contract.JobId);
-          
-          var position = _unitOfWork.Positions.GetById(job.PositionsId!.Value);
+          var offer = _unitOfWork.Offers.GetAll().FirstOrDefault(x => x.AppUserId == contract.AppUserId);
+          var position = _unitOfWork.Positions.GetById(job!.PositionsId!.Value);
           var currency = _unitOfWork.Currencies.GetById(2);
+
 
           var dagavor = new Dogovor();
           dagavor.ContractDate = contract.DealingDate;
@@ -83,18 +84,17 @@ public partial class ContractService : IContractService
           dagavor.Position = position!.Name;
           dagavor.JobDescription = job.Description;
           dagavor.FreelancerName = freelancer.LastName!.ToString();
-          dagavor.Summa =  "443354565673"+" ( "+ CalculateSumma.Calculate(443354565673)+ ")"+$"  {currency.Name}  {currency.Code}";
+          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate((int)job.Price!) + ")"+$"  {currency.Name}  {currency.Code}";
           dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now.AddDays(job.DeadLine!.Value));
-
-        // dagavor.AdvancePayment = 
-        // dagavor.LastPayment = 
+          dagavor.AdvancePayment = offer.Downpayment;
+          dagavor.LastPayment = 100 - offer.Downpayment;
          
          return new(true) { Data = dagavor};
        }
-       catch (System.Exception)
+       catch (System.Exception e)
        {
         
-        throw;
+        throw new Exception(e.Message);
        }
     }
 
@@ -109,8 +109,7 @@ public partial class ContractService : IContractService
 
         var bytes = converter.FromUrl(fileUrl);
         File.WriteAllBytes(path, bytes);
-        // HtmlToPdf();
-        
+    
         return new(true) {Data = path};
     }
 
