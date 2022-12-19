@@ -1,0 +1,14 @@
+namespace MyCarearApi.Entities;
+
+public class FreelancerProject
+{
+    public string? Project { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public string? Tools { get; set; }
+    public string? Link { get; set; }
+    public int? ProjectImageId { get; set; }
+    public ProjectImage? ProjectImage { get; set; }
+    public string? AppUserId { get; set; }
+    public DateOnly CreatedAt { get; set; }
+}
