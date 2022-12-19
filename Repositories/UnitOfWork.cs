@@ -10,6 +10,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
+        ProjectImages = new ProjectImageRepository(context);
+        FreelancerPortfolios = new FreelancerPortfolioRepository(context);
+        FreelancerProjects = new FreelancerProjectRepository(context);
         Countries = new CountryRepository(context);
         FreelancerContacts = new FreelancerContactRepository(context);
         Educations = new EducationRepository(context);
@@ -71,6 +74,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public ICountryRepository Countries { get; set; }
 
     public IChatRepository Chats { get; }
+    public IFreelancerProjectRepository FreelancerProjects { get; set; }
+    public IProjectImageRepository ProjectImages { get; set; }
+    public IFreelancerPortfolioRepository FreelancerPortfolios { get; set; }
 
     public void Dispose()
     {

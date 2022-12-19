@@ -1,6 +1,6 @@
 namespace MyCarearApi.Entities;
 
-public class FreelancerPartfolio 
+public class FreelancerPortfolio 
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
