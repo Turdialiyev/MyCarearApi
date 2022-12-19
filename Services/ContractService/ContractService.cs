@@ -72,17 +72,20 @@ public partial class ContractService : IContractService
           
           var job = _unitOfWork.Jobs.GetById(contract.JobId);
           
-          var position = _unitOfWork.Jobs.GetById(job.PositionsId.Value);
+          var position = _unitOfWork.Positions.GetById(job.PositionsId!.Value);
+          var currency = _unitOfWork.Currencies.GetById(2);
 
           var dagavor = new Dogovor();
           dagavor.ContractDate = contract.DealingDate;
           dagavor.FreelancerName = freelancer.FirstName + " " + freelancer.LastName;
           dagavor.PassportSeria = contract.PasportSeriyaNumber;
           dagavor.JobTitle = job.Name;
-          dagavor.Position = position.Name;
+          dagavor.Position = position!.Name;
           dagavor.JobDescription = job.Description;
-          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate(job.Price.Value)+" )";
-          dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now);
+          dagavor.FreelancerName = freelancer.LastName!.ToString();
+          dagavor.Summa =  "443354565673"+" ( "+ CalculateSumma.Calculate(443354565673)+ ")"+$"  {currency.Name}  {currency.Code}";
+          dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now.AddDays(job.DeadLine!.Value));
+
         // dagavor.AdvancePayment = 
         // dagavor.LastPayment = 
          
@@ -95,7 +98,10 @@ public partial class ContractService : IContractService
        }
     }
 
-    
+    // https://www.signwell.com/online-signature/ -- bu elektron imzo uchin tekin sayt
+    // https://smallpdf.com/sign-pdf -- buham
+    // https://www.digisigner.com/free-electronic-signature/sign-document-online --bu eng zori
+
     public async  ValueTask<Result<string>> SaveContract(string fileUrl)
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",Guid.NewGuid().ToString().Substring(27)+".jpg");

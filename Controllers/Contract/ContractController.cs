@@ -29,6 +29,7 @@ public partial class ContractController : ControllerBase
         return BadRequest("This properties can't be null");
 
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        System.Console.WriteLine("===============> "+ userId);
 
 
         var cereatedContract = await _contractService.CreateContract(ToModelContractDto(contract,userId));
