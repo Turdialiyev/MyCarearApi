@@ -93,8 +93,14 @@ builder.Services.AddAuthentication(opt =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
         };
     });
+
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IProjectService, Projectservice>();    
+
+builder.Services.AddAuthorization(options =>
+{
+});
+
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -103,8 +109,8 @@ builder.Services.AddScoped<IFreelancerService, FreelancerService>();
 builder.Services.AddScoped<IEducationService, EducationService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddTransient<IContractService, ContractService>();
 builder.Services.AddScoped<IGetInformationService, GetInformationService>();
-
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();

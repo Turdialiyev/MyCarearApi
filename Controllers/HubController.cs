@@ -16,21 +16,32 @@ namespace MyCarearApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult LocateFile(IFormFile file)
+        public IActionResult LocateFile(IFormFileCollection files)
         {
-            var fileName = _messageService.LocateFile(file);
-            if(io.File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName))) 
+            var filePaths = new List<string>();
+            var result = true;
+            foreach (var file in files)
+            {
+                var filePath = _messageService.LocateFile(file);
+                filePaths.Add(filePath);
+                
+            }
+
+            var successfulFilePaths = filePaths.Where(fileName =>
+                            io.File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName)));
+            
+            if(successfulFilePaths.Any()) 
             {
                 return Ok(new
                 {
                     Succeded = true,
-                    FileName = fileName
+                    Files = successfulFilePaths
                 });
             }
             return BadRequest(new
             {
                 Succeded = false,
-                FileName = string.Empty
+                Files = successfulFilePaths
             });
         }
     }

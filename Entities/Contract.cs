@@ -17,7 +17,7 @@ public class Contract
     public string BankINN { get; set; }
     public string MFO { get; set; }
     public ContractState State { get; set; }
-    public DateOnly DealingDate { get; set; }
+    public DateOnly? DealingDate { get; set; }
 
     public int JobId { get; set; }
     public Job Job { get; set; }

@@ -37,6 +37,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         Currencies = new CurrencyRepository(context);
         Messages = new MessageRepository(context);
         Chats = new ChatRepository(context);
+        ChatFiles = new ChatFileRepository(context);
     }
 
     public ICompanyRepository Companies { get; }
@@ -77,6 +78,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public IFreelancerProjectRepository FreelancerProjects { get; set; }
     public IProjectImageRepository ProjectImages { get; set; }
     public IFreelancerPortfolioRepository FreelancerPortfolios { get; set; }
+
+    public IChatFileRepository ChatFiles { get; }
 
     public void Dispose()
     {
