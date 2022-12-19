@@ -11,13 +11,17 @@
 
         public string Text { get; set; }
 
-        public bool FileMessage { get; set; }
-
-        public string? FileName { get; set; }
-
         public bool IsRead { get; set; }
+
+        public bool HasLink { get; set; }
+
+        public bool HasMedia { get; set; }
+
+        public bool HasFile { get; set; }
 
         public int ChatId { get; set; }
         public Chat Chat { get; set; }
+
+        public List<ChatFile> ChatFiles { get; set; }
     }
 }

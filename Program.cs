@@ -93,6 +93,11 @@ builder.Services.AddAuthentication(opt =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+});
+
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
