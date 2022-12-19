@@ -72,16 +72,16 @@ public partial class ContractService : IContractService
           
           var job = _unitOfWork.Jobs.GetById(contract.JobId);
           
-          var position = _unitOfWork.Jobs.GetById(job.PositionsId);
+          var position = _unitOfWork.Jobs.GetById(job.PositionsId.Value);
 
           var dagavor = new Dogovor();
-          dagavor.ContractDate = DateOnly.MaxValue;
+          dagavor.ContractDate = contract.DealingDate;
           dagavor.FreelancerName = freelancer.FirstName + " " + freelancer.LastName;
           dagavor.PassportSeria = contract.PasportSeriyaNumber;
           dagavor.JobTitle = job.Name;
           dagavor.Position = position.Name;
           dagavor.JobDescription = job.Description;
-          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate(job.Price)+" )";
+          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate(job.Price.Value)+" )";
           dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now);
         // dagavor.AdvancePayment = 
         // dagavor.LastPayment = 
@@ -96,25 +96,43 @@ public partial class ContractService : IContractService
     }
 
     
-
-    // public DateOnly ContractDate {get; set;}
-    // public string? FreelancerName { get; set; }
-    // public string? PassportSeria { get; set; }
-    // public string? JobTitle { get; set; }
-    // public string? Position { get; set; }
-    // public string? JobDescription { get; set; }
-    // public string? Summa { get; set; }
-    // public DateOnly Diedline { get; set; }
-    // public Decimal AdvancePayment { get; set; }
-    // public Decimal LastPayment {get; set;}
     public async  ValueTask<Result<string>> SaveContract(string fileUrl)
     {
-        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",Guid.NewGuid().ToString().Substring(27)+"jpg");
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",Guid.NewGuid().ToString().Substring(27)+".jpg");
         var converter = new HtmlConverter();
 
         var bytes = converter.FromUrl(fileUrl);
         File.WriteAllBytes(path, bytes);
+        // HtmlToPdf();
         
         return new(true) {Data = path};
     }
-}
+
+    // private void HtmlToPdf()
+    // {
+    //      SautinSoft.PdfMetamorphosis p = new SautinSoft.PdfMetamorphosis();
+
+    //         p.PageSettings.Size.A4();
+    //         p.PageSettings.Orientation = SautinSoft.PdfMetamorphosis.PageSetting.Orientations.Landscape;
+    //         p.PageSettings.Numbering.Text = "Page {page} of {numpages}";
+
+    //         if (p != null)
+    //         {
+    //             string inputFile = @"sample2.html";
+    //             string outputFile = @"test.pdf";
+
+    //             int result = p.HtmlToPdfConvertFile(inputFile, outputFile);
+
+
+    //             if (result == 0)
+    //             {
+    //                 System.Console.WriteLine("Converted successfully!");
+    //                 System.Diagnostics.Process.Start(outputFile);
+    //             }
+    //             else
+    //             {
+    //                 System.Console.WriteLine("Converting Error!");
+    //             }
+    // }}
+    
+    }

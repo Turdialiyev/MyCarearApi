@@ -14,7 +14,7 @@ public class CreateContractDto
     public string BankINN { get; set; }
     public string MFO { get; set; }
     public ContractState State { get; set; }
-    public DateOnly? DealingDate { get; set; }
+    public DateTime DealingDate { get; set; } = DateTime.Parse(DateTime.Now.ToLongDateString());
     public int JobId { get; set; }
-    public string AppUserId { get; set; }
+    // public string AppUserId { get; set; }
 }

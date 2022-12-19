@@ -5,7 +5,8 @@ namespace MyCarearApi.Controllers;
 
 public partial class ContractController
 {
-    private ReturnCreatedContract ContractModelToDto(Contract contract)
+  
+    private Contract ToModelContractDto(CreateContractDto contract, string userId)
     => new()
     {
      Id = contract.Id,
@@ -18,27 +19,9 @@ public partial class ContractController
      INPS = contract.INPS,
      MFO = contract.MFO,
      State = contract.State,
-     DealingDate = contract.DealingDate,
+     DealingDate = DateOnly.FromDateTime(contract.DealingDate!),
      JobId = contract.JobId,
-     AppUserId = contract.AppUserId
-    };
-
-    private Contract ToModelContractDto(CreateContractDto contract)
-    => new()
-    {
-     Id = contract.Id,
-     PasportSeriyaNumber = contract.PasportSeriyaNumber,
-     INN = contract.INN,
-     BankName = contract.BankName,
-     BankINN = contract.BankINN,
-     TranzitAccount = contract.TranzitAccount,
-     CardNumber = contract.CardNumber,
-     INPS = contract.INPS,
-     MFO = contract.MFO,
-     State = contract.State,
-     DealingDate = contract.DealingDate,
-     JobId = contract.JobId,
-     AppUserId = contract.AppUserId
+     AppUserId = userId
     };
     
 }
