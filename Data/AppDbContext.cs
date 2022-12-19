@@ -13,7 +13,7 @@ namespace MyCarearApi.Data;
 public class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    public DbSet<FreelancerPartfolio> FreelancerPartfolios { get; set; }
+    public DbSet<FreelancerPortfolio> FreelancerPartfolios { get; set; }
     public DbSet<FreelancerProject> FreelancerProjects { get; set; }
     public DbSet<ProjectImage> ProjectImages { get; set; }
     public DbSet<Country> Countries { get; set; }

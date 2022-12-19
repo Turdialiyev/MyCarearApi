@@ -1,4 +1,4 @@
-namespace MyCarearApi.Entities;
+namespace MyCarearApi.Models;
 
 public class FreelancerProject
 {
@@ -9,7 +9,6 @@ public class FreelancerProject
     public string? Tools { get; set; }
     public string? Link { get; set; }
     public int? ProjectImageId { get; set; }
-    public ProjectImage? ProjectImage { get; set; }
-    public string? AppUserId { get; set; }
+    public IEnumerable<ProjectImage>? ProjectImage { get; set; }
     public DateOnly CreatedAt { get; set; }
 }
