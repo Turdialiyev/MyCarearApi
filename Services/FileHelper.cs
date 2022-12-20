@@ -20,7 +20,7 @@ public class FileHelper : IFileHelper
     {
         var defineFileExtension = DefineFileExtension(file);
 
-        if ((defineFileExtension.ToLower() == "txt" || defineFileExtension.ToLower() == "docs"))
+        if (file.Length > 0)
             return true;
 
         return false;
@@ -36,19 +36,21 @@ public class FileHelper : IFileHelper
         using var fileStream = new FileStream(filePath, FileMode.Create, System.IO.FileAccess.Write);
         await file.CopyToAsync(fileStream);
 
-        return filePath;
+        return filename;
     }
     // saqlangan file tipini bo'lsa o'chirib tashlaydi bo'lmasa false qaytaradi
-    public bool DeleteFileByName(string filePath)
+    public bool DeleteFileByName(string filePath, string fileName)
     {
-        if (File.Exists(filePath))
+        string? path = filePath + @"\" + fileName;
+
+        if (File.Exists(path))
         {
             // If file found, delete it    
-            File.Delete(filePath);
+            File.Delete(path);
 
             return true;
         }
-        if (!File.Exists(filePath))
+        if (!File.Exists(path))
             return true;
 
         return false;
