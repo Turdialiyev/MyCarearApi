@@ -90,17 +90,17 @@ builder.Services.AddAuthentication(opt =>
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]!))
         };
     });
 
-builder.Services.AddScoped<IPortfolioService, PortfolioService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddAuthorization(options =>
 {
 });
 
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();

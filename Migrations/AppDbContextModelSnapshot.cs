@@ -651,12 +651,6 @@ namespace MyCarearApi.Migrations
                     b.Property<string>("Project")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProjectImageId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ProjectImageId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");
 
@@ -664,8 +658,6 @@ namespace MyCarearApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectImageId1");
 
                     b.ToTable("FreelancerProjects");
                 });
@@ -893,6 +885,8 @@ namespace MyCarearApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FreelancerProjectId");
 
                     b.ToTable("ProjectImages");
                 });
@@ -1235,15 +1229,6 @@ namespace MyCarearApi.Migrations
                     b.Navigation("Position");
                 });
 
-            modelBuilder.Entity("MyCarearApi.Entities.FreelancerProject", b =>
-                {
-                    b.HasOne("MyCarearApi.Entities.ProjectImage", "ProjectImage")
-                        .WithMany()
-                        .HasForeignKey("ProjectImageId1");
-
-                    b.Navigation("ProjectImage");
-                });
-
             modelBuilder.Entity("MyCarearApi.Entities.FreelancerSkill", b =>
                 {
                     b.HasOne("MyCarearApi.Entities.FreelancerInformation", "FreelancerInformation")
@@ -1329,6 +1314,13 @@ namespace MyCarearApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.ProjectImage", b =>
+                {
+                    b.HasOne("MyCarearApi.Entities.FreelancerProject", null)
+                        .WithMany("ProjectImages")
+                        .HasForeignKey("FreelancerProjectId");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.Region", b =>
@@ -1427,6 +1419,11 @@ namespace MyCarearApi.Migrations
                     b.Navigation("Hobbies");
 
                     b.Navigation("UserLanguages");
+                });
+
+            modelBuilder.Entity("MyCarearApi.Entities.FreelancerProject", b =>
+                {
+                    b.Navigation("ProjectImages");
                 });
 
             modelBuilder.Entity("MyCarearApi.Entities.Job", b =>

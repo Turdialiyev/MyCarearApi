@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 
@@ -8,13 +9,13 @@ public class ProjectService : IProjectService
 {
     private readonly ILogger<ProjectService> _logger;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<AppUser> _userManager;
+    private readonly UserManager<Entities.AppUser> _userManager;
     private readonly IFileHelper _fileHelper;
 
     public ProjectService(
         ILogger<ProjectService> logger,
         IUnitOfWork unitOfWork,
-        UserManager<AppUser> userManager,
+        UserManager<Entities.AppUser> userManager,
         IFileHelper fileHelper)
     {
         _logger = logger;
@@ -65,12 +66,11 @@ public class ProjectService : IProjectService
         string? file = null;
         string? image = null;
         var id = 0;
-        var result = new FreelancerProject();
         var fileFolder = FileFolders.Project;
         var projectImageFolder = FileFolders.ProjectImages;
 
-        try
-        {
+        // try
+        // {
             var existUser = await _userManager.FindByIdAsync(userId);
 
             if (existUser is null)
@@ -95,7 +95,7 @@ public class ProjectService : IProjectService
             }
 
             var createdProject = await _unitOfWork.FreelancerProjects.AddAsync(ToEntity(userId, file, project));
-            
+
             if (createdProject is null)
                 return new(false) { ErrorMessage = "project is not created " };
 
@@ -124,23 +124,30 @@ public class ProjectService : IProjectService
                     image = null;
                 }
             }
+            var result =  _unitOfWork.FreelancerProjects.GetAll().Include(x => x.ProjectImages).FirstOrDefault(x => x.Id == id);
 
-            return new(true) { Data = ToModel(createdProject)};
-        }
-        catch (Exception e)
-        {
-            _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
-            throw new("Couldn't get project GetbyId Please contact support");
-        }
+            return new(true) { Data = ToModel(result!)};
+        // }
+        // catch (Exception e)
+        // {
+        //     _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
+        //     throw new("Couldn't get project create Please contact support");
+        // }
     }
 
     private FreelancerProject ToModel(Entities.FreelancerProject createdProject) => new()
     {
+        Id = createdProject.Id,
         Description = createdProject.Description,
         Title = createdProject.Title,
         Tools = createdProject.Tools,
         Link = createdProject.Link,
         Project = createdProject.Project,
+        ProjectImage = createdProject.ProjectImages!.Select(x => new ProjectImage()
+        {
+            Id = x.Id,
+            Name = x.Name
+        })
     };
 
     private Entities.ProjectImage ToEntityImage(int id, string? image) => new()
