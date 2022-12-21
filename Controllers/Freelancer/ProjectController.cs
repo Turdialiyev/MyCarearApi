@@ -23,11 +23,15 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Save([FromForm] FreelancerProject project)
     {
+        var a = project.ProjectImages == null ? 0 : project.ProjectImages.Count();
+        _logger.LogInformation($"=================>");
+
+        _logger.LogInformation($"=================> {a}");
         try
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            var result = await _projectService.SaveAsync(userId!, project.Project!, project.ProjectImages!, ToModel(project));
+            var result = await _projectService.SaveAsync(userId!, project.Project!, project.ProjectImages, ToModel(project));
 
             if (!result.IsSuccess)
                 return NotFound(result);

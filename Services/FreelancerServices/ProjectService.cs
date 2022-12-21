@@ -61,16 +61,17 @@ public class ProjectService : IProjectService
     }
 
 
-    public async ValueTask<Result<FreelancerProject>> SaveAsync(string userId, IFormFile projectFile, List<IFormFile> projectFiles, FreelancerProject project)
+    public async ValueTask<Result<FreelancerProject>> SaveAsync(string userId, IFormFile projectFile, IFormFileCollection projectFiles, FreelancerProject project)
     {
+        var check = projectFiles == null ? 0 : projectFiles.Count();
         string? file = null;
         string? image = null;
         var id = 0;
         var fileFolder = FileFolders.Project;
         var projectImageFolder = FileFolders.ProjectImages;
 
-        // try
-        // {
+        try
+        {
             var existUser = await _userManager.FindByIdAsync(userId);
 
             if (existUser is null)
@@ -81,6 +82,7 @@ public class ProjectService : IProjectService
 
             if (projectFile is not null)
             {
+                _logger.LogInformation("=------------------------------");
                 try
                 {
                     if (!_fileHelper.FileValidate(projectFile))
@@ -101,11 +103,11 @@ public class ProjectService : IProjectService
 
             id = createdProject.Id;
 
-            if (projectFiles.Any())
+            if (check > 0)
             {
-                for (int i = 0; i < projectFiles.Count(); i++)
+                for (int i = 0; i < projectFiles!.Count(); i++)
                 {
-                    if (projectFiles[i] is not null)
+                    if (projectFiles[i]! is not null)
                     {
                         try
                         {
@@ -124,16 +126,22 @@ public class ProjectService : IProjectService
                     image = null;
                 }
             }
-            var result =  _unitOfWork.FreelancerProjects.GetAll().Include(x => x.ProjectImages).FirstOrDefault(x => x.Id == id);
 
-            return new(true) { Data = ToModel(result!)};
-        // }
-        // catch (Exception e)
-        // {
-        //     _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
-        //     throw new("Couldn't get project create Please contact support");
-        // }
+            var result =  _unitOfWork.FreelancerProjects.GetAll().Include(x=> x.ProjectImages).FirstOrDefault(x => x.Id == id);
+
+            return new(true) { Data = ToModel(createdProject!) };
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
+            throw new("Couldn't get project create Please contact support");
+        }
     }
+
+    // private FreelancerProject ToModel(object value)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     private FreelancerProject ToModel(Entities.FreelancerProject createdProject) => new()
     {
@@ -143,11 +151,11 @@ public class ProjectService : IProjectService
         Tools = createdProject.Tools,
         Link = createdProject.Link,
         Project = createdProject.Project,
-        ProjectImage = createdProject.ProjectImages!.Select(x => new ProjectImage()
-        {
-            Id = x.Id,
-            Name = x.Name
-        })
+        // ProjectImage = createdProject.ProjectImages!.Select(x => new ProjectImage()
+        // {
+        //     Id = x.Id,
+        //     Name = x.Name
+        // })
     };
 
     private Entities.ProjectImage ToEntityImage(int id, string? image) => new()
