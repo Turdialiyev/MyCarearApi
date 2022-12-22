@@ -17,7 +17,9 @@ public class Offer
     /// Freelancer
     /// </summary>
     public AppUser AppUser { get; set; }
-
+    /// <summary>
+    /// Percent
+    /// </summary>
     public int Downpayment { get; set; } = 0;
 
     public int Deadline { get; set; }
