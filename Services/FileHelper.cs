@@ -30,7 +30,7 @@ public class FileHelper : IFileHelper
     public async Task<string> WriteFileAsync(IFormFile file, string folder)
     {
         var fileExtension = DefineFileExtension(file);
-        var filename = DateTime.Now.ToString("yyyy'-'MM'-'dd'-'hh'-'mm'-'ss") + "." + fileExtension;
+        var filename = Guid.NewGuid().ToString() + "." + fileExtension;
         var filePath = Folder(folder) + @"\" + filename;
 
         using var fileStream = new FileStream(filePath, FileMode.Create, System.IO.FileAccess.Write);

@@ -1,3 +1,4 @@
+# pragma warning disable
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Models;
@@ -42,12 +43,32 @@ public class ProjectService : IProjectService
     }
     public async ValueTask<Result<FreelancerProject>> DeleteAsync(int id)
     {
+        var projectPath = _fileHelper.Folder(FileFolders.Project);
+        var imagePath = _fileHelper.Folder(FileFolders.ProjectImages);
         try
         {
             var existProject = _unitOfWork.FreelancerProjects.GetById(id);
 
             if (existProject == null)
                 return new(false) { ErrorMessage = "project id is not found" };
+
+            var existProjectImages = _unitOfWork.ProjectImages.GetAll().Where(x => x.FreelancerProjectId == existProject.Id);
+            
+            if (existProjectImages.Any())
+            {
+                foreach (var item in existProjectImages)
+                {
+                    if (File.Exists(imagePath + @"\" + item.Name))
+                    {
+                        _fileHelper.DeleteFileByName(imagePath, item.Name!);
+                    }
+
+                    await _unitOfWork.ProjectImages.Remove(item);
+                }
+            }
+            
+            if (File.Exists(projectPath + @"\" + existProject.Project))
+                _fileHelper.DeleteFileByName(projectPath, existProject.Project!);
 
             existProject = await _unitOfWork.FreelancerProjects.Remove(existProject);
 
