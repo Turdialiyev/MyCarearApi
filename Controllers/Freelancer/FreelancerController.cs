@@ -1,3 +1,4 @@
+# pragma warning disable
 using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;

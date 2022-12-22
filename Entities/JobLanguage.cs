@@ -1,4 +1,5 @@
-﻿namespace MyCarearApi.Entities
+﻿# pragma warning disable
+namespace MyCarearApi.Entities
 {
     public class JobLanguage
     {

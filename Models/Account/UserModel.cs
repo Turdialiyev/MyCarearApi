@@ -1,4 +1,5 @@
-﻿namespace MyCarearApi.Models.Account;
+﻿# pragma warning disable
+namespace MyCarearApi.Models.Account;
 
 public class UserModel
 {

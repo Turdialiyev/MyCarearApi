@@ -1,3 +1,4 @@
+# pragma warning disable
 using MyCarearApi.Entities.Enums;
 
 namespace MyCarearApi.Entities;

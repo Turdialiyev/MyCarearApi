@@ -1,3 +1,4 @@
+# pragma warning disable
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 using MyCareerApi.Entities;
@@ -32,6 +33,7 @@ public partial class FreelancerService : IFreelancerService
     {
 
         string? filePath = null;
+        var fileFolder = FileFolders.UserImage;
         try
         {
 
@@ -69,7 +71,7 @@ public partial class FreelancerService : IFreelancerService
             else
             {
                 if (File.Exists(freelancerInformation.FreelancerImage))
-                    _fileHelper.DeleteFileByName(freelancerInformation.FreelancerImage!);
+                    _fileHelper.DeleteFileByName(fileFolder, freelancerInformation.FreelancerImage!);
 
                 try
                 {

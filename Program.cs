@@ -63,13 +63,14 @@ builder.Services.AddAuthentication(opt =>
     googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
 });
 
-builder.Services.AddScoped<IPortfolioService, PortfolioService>();
-builder.Services.AddScoped<IProjectService, Projectservice>();    
+
 
 builder.Services.AddAuthorization(options =>
 {
 });
 
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -100,8 +101,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 }
 
 app.UseStaticFiles(new StaticFileOptions

@@ -1,3 +1,4 @@
+# pragma warning disable
 using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Entities;
 using MyCarearApi.Models;

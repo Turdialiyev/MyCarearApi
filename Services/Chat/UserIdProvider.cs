@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿# pragma warning disable
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace MyCarearApi.Services.Chat;

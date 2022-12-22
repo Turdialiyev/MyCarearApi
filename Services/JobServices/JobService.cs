@@ -1,4 +1,5 @@
-﻿using MyCarearApi.Entities.Enums;
+﻿# pragma warning disable
+using MyCarearApi.Entities.Enums;
 using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
 using MyCarearApi.Services.JobServices.Interfaces;
