@@ -40,7 +40,7 @@ public class ProjectService : IProjectService
             throw new("Couldn't get project GetbyId Please contact support");
         }
     }
-    public async ValueTask<Result<FreelancerProject>> DeleteAsync(int id, IFormFile projectFile, List<IFormFile> projectFiles, FreelancerProject project)
+    public async ValueTask<Result<FreelancerProject>> DeleteAsync(int id)
     {
         try
         {
@@ -56,7 +56,7 @@ public class ProjectService : IProjectService
         catch (Exception e)
         {
             _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
-            throw new("Couldn't get project GetbyId Please contact support");
+            throw new("Couldn't project delete Please contact support");
         }
     }
 
@@ -82,7 +82,6 @@ public class ProjectService : IProjectService
 
             if (projectFile is not null)
             {
-                _logger.LogInformation("=------------------------------");
                 try
                 {
                     if (!_fileHelper.FileValidate(projectFile))
@@ -127,7 +126,7 @@ public class ProjectService : IProjectService
                 }
             }
 
-            var result =  _unitOfWork.FreelancerProjects.GetAll().Include(x=> x.ProjectImages).FirstOrDefault(x => x.Id == id);
+            var result = _unitOfWork.FreelancerProjects.GetAll().Include(x => x.ProjectImages).FirstOrDefault(x => x.Id == id);
 
             return new(true) { Data = ToModel(createdProject!) };
         }
@@ -137,12 +136,6 @@ public class ProjectService : IProjectService
             throw new("Couldn't get project create Please contact support");
         }
     }
-
-    // private FreelancerProject ToModel(object value)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
     private FreelancerProject ToModel(Entities.FreelancerProject createdProject) => new()
     {
         Id = createdProject.Id,
@@ -151,11 +144,11 @@ public class ProjectService : IProjectService
         Tools = createdProject.Tools,
         Link = createdProject.Link,
         Project = createdProject.Project,
-        // ProjectImage = createdProject.ProjectImages!.Select(x => new ProjectImage()
-        // {
-        //     Id = x.Id,
-        //     Name = x.Name
-        // })
+        ProjectImages = createdProject.ProjectImages!.Select(x => new ProjectImage()
+        {
+            Id = x.Id,
+            Name = x.Name
+        })
     };
 
     private Entities.ProjectImage ToEntityImage(int id, string? image) => new()
