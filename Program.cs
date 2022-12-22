@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
+using MyCarearApi.Services.Chat.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
