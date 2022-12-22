@@ -53,7 +53,7 @@ public class ProjectService : IProjectService
                 return new(false) { ErrorMessage = "project id is not found" };
 
             var existProjectImages = _unitOfWork.ProjectImages.GetAll().Where(x => x.FreelancerProjectId == existProject.Id);
-            
+
             if (existProjectImages.Any())
             {
                 foreach (var item in existProjectImages)
@@ -66,7 +66,7 @@ public class ProjectService : IProjectService
                     await _unitOfWork.ProjectImages.Remove(item);
                 }
             }
-            
+
             if (File.Exists(projectPath + @"\" + existProject.Project))
                 _fileHelper.DeleteFileByName(projectPath, existProject.Project!);
 
@@ -157,6 +157,102 @@ public class ProjectService : IProjectService
             throw new("Couldn't get project create Please contact support");
         }
     }
+
+    public async ValueTask<Result<FreelancerProject>> UpdateAsync(int id, IFormFile projectFile, List<IFormFile> projectFiles, FreelancerProject project, int[] deleteId)
+    {
+
+        var check = projectFiles == null ? 0 : projectFiles.Count();
+        var delete = deleteId == null ? 0 : deleteId.Count();
+        string? file = null;
+        string? image = null;
+        var fileFolder = FileFolders.Project;
+        var projectImageFolder = FileFolders.ProjectImages;
+
+        try
+        {
+            if (id <= 0)
+                return new(false) { ErrorMessage = "User Id invalid" };
+
+            var existProject = _unitOfWork.FreelancerProjects.GetAll().Include(x => x.ProjectImages).FirstOrDefault(x => x.Id == id);
+
+            if (existProject is null)
+                return new(false) { ErrorMessage = "project Id is not found " };
+
+            if (project is null)
+                return new(false) { ErrorMessage = "project null exseption " };
+
+            if (delete > 0)
+            {
+                foreach (var item in deleteId)
+                {
+                    var existProjectImages = _unitOfWork.ProjectImages.GetById(item);
+
+                    if (existProjectImages is null)
+                        return new(false) { ErrorMessage = $"Image Is {item} not found" };
+
+                    await _unitOfWork.ProjectImages.Remove(existProjectImages);
+                }
+            }
+
+            if (check > 0)
+            {
+                for (int i = 0; i < projectFiles!.Count(); i++)
+                {
+                    if (projectFiles[i]! is not null)
+                    {
+                        try
+                        {
+                            if (!_fileHelper.FileValidateImage(projectFiles[i]))
+                                return new(false) { ErrorMessage = "project Image file is invalid" };
+
+                            image = await _fileHelper.WriteFileAsync(projectFiles[i], projectImageFolder);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    }
+
+                    var createdProjectFile = await _unitOfWork.ProjectImages.AddAsync(ToEntityImage(existProject.Id, image));
+                    image = null;
+                }
+            }
+
+            if (projectFile is not null)
+            {
+                try
+                {
+                    if (!_fileHelper.FileValidate(projectFile))
+                        return new(false) { ErrorMessage = "Project file is invalid" };
+
+                    file = await _fileHelper.WriteFileAsync(projectFile, fileFolder);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                if (File.Exists(fileFolder + @"\" + existProject.Project))
+                    _fileHelper.DeleteFileByName(fileFolder, existProject.Project);
+
+                existProject.Project = file;
+            }
+
+            existProject.Title = project.Title;
+            existProject.Tools = project.Tools;
+            existProject.Description = project.Description;
+            existProject.Link = project.Link;
+
+            return new(true) { Data = ToModel(existProject) };
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occured at {nameof(ProjectService)} .", e);
+            throw new("Couldn't project Update Please contact support");
+        }
+    }
+
     private FreelancerProject ToModel(Entities.FreelancerProject createdProject) => new()
     {
         Id = createdProject.Id,
@@ -188,8 +284,4 @@ public class ProjectService : IProjectService
         AppUserId = userId
     };
 
-    public ValueTask<Result<FreelancerProject>> UpdateAsync(int id, IFormFile projectFile, List<IFormFile> projectFiles, FreelancerProject project)
-    {
-        throw new NotImplementedException();
-    }
 }

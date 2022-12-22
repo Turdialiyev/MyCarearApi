@@ -1,3 +1,4 @@
+# pragma warning disable
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 using MyCareerApi.Entities;

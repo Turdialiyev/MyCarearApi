@@ -1,3 +1,4 @@
+# pragma warning disable
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
@@ -40,6 +41,33 @@ public class ProjectController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromForm] FreelancerProjectUpdate update)
+    {
+        try
+        {
+            var result = await _projectService.UpdateAsync(id, update.Project, update.ProjectImages!.ToList(), ToModelUpdate(update), update.DeleteId!);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
+        }
+    }
+
+    private Models.FreelancerProject ToModelUpdate(FreelancerProjectUpdate update) => new()
+    {
+        Title = update.Title,
+        Description = update.Description,
+        Tools = update.Tools,
+        Link = update.Link
+    };
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

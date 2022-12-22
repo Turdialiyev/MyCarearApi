@@ -1,3 +1,4 @@
+# pragma warning disable
 using MyCarearApi.Models;
 
 namespace MyCarearApi.Services;

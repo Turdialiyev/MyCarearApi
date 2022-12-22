@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿# pragma warning disable
+using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Entities;
 using System.Text.Json;
 

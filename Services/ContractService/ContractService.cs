@@ -1,3 +1,4 @@
+# pragma warning disable
 using CoreHtmlToImage;
 using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Models;

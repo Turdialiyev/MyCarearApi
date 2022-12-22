@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿# pragma warning disable
+using System.ComponentModel.DataAnnotations;
 
 namespace MyCarearApi.Models;
 

@@ -1,4 +1,5 @@
-﻿namespace MyCarearApi.Entities.ChatEntities;
+﻿# pragma warning disable
+namespace MyCarearApi.Entities.ChatEntities;
 
 public class Connection
 {
