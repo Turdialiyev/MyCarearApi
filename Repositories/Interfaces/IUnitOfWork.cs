@@ -33,5 +33,6 @@ public interface IUnitOfWork : IDisposable
     IMessageRepository Messages { get; }
     IChatRepository Chats { get; }
     IChatFileRepository ChatFiles { get; }
+    IOfferRepository Offers { get; }
     int Save();
 }

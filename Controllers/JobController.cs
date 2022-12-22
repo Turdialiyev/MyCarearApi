@@ -20,15 +20,17 @@ public class JobController: ControllerBase
     private readonly IJobService _jobService;
     private readonly IJobLanguagesService _jobLanguagesService;
     private readonly IJobSkillsService _jobSkillsService;
+    private readonly IOfferService _offerService;
     private readonly UserManager<Entities.AppUser> _userManager;
 
     public JobController(IJobService jobService, UserManager<Entities.AppUser> userManager, 
-        IJobLanguagesService jobLanguagesService, IJobSkillsService jobSkillsService)
+        IJobLanguagesService jobLanguagesService, IJobSkillsService jobSkillsService, IOfferService offerService)
     {
         _jobService = jobService;
         _jobLanguagesService = jobLanguagesService;
         _jobSkillsService = jobSkillsService;
-        _userManager= userManager;
+        _userManager = userManager;
+        _offerService = offerService;
     }
 
     private Regex spaceReplacer = new Regex(@"\s\s+");
@@ -179,4 +181,29 @@ public class JobController: ControllerBase
             JobId = await _jobService.UpdateJob(job)
         });
     }
+
+    [HttpPost("offer")]
+    [Authorize]
+    public IActionResult Offer(OfferCreateModel offer)
+    {
+        var job = _jobService.GetJob(offer.JobId);
+        var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (job is null || job.State != JobState.Active || company is null || company.Id != job.CompanyId)
+            return BadRequest(new
+            {
+                Succeded = false
+            });
+
+        return Ok(new
+        {
+            Succeded = true,
+            Offer = _offerService.AddOffer(offer.JobId, offer.Downpayment, offer.Deadline, offer.DeadlineRate, offer.FreelancerId)
+        });
+    }
+
+    [HttpGet("offer/{offerId}")]
+    [Authorize]
+    public IActionResult Offer(int offerId) => _offerService.GetOffer(offerId) is not null
+                    ? Ok(new {Succeded = true, Offer = _offerService.GetOffer(offerId) })
+                    : BadRequest(new { Succeded = false });
 }

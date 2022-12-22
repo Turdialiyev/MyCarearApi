@@ -59,6 +59,29 @@ public class AppDbInitialize
                 });
             context.SaveChanges();
         }
+           if (!context.Currencys.Any())
+        {
+            context.Currencys.AddRange(
+                new List<Currency>()
+                {
+                    new Currency
+                    {
+                       Name = "Sum",
+                       Code = "@Sum"
+                    },
+                    new Currency
+                    {
+                        Name = "Dollar",
+                        Code = "$"
+                    },
+                     new Currency
+                    {
+                        Name = "Euro",
+                        Code = "E"
+                    }
+                });
+            context.SaveChanges();
+        }
 
         // If Regions table is not added this adds it 
         if (!context.Regions.Any())

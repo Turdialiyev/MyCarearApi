@@ -72,31 +72,37 @@ public partial class ContractService : IContractService
           return new("Freelancer is not found");
           
           var job = _unitOfWork.Jobs.GetById(contract.JobId);
-          
-          var position = _unitOfWork.Jobs.GetById(job.PositionsId.Value);
+          var offer = _unitOfWork.Offers.GetAll().FirstOrDefault(x => x.AppUserId == contract.AppUserId);
+          var position = _unitOfWork.Positions.GetById(job!.PositionsId!.Value);
+          var currency = _unitOfWork.Currencies.GetById(2);
+
 
           var dagavor = new Dogovor();
           dagavor.ContractDate = contract.DealingDate;
           dagavor.FreelancerName = freelancer.FirstName + " " + freelancer.LastName;
           dagavor.PassportSeria = contract.PasportSeriyaNumber;
           dagavor.JobTitle = job.Name;
-          dagavor.Position = position.Name;
+          dagavor.Position = position!.Name;
           dagavor.JobDescription = job.Description;
-          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate(job.Price.Value)+" )";
-          dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now);
-        // dagavor.AdvancePayment = 
-        // dagavor.LastPayment = 
+          dagavor.FreelancerName = freelancer.LastName!.ToString();
+          dagavor.Summa =  job.Price.ToString()+" ( "+ CalculateSumma.Calculate((int)job.Price!) + ")"+$"  {currency.Name}  {currency.Code}";
+          dagavor.Diedline = DateOnly.FromDateTime(DateTime.Now.AddDays(job.DeadLine!.Value));
+          dagavor.AdvancePayment = offer.Downpayment;
+          dagavor.LastPayment = 100 - offer.Downpayment;
          
          return new(true) { Data = dagavor};
        }
-       catch (System.Exception)
+       catch (System.Exception e)
        {
         
-        throw;
+        throw new Exception(e.Message);
        }
     }
 
-    
+    // https://www.signwell.com/online-signature/ -- bu elektron imzo uchin tekin sayt
+    // https://smallpdf.com/sign-pdf -- buham
+    // https://www.digisigner.com/free-electronic-signature/sign-document-online --bu eng zori
+
     public async  ValueTask<Result<string>> SaveContract(string fileUrl)
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",Guid.NewGuid().ToString().Substring(27)+".jpg");
@@ -104,8 +110,7 @@ public partial class ContractService : IContractService
 
         var bytes = converter.FromUrl(fileUrl);
         File.WriteAllBytes(path, bytes);
-        // HtmlToPdf();
-        
+    
         return new(true) {Data = path};
     }
 
