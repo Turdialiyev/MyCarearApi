@@ -6,6 +6,7 @@ using MyCarearApi.Entities;
 using MyCareerApi.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MyCarearApi.Data;
 
@@ -62,7 +63,22 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Chat> Chats { get; set; }
 
     public DbSet<Offer> Offers { get; set; }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        configurationBuilder.Properties<DateOnly>().HaveConversion<DateOnlyConverter>();
+    }
 }
 
-
+public class DateOnlyConverter : ValueConverter<DateOnly, DateTime>
+{
+    /// <summary>
+    /// Creates a new instance of this converter.
+    /// </summary>
+    public DateOnlyConverter() : base(
+            d => d.ToDateTime(TimeOnly.MinValue),
+            d => DateOnly.FromDateTime(d))
+    { }
+}
 

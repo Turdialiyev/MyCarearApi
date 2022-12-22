@@ -1,3 +1,4 @@
+#pragma warning disable
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -24,35 +25,43 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
+    //options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
     options.UseSqlite("Data Source = Data.db;");
+
     //  options.UseInMemoryDatabase("TestDb");
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
-}).AddEntityFrameworkStores<AppDbContext>();
+    options.SignIn.RequireConfirmedEmail = true;
+}).AddEntityFrameworkStores<AppDbContext>().AddTokenProvider<TwoFactorTokenProvider<AppUser>>("Default");
 
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     Console.WriteLine("JwtBearerDefaults.AuthenticationScheme: " + JwtBearerDefaults.AuthenticationScheme);
-})
-    .AddJwtBearer(options =>
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
-        };
-    });
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
+    };
+}).AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration.GetSection("Google")["client_id"];
+    googleOptions.ClientSecret = builder.Configuration.GetSection("Google")["client_secret"];
+    googleOptions.CallbackPath = "/signin-google";
+    googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+});
 
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IProjectService, Projectservice>();    
@@ -76,6 +85,9 @@ builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
 builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
 builder.Services.AddTransient<IJobService, JobService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IConnectionService, ConnectionService>();
+builder.Services.AddTransient<IMailSender, MailSender>();
+
 
 builder.Services.AddSignalR();
 
