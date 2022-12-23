@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
+using MyCarearApi.Services.Chat.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +26,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    //options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
-    options.UseSqlite("Data Source = Data.db;");
+    options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
+    //options.UseSqlite("Data Source = Data.db;");
 
     //  options.UseInMemoryDatabase("TestDb");
 });
+
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase("ChatDatabase"));
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -61,6 +64,7 @@ builder.Services.AddAuthentication(opt =>
     googleOptions.ClientSecret = builder.Configuration.GetSection("Google")["client_secret"];
     googleOptions.CallbackPath = "/signin-google";
     googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+    Console.WriteLine("\n\n****IdentityConstants.ExternalScheme : " + IdentityConstants.ExternalScheme + "****\n\n");
 });
 
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
