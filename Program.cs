@@ -19,6 +19,7 @@ using MyCarearApi.Hubs;
 using MyCarearApi.Services.Chat.Interfaces;
 using Microsoft.OpenApi.Models;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -53,11 +54,14 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
+
     //options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
     options.UseSqlite("Data Source = Data.sqlite;");
 
     //  options.UseInMemoryDatabase("TestDb");
 });
+
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase("ChatDatabase"));
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -89,6 +93,7 @@ builder.Services.AddAuthentication(opt =>
     googleOptions.ClientSecret = builder.Configuration.GetSection("Google")["client_secret"];
     googleOptions.CallbackPath = "/signin-google";
     googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+    Console.WriteLine("\n\n****IdentityConstants.ExternalScheme : " + IdentityConstants.ExternalScheme + "****\n\n");
 });
 
 
