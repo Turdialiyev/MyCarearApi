@@ -34,6 +34,8 @@ public partial class FreelancerService : IFreelancerService
 
         string? filePath = null;
         var fileFolder = FileFolders.UserImage;
+        var fullPath = _fileHelper.Folder(fileFolder);
+        _logger.LogInformation($"-------------------------> {fullPath}");
         try
         {
 
@@ -70,8 +72,11 @@ public partial class FreelancerService : IFreelancerService
             }
             else
             {
-                if (File.Exists(freelancerInformation.FreelancerImage))
-                    _fileHelper.DeleteFileByName(fileFolder, freelancerInformation.FreelancerImage!);
+                if (File.Exists(fullPath + @"\" + freelancerInformation.FreelancerImage))
+                {
+                     _logger.LogInformation("========> ---->   ");
+                    _fileHelper.DeleteFileByName(fullPath, freelancerInformation.FreelancerImage!);
+                }
 
                 try
                 {

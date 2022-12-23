@@ -45,9 +45,10 @@ public class ProjectController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] FreelancerProjectUpdate update)
     {
+        _logger.LogInformation("============================");
         try
         {
-            var result = await _projectService.UpdateAsync(id, update.Project, update.ProjectImages!.ToList(), ToModelUpdate(update), update.DeleteId!);
+            var result = await _projectService.UpdateAsync(id, update.Project, update.ProjectImages, ToModelUpdate(update), update.DeleteId!);
 
             if (!result.IsSuccess)
                 return BadRequest(result);
