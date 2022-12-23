@@ -158,7 +158,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async ValueTask<Result<FreelancerProject>> UpdateAsync(int id, IFormFile projectFile, List<IFormFile> projectFiles, FreelancerProject project, int[] deleteId)
+    public async ValueTask<Result<FreelancerProject>> UpdateAsync(int id, IFormFile projectFile, IFormFileCollection projectFiles, FreelancerProject project, int[] deleteId)
     {
 
         var check = projectFiles == null ? 0 : projectFiles.Count();
@@ -167,6 +167,8 @@ public class ProjectService : IProjectService
         string? image = null;
         var fileFolder = FileFolders.Project;
         var projectImageFolder = FileFolders.ProjectImages;
+        var fullPathToProject = _fileHelper.Folder(fileFolder);
+        var fullPathImages = _fileHelper.Folder(projectImageFolder);
 
         try
         {
@@ -185,12 +187,15 @@ public class ProjectService : IProjectService
             {
                 foreach (var item in deleteId)
                 {
-                    var existProjectImages = _unitOfWork.ProjectImages.GetById(item);
+                    var existProjectImage = _unitOfWork.ProjectImages.GetById(item);
 
-                    if (existProjectImages is null)
+                    if (existProjectImage is null)
                         return new(false) { ErrorMessage = $"Image Is {item} not found" };
 
-                    await _unitOfWork.ProjectImages.Remove(existProjectImages);
+                    if (File.Exists(fullPathImages + @"\" + existProjectImage.Name))
+                        _fileHelper.DeleteFileByName(fullPathImages, existProjectImage.Name);
+
+                    await _unitOfWork.ProjectImages.Remove(existProjectImage);
                 }
             }
 
@@ -225,19 +230,23 @@ public class ProjectService : IProjectService
                     if (!_fileHelper.FileValidate(projectFile))
                         return new(false) { ErrorMessage = "Project file is invalid" };
 
+                    if (File.Exists(fullPathToProject + @"\" + existProject.Project))
+                        _fileHelper.DeleteFileByName(fullPathToProject, existProject.Project);
+
                     file = await _fileHelper.WriteFileAsync(projectFile, fileFolder);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
-
-                if (File.Exists(fileFolder + @"\" + existProject.Project))
-                    _fileHelper.DeleteFileByName(fileFolder, existProject.Project);
-
-                existProject.Project = file;
+            }
+            if (projectFile is null)
+            {
+                if (File.Exists(fullPathToProject + @"\" + existProject.Project))
+                    _fileHelper.DeleteFileByName(fullPathToProject, existProject.Project);
             }
 
+            existProject.Project = file;
             existProject.Title = project.Title;
             existProject.Tools = project.Tools;
             existProject.Description = project.Description;

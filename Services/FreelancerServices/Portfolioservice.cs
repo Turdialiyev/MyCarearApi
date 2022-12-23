@@ -27,6 +27,7 @@ public class PortfolioService : IPortfolioService
     {
         string? imageName = null;
         var fileFolder = FileFolders.PortfolioImage;
+        var fullPath = _fileHelper.Folder(fileFolder);
 
         try
         {
@@ -66,8 +67,8 @@ public class PortfolioService : IPortfolioService
             {
                 try
                 {
-                    if (File.Exists(existPortfolio!.ImageName))
-                        _fileHelper.DeleteFileByName(fileFolder, existPortfolio.ImageName!);
+                    if (File.Exists(fullPath + @"\" + existPortfolio!.ImageName))
+                        _fileHelper.DeleteFileByName(fullPath, existPortfolio.ImageName!);
 
                     if (!_fileHelper.FileValidateImage(image))
                         return new("File is invalid recive only picture");
