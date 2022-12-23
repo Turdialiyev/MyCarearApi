@@ -9,7 +9,7 @@ public partial class FreelancerService
     private Models.Address ToModelAdress(Entities.Address? existAddress) => new()
     {
         // Id = existAddress!.Id,
-        CountryId = existAddress.CountryId,
+        CountryId = existAddress!.CountryId,
         RegionId = existAddress.RegionId,
         Home = existAddress.Home,
         FrelancerInformationId = existAddress.FrelancerInformationId

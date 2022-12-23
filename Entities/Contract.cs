@@ -1,4 +1,5 @@
-﻿using MyCarearApi.Entities;
+﻿# pragma warning disable
+using MyCarearApi.Entities;
 using MyCarearApi.Entities.Enums;
 using System.Text.Json.Serialization;
 

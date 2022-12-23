@@ -1,3 +1,4 @@
+# pragma warning disable
 namespace MyCarearApi.Models;
 
 public class Company

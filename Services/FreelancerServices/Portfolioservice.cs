@@ -26,6 +26,8 @@ public class PortfolioService : IPortfolioService
     public async ValueTask<Result<FreelancerPortfolio>> SaveAsync(string userId, IFormFile image, FreelancerPortfolio portfolio)
     {
         string? imageName = null;
+        var fileFolder = FileFolders.PortfolioImage;
+        var fullPath = _fileHelper.Folder(fileFolder);
 
         try
         {
@@ -65,8 +67,8 @@ public class PortfolioService : IPortfolioService
             {
                 try
                 {
-                    if (File.Exists(existPortfolio!.ImageName))
-                        _fileHelper.DeleteFileByName(existPortfolio.ImageName!);
+                    if (File.Exists(fullPath + @"\" + existPortfolio!.ImageName))
+                        _fileHelper.DeleteFileByName(fullPath, existPortfolio.ImageName!);
 
                     if (!_fileHelper.FileValidateImage(image))
                         return new("File is invalid recive only picture");

@@ -1,4 +1,4 @@
-﻿#pragma warning disable
+﻿# pragma warning disable
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;

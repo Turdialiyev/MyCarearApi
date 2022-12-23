@@ -8,7 +8,6 @@ public class FreelancerProject
     public string? Description { get; set; }
     public string? Tools { get; set; }
     public string? Link { get; set; }
-    public int? ProjectImageId { get; set; }
-    public IEnumerable<ProjectImage>? ProjectImage { get; set; }
+    public IEnumerable<ProjectImage>? ProjectImages { get; set; }
     public DateOnly CreatedAt { get; set; }
 }
