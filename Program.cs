@@ -66,7 +66,7 @@ builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatab
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
-    options.SignIn.RequireConfirmedEmail = true;
+    // options.SignIn.RequireConfirmedEmail = true;
 }).AddEntityFrameworkStores<AppDbContext>().AddTokenProvider<TwoFactorTokenProvider<AppUser>>("Default");
 
 builder.Services.AddAuthentication(opt =>
