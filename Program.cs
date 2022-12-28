@@ -87,14 +87,24 @@ builder.Services.AddAuthentication(opt =>
 
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
     };
-}).AddGoogle(googleOptions =>
+});
+/*.AddGoogle(googleOptions =>
 {
     googleOptions.ClientId = builder.Configuration.GetSection("Google")["client_id"];
     googleOptions.ClientSecret = builder.Configuration.GetSection("Google")["client_secret"];
     googleOptions.CallbackPath = "/signin-google";
     googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
     Console.WriteLine("\n\n****IdentityConstants.ExternalScheme : " + IdentityConstants.ExternalScheme + "****\n\n");
-});
+}).AddOAuth("github", github =>
+{
+    github.ClientId = "c48925d14cde0345c9c5";
+    github.ClientSecret = "55229101dd1a1ba516121b7ae7d3ab79d840f269";
+    github.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+    github.CallbackPath = "/github-cb";
+}).AddFacebook(facebook =>
+{
+
+})*/;
 
 
 

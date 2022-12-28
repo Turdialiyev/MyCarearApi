@@ -74,7 +74,7 @@ public class JobController: ControllerBase
 
     [HttpPost("description")]
     [Authorize]
-    public async Task<IActionResult> DescribeJob([FromForm]int jobId, [FromForm] string description, [FromForm] IFormFile? file)
+    public async Task<IActionResult> DescribeJob(int jobId, string description, IFormFile? file)
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(jobId);

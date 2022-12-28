@@ -154,8 +154,8 @@ public class AccountController: ControllerBase
             : BadRequest(new { Succeded = false, Error = result.Errors.Select(x => x.Description) });
     }
 
-    [HttpPost("ExternalLogin")]
-    public async Task<IActionResult> ExternalLogin(ExternalAuthDto externalAuth)
+    [HttpPost("ExternalGoogleLogin")]
+    public async Task<IActionResult> ExternalGoogleLogin(ExternalAuthDto externalAuth)
     {
         var payload = await _jwtService.VerifyGoogleToken(externalAuth.Provider, externalAuth.IdToken);
         if (payload is null)
@@ -206,7 +206,7 @@ public class AccountController: ControllerBase
                 await _userManager.AddLoginAsync(user, info);
             }
         }
-
+        
         var jwtToken = await _jwtService.GenerateToken(await _userManager.FindByEmailAsync(user.Email));
         return Ok(new { Succeeded = true, Token = jwtToken });
 
