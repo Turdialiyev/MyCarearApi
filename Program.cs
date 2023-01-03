@@ -66,7 +66,7 @@ builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatab
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
-    options.SignIn.RequireConfirmedEmail = true;
+    // options.SignIn.RequireConfirmedEmail = true;
 }).AddEntityFrameworkStores<AppDbContext>().AddTokenProvider<TwoFactorTokenProvider<AppUser>>("Default");
 
 builder.Services.AddAuthentication(opt =>
@@ -111,7 +111,7 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddAuthorization(options =>
 {
 });
-
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
@@ -142,11 +142,11 @@ builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 app.UseStaticFiles(new StaticFileOptions
 {

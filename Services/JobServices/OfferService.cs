@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable
+using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Entities;
 using MyCarearApi.Entities.Enums;
 using MyCarearApi.Repositories;
