@@ -111,7 +111,7 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddAuthorization(options =>
 {
 });
-
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();

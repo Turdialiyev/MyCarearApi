@@ -19,6 +19,7 @@ public class GetInformationController : ControllerBase
     [HttpGet("Countries")]
     public async Task<IActionResult> GetCountry()
     {
+        Console.WriteLine("==============================> ");
         try
         {
             var result = await _getInformationService.GetCountries();
