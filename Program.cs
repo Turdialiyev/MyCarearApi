@@ -56,9 +56,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
 
     //options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
-    options.UseSqlite("Data Source = Data.sqlite;");
+    //options.UseSqlite("Data Source = Data.sqlite;");
 
-    //  options.UseInMemoryDatabase("TestDb");
+    options.UseInMemoryDatabase("TestDb");
 });
 
 builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase("ChatDatabase"));
@@ -66,7 +66,7 @@ builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatab
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
-    // options.SignIn.RequireConfirmedEmail = true;
+    options.SignIn.RequireConfirmedEmail = false;
 }).AddEntityFrameworkStores<AppDbContext>().AddTokenProvider<TwoFactorTokenProvider<AppUser>>("Default");
 
 builder.Services.AddAuthentication(opt =>
@@ -131,15 +131,21 @@ builder.Services.AddTransient<IJobService, JobService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
 builder.Services.AddTransient<IConnectionService, ConnectionService>();
 builder.Services.AddTransient<IMailSender, MailSender>();
-
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddTransient<IUserIdProvider, UserIdProvider>();
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddSingleton<IUserTwoFactorTokenProvider<AppUser>, TwoFactorTokenProvider<AppUser>>();
 
 builder.Services.AddSignalR();
 
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
+                                                              .SetIsOriginAllowed((x) => true)
                                                               .AllowAnyMethod()));
 
 var app = builder.Build();
+
 
 
 // if (app.Environment.IsDevelopment())
