@@ -154,6 +154,8 @@ var app = builder.Build();
     app.UseSwaggerUI();
 // }
 
+app.UseHttpsRedirection();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
@@ -161,8 +163,13 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-app.UseHttpsRedirection();
-app.UseCors("EnableCORS");
+app.UseCors(b =>
+{
+    b.AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed(origin => true);
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");

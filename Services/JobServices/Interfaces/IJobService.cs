@@ -7,6 +7,8 @@ public interface IJobService
 {
     IEnumerable<Job> Jobs { get; }
 
+    IEnumerable<Job> GetJobsOfComapany(int companyId);
+
     Job GetJob(int id);
 
     int AddJob(Job job);

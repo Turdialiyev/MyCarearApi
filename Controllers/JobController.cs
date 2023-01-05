@@ -206,4 +206,21 @@ public class JobController: ControllerBase
     public IActionResult Offer(int offerId) => _offerService.GetOffer(offerId) is not null
                     ? Ok(new {Succeded = true, Offer = _offerService.GetOffer(offerId) })
                     : BadRequest(new { Succeded = false });
+
+    [HttpGet("All")]
+    [Authorize]
+    public IActionResult GetAllJobs()
+    {
+        var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (company is null) return BadRequest(new
+        {
+            Succeded = false,
+            Error = "You need to create a company"
+        });
+        return Ok(new
+        {
+            Succeded = true,
+            Jobs = _jobService.GetJobsOfComapany(company.Id)
+        });
+    }
 }

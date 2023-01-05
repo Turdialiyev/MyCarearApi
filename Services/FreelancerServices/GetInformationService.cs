@@ -81,4 +81,7 @@ public class GetInformationService : IGetInformationService
             throw new($"Couldn't get Languages Please contact support");
         }
     }
+
+    public async Task<Result<List<Entities.Skill>>> GetSkills()
+        => new Result<List<Entities.Skill>>(true) { Data = await _unitOfWork.Skills.GetAll().ToListAsync() };
 }
