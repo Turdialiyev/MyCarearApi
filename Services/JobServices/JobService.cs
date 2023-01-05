@@ -29,6 +29,7 @@ namespace MyCarearApi.Services.JobServices
             _currencyRepository = unitOfWork.Currencies;
         }
 
+
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
             .Include(j => j.Currency)
             .Include(j => j.JobLanguages)
@@ -37,6 +38,12 @@ namespace MyCarearApi.Services.JobServices
             .Include(j => j.Company).ThenInclude(c => c.CompanyLocations)
             .Include(j => j.Company).ThenInclude(c => c.AppUser)
             .ToList();
+
+        public IEnumerable<Job> GetJobsOfComapany(int companyId) => _jobRepository.GetAll()
+            .Where(x => x.CompanyId == companyId)
+            .Include(x => x.Company)
+            .Include(x => x.JobLanguages).ThenInclude(y => y.Language)
+            .Include(x => x.JobSkills).ThenInclude(y => y.Skill).ToList();
 
         public Job? GetJob(int id) => _jobRepository.GetAll()
             .Include(j => j.Currency)

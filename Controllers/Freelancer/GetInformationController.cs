@@ -1,5 +1,6 @@
 # pragma warning disable
 using Microsoft.AspNetCore.Mvc;
+using MyCarearApi.Entities.Enums;
 using MyCarearApi.Services;
 
 namespace MyCarearApi.Controllers;
@@ -91,4 +92,14 @@ public class GetInformationController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
     }
+
+    [HttpGet("Skills")]
+    public async Task<IActionResult> GetSkills() => Ok( await _getInformationService.GetSkills());
+
+    [HttpGet("CandidateLeves")]
+    public IActionResult GetLevels() => Ok(new
+    {
+        Data = Enum.GetValues<Level>().ToDictionary(x => (int)x, x => x.ToString())
+    });
+
 }
