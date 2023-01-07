@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations.Rules;
 using MyCarearApi.Entities;
 using MyCarearApi.Entities.Enums;
 using MyCarearApi.Models;
@@ -9,6 +10,7 @@ using MyCarearApi.Models.JobModels;
 using MyCarearApi.Services;
 using MyCarearApi.Services.JobServices;
 using MyCarearApi.Services.JobServices.Interfaces;
+using System.ComponentModel;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
@@ -21,16 +23,19 @@ public class JobController: ControllerBase
     private readonly IJobLanguagesService _jobLanguagesService;
     private readonly IJobSkillsService _jobSkillsService;
     private readonly IOfferService _offerService;
+    public readonly IFreelancerService _freelancerService;
     private readonly UserManager<Entities.AppUser> _userManager;
 
     public JobController(IJobService jobService, UserManager<Entities.AppUser> userManager, 
-        IJobLanguagesService jobLanguagesService, IJobSkillsService jobSkillsService, IOfferService offerService)
+        IJobLanguagesService jobLanguagesService, IJobSkillsService jobSkillsService, 
+        IOfferService offerService, IFreelancerService freelancerService)
     {
         _jobService = jobService;
         _jobLanguagesService = jobLanguagesService;
         _jobSkillsService = jobSkillsService;
         _userManager = userManager;
         _offerService = offerService;
+        _freelancerService = freelancerService;
     }
 
     private Regex spaceReplacer = new Regex(@"\s\s+");
@@ -206,6 +211,40 @@ public class JobController: ControllerBase
     public IActionResult Offer(int offerId) => _offerService.GetOffer(offerId) is not null
                     ? Ok(new {Succeded = true, Offer = _offerService.GetOffer(offerId) })
                     : BadRequest(new { Succeded = false });
+
+    [HttpGet("companyOffers")]
+    [Authorize]
+    public IActionResult GetCompanyOffers()
+    {
+        var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if(company is null)
+            return BadRequest(new { Succeded = false });
+        return Ok(new
+        {
+            Succeded = true,
+            Offers = _offerService.GetCompanyOffers(company.Id)
+        });
+    }
+
+    [HttpGet("freelancerOffers")]
+    [Authorize]
+    public IActionResult GetFreelancerOffers()
+    {
+        var offers = _offerService.GetFreelancerOffers(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if(offers is null || offers.Count == 0)
+        {
+            return Ok(new
+            {
+                Succeded = true,
+                Offers = new List<Offer>()
+            });
+        }
+        return Ok(new
+        {
+            Succeded = true,
+            Offers = offers
+        });
+    }
 
     [HttpGet("All")]
     [Authorize]

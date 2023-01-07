@@ -84,4 +84,7 @@ public class GetInformationService : IGetInformationService
 
     public async Task<Result<List<Entities.Skill>>> GetSkills()
         => new Result<List<Entities.Skill>>(true) { Data = await _unitOfWork.Skills.GetAll().ToListAsync() };
+
+    public async Task<Result<List<Entities.Currency>>> GetCurrencies() 
+        => new(true) { Data = await _unitOfWork.Currencies.GetAll().ToListAsync() };
 }

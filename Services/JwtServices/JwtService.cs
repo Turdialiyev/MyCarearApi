@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using MyCarearApi.Services.JwtServices.Interfaces;
 using Google.Apis.Auth;
+using MyCareerApi.Entities;
 
 namespace MyCarearApi.Services.JwtServices;
 
@@ -81,5 +82,4 @@ public class JwtService: IJwtService
             return null;
         }
     }
-
 }
