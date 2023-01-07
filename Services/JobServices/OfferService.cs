@@ -38,4 +38,13 @@ public class OfferService: IOfferService
         .Include(x => x.Job).ThenInclude(j => j.Currency)
         .Include(x => x.Job).ThenInclude(j => j.Company).FirstOrDefault();
 
+    public List<Offer> GetCompanyOffers(int companyId) =>
+        _offerRepository
+        .GetAll()
+        .Include(x=> x.Job)
+        .Where(x => x.Job.CompanyId == companyId).ToList();
+
+    public List<Offer> GetFreelancerOffers(string userId) =>
+        _offerRepository.GetAll()
+        .Where(x => x.AppUserId== userId).ToList();
 }

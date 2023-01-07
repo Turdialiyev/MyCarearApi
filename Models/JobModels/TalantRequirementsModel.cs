@@ -9,5 +9,6 @@ namespace MyCarearApi.Models
         public Level reuiredCandidateLevel;
         public IEnumerable<int> requiredSkillIds;
         public IEnumerable<int> requiredLanguageIds;
+
     }
 }
