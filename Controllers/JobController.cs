@@ -247,7 +247,6 @@ public class JobController: ControllerBase
     }
 
     [HttpGet("All")]
-    [Authorize]
     public IActionResult GetAllJobs()
     {
         var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -262,4 +261,11 @@ public class JobController: ControllerBase
             Jobs = _jobService.GetJobsOfComapany(company.Id)
         });
     }
+
+    [HttpGet("Pag/{page}/{size}")]
+    public IActionResult GetByPage(int page, int size) => Ok(new
+    {
+        Succeded = true,
+        Jobs = _jobService.GetByPage(page, size)
+    });
 }

@@ -9,6 +9,8 @@ public interface IJobService
 
     IEnumerable<Job> GetJobsOfComapany(int companyId);
 
+    IEnumerable<Job> GetByPage(int page, int size);
+
     Job GetJob(int id);
 
     int AddJob(Job job);

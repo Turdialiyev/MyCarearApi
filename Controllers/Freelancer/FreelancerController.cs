@@ -52,6 +52,9 @@ public partial class FreelancerController : ControllerBase
         }
     }
 
+    [HttpGet("Page/{page}/{size}")]
+    public IActionResult GetByPage(int page, int size) => Ok(_freelancerService.GetByPage(page, size));
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int freelancerId)
     {

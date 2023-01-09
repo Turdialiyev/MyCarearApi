@@ -18,7 +18,10 @@ using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
 using MyCarearApi.Services.Chat.Interfaces;
 using Microsoft.OpenApi.Models;
-
+using SignalRSwaggerGen.Utils;
+using SignalRSwaggerGen.Naming;
+using SignalRSwaggerGen.Enums;
+using SignalRSwaggerGen.Attributes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +53,14 @@ builder.Services.AddSwaggerGen(option =>
             new string[]{}
         }
     });
+   
+});
+
+builder.Services.AddSwaggerGen(option =>
+{
+    
+    option.SwaggerDoc("v2", new OpenApiInfo { Title = "Chat", Version = "v2" });
+    option.AddSignalRSwaggerGen(o => { o.ScanAssembly(typeof(ChatHub).Assembly); o.HubPathFunc = (hubName) => "/Hubs/ChatHub"; });
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -138,6 +149,7 @@ builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddSingleton<IUserTwoFactorTokenProvider<AppUser>, TwoFactorTokenProvider<AppUser>>();
 
 builder.Services.AddSignalR();
+
 
 builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                               .AllowAnyHeader()
