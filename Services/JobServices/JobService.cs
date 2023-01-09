@@ -45,6 +45,16 @@ namespace MyCarearApi.Services.JobServices
             .Include(x => x.JobLanguages).ThenInclude(y => y.Language)
             .Include(x => x.JobSkills).ThenInclude(y => y.Skill).ToList();
 
+        public IEnumerable<Job> GetByPage(int page, int size) => _jobRepository.GetAll()
+            .Skip((page - 1) * size).Take(size)
+            .Include(j => j.Currency)
+            .Include(j => j.JobLanguages)
+            .Include(j => j.JobSkills)
+            .Include(j => j.Position)
+            .Include(j => j.Company).ThenInclude(c => c.CompanyLocations)
+            .Include(j => j.Company).ThenInclude(c => c.AppUser)
+            .ToList();
+
         public Job? GetJob(int id) => _jobRepository.GetAll()
             .Include(j => j.Currency)
             .Include(j => j.JobLanguages)
