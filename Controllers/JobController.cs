@@ -132,7 +132,7 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Id = _jobService.SetTalantRequirements(talant.JobId, talant.reuiredCandidateLevel,
+            Id = _jobService.SetTalantRequirements(talant.JobId, talant.requiredCandidateLevel,
                                                    talant.requiredSkillIds, talant.requiredLanguageIds)
         });
     }
