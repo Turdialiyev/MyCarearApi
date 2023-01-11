@@ -96,8 +96,8 @@ public class AccountController: ControllerBase
         if (!signUpResult.Succeeded)
             errors["OtherError"].AddRange(signUpResult.Errors.Select(x => x.Description));
 
-        var result = new { Succeded = isSuccess(errors), Errors = errors };        
-
+        var result = new { Succeded = isSuccess(errors), Errors = errors };
+        Console.WriteLine((await _userManager.FindByEmailAsync(userModel.Email)).Id);
         if(result.Succeded) return Ok(result);
 
         return BadRequest( result );

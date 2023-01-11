@@ -25,6 +25,16 @@ using SignalRSwaggerGen.Attributes;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
+                                                              .AllowAnyHeader()
+                                                              .SetIsOriginAllowed((x) => {
+                                                                  File.WriteAllText($"C:\\{Guid.NewGuid()}.txt", x??"Text was null");
+                                                                  return true;
+                                                                  })
+                                                              .AllowAnyMethod()));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -150,12 +160,6 @@ builder.Services.AddSingleton<IUserTwoFactorTokenProvider<AppUser>, TwoFactorTok
 
 builder.Services.AddSignalR();
 
-
-builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
-                                                              .AllowAnyHeader()
-                                                              .SetIsOriginAllowed((x) => true)
-                                                              .AllowAnyMethod()));
-
 var app = builder.Build();
 
 
@@ -175,13 +179,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-app.UseCors(b =>
-{
-    b.AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .SetIsOriginAllowed(origin => true);
-});
+app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");
