@@ -66,10 +66,18 @@ namespace MyCarearApi.Services.JobServices
 
         public int AddJob(Job job) => _jobRepository.Add(job).Id;
 
-        public int AddJob(string name, int PositionId, int companyId)
+        public int AddJob(int jobId, string name, int PositionId, int companyId)
         {
-            var job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
-            return _jobRepository.Add(job).Id;
+            var job = _jobRepository.GetById(jobId);
+            if (job is null)
+            {
+                job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
+                return _jobRepository.Add(job).Id;
+            }
+            else
+            {
+                return _jobRepository.Update(job).Result.Id;
+            }
         }
 
         public async Task<int> UpdateTitle(int id,string name, int PositionId)
