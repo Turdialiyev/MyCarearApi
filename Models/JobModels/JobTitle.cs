@@ -5,6 +5,8 @@ namespace MyCarearApi.Models;
 
 public class JobTitle
 {
+    public int JobId { get; set; }
+
     [Required]
     public string Title { get; set; }
     [Required]

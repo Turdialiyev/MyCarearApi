@@ -15,7 +15,7 @@ public interface IJobService
 
     int AddJob(Job job);
 
-    int AddJob(string name, int PositionId, int companyId);
+    int AddJob(int jobId, string name, int PositionId, int companyId);
 
     Task<int> UpdateTitle(int id, string name, int PositionId);
 

@@ -53,7 +53,7 @@ public class JobController: ControllerBase
 
     [HttpPost("title")]
     [Authorize]
-    public IActionResult StartCreateJob(JobTitle job)
+    public IActionResult StartCreateJob([FromBody]JobTitle job)
     {
         job.Title = SpaceReplace(job.Title);
 
@@ -73,7 +73,7 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            JobId = _jobService.AddJob(job.Title, job.PositionId, company.Id)
+            JobId = _jobService.AddJob(job.JobId, job.Title, job.PositionId, company.Id)
         });
     }
 
@@ -101,20 +101,20 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Id = jobId
+            JobId = jobId
         });
     }
 
     [HttpPost("talant")]
-    [Authorize]  
-    public IActionResult SetTalantRequirements(TalantRequirementsModel talant) 
+    [Authorize]
+    public IActionResult SetTalantRequirements([FromBody]TalantRequirementsModel talant) 
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(talant.JobId);
 
-        var notFoundSkills = _jobSkillsService.CheckSkillIds(talant.requiredSkillIds);
+        var notFoundSkills = _jobSkillsService.CheckSkillIds(talant.RequiredSkillIds);
 
-        var notFoundLanguages = _jobLanguagesService.CheckLanguageIds(talant.requiredLanguageIds);
+        var notFoundLanguages = _jobLanguagesService.CheckLanguageIds(talant.RequiredLanguageIds);
         //Validation
         if (company is null || job is null || company.Id != job.CompanyId
             || notFoundSkills.Count() > 0 || notFoundLanguages.Count() > 0)
@@ -132,14 +132,14 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Id = _jobService.SetTalantRequirements(talant.JobId, talant.requiredCandidateLevel,
-                                                   talant.requiredSkillIds, talant.requiredLanguageIds)
+            JobId = _jobService.SetTalantRequirements(talant.JobId, talant.RequiredCandidateLevel,
+                                                   talant.RequiredSkillIds, talant.RequiredLanguageIds)
         });
     }
 
     [HttpPost("contract")]
     [Authorize]
-    public async Task<IActionResult> SetContractRequirements(ContractRequirementsModel contract)
+    public async Task<IActionResult> SetContractRequirements([FromBody]ContractRequirementsModel contract)
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(contract.JobId);
@@ -159,7 +159,7 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Id = await _jobService.SetContractRequirements(contract.JobId, contract.Price, contract.CurrencyId,
+            JobId = await _jobService.SetContractRequirements(contract.JobId, contract.Price, contract.CurrencyId,
             contract.PriceRate, contract.Deadline, contract.DeadlineRate)
         });
     }
@@ -189,7 +189,7 @@ public class JobController: ControllerBase
 
     [HttpPost("offer")]
     [Authorize]
-    public IActionResult Offer(OfferCreateModel offer)
+    public IActionResult Offer([FromBody] OfferCreateModel offer)
     {
         var job = _jobService.GetJob(offer.JobId);
         var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));

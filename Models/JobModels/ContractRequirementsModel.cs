@@ -8,16 +8,16 @@ namespace MyCarearApi.Models.JobModels
     public class ContractRequirementsModel
     {
         [Required]
-        public int JobId;
+        public int JobId { get; set; }
         [Required]
-        public decimal Price;
+        public decimal Price { get; set; }
         [Required]
-        public int CurrencyId;
+        public int CurrencyId { get; set; }
         [Required]
-        public PriceRate PriceRate;
+        public PriceRate PriceRate { get; set; }
         [Required]
-        public int Deadline;
+        public int Deadline { get; set; }
         [Required]
-        public DeadlineRate DeadlineRate;
+        public DeadlineRate DeadlineRate { get; set; }
     }
 }
