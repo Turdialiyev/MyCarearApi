@@ -10,7 +10,7 @@ namespace MyCarearApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
+[Authorize]
 public partial class CompanyController : ControllerBase
 {
     private readonly ICompanyService _companyService;
@@ -104,6 +104,35 @@ public partial class CompanyController : ControllerBase
 
      return Ok(ToDtoCreatedContact(createdContact.Data));
     }
-    
+    [HttpGet("GetWithId")]
+    public async Task<IActionResult> GetCompany(int id)
+    {
+      if(id <= 0)
+      return BadRequest("Id can't be Thero or Minus");
 
+      return Ok(await _companyService.GetCompanyById(id));
+    }
+    
+    [HttpGet("GetAllCompany")]
+    public async Task<IActionResult> GetAll()
+    {
+      return Ok(await _companyService.GetAllCompany());
+    }
+
+   [HttpGet("GetWithPagination")]
+   public async Task<IActionResult>  GetWithPagination(int page, int limit)
+   {
+    if(page <= 0 || limit <= 0)
+    return BadRequest("limit or page can't be thero  or Minus");
+
+    return Ok(await _companyService.GetCompanyWithPagination(page, limit));
+   }
+
+   [HttpGet("CompaniesCount")]
+   public async Task<IActionResult> GetCount()
+   {
+    var allCompany = await _companyService.GetAllCompany();
+
+    return Ok(allCompany.Data.Count());
+   }
 }
