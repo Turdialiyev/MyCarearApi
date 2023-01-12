@@ -98,7 +98,7 @@ public class JobController: ControllerBase
             Id = jobId
         });
     }
-
+    
     [HttpPost("talant")]
     [Authorize]  
     public IActionResult SetTalantRequirements(TalantRequirementsModel talant) 
@@ -196,7 +196,8 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Offer = _offerService.AddOffer(offer.JobId, offer.Downpayment, offer.Deadline, offer.DeadlineRate, offer.FreelancerId)
+            Offer = _offerService
+            .AddOffer(offer.JobId, offer.Downpayment, offer.Deadline, offer.DeadlineRate, offer.FreelancerId)
         });
     }
 
