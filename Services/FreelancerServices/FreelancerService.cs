@@ -422,6 +422,8 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
+    public int GetCount() => _unitOfwork.FreelancerInformations.GetAll().Count();
+
     public Result<IEnumerable<Entities.FreelancerInformation>> GetByPage(int page, int size) =>
         new(true)
         {

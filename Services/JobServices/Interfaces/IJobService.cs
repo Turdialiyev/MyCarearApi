@@ -17,6 +17,8 @@ public interface IJobService
 
     int AddJob(int jobId, string name, int PositionId, int companyId);
 
+    int GetCount();
+
     Task<int> UpdateTitle(int id, string name, int PositionId);
 
     Task<int> AddDescriptionToJob(int id, string Description, IFormFile file);
@@ -37,4 +39,5 @@ public interface IJobService
 
     Task<int> UpdateJob(Job job);
 
+    bool DeleteJob(int id);
 }

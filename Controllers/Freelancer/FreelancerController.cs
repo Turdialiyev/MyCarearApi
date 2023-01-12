@@ -55,6 +55,9 @@ public partial class FreelancerController : ControllerBase
     [HttpGet("Page/{page}/{size}")]
     public IActionResult GetByPage(int page, int size) => Ok(_freelancerService.GetByPage(page, size));
 
+    [HttpGet("count")]
+    public IActionResult GetCount() => Ok(new { Count = _freelancerService.GetCount() });
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int freelancerId)
     {
