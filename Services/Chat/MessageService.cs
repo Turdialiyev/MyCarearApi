@@ -132,7 +132,7 @@ public class MessageService: IMessageService
                 photoPath = company.Photo;
                 Console.WriteLine(photoPath);
             }
-            if (!File.Exists(photoPath))
+            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", photoPath)))
             {
                 photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "DefaultUser.png");
             }
@@ -143,7 +143,7 @@ public class MessageService: IMessageService
             if (freelancerInfo is not null) photoPath = freelancerInfo.FreelancerImage;
             if (!File.Exists(photoPath))
             {
-                photoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "DefaultCompany.png");
+                photoPath = "DefaultCompany.png";
             }
         }
         Console.WriteLine("Path of   " + userId + "   " + photoPath);

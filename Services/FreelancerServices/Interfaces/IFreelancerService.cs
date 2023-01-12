@@ -14,4 +14,5 @@ public interface IFreelancerService
     ValueTask<Result<FreelancerInformation>> Address(string userId, Address address);
     ValueTask<Result<FreelancerInformation>> Position(string userId, Position possion);
     ValueTask<Result<FreelancerInformation>> Contact(string userId, FreelancerContact contacts);
+    int GetCount();
 }

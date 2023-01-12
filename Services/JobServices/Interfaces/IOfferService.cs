@@ -9,5 +9,5 @@ public interface IOfferService
     Offer GetOffer(int id);
     List<Offer> GetCompanyOffers(int companyId);
     List<Offer> GetFreelancerOffers(string userId);
-
+    Task DeleteByJob(int jobId);
 }

@@ -17,8 +17,10 @@ namespace MyCarearApi.Services.JobServices
         private readonly IPositionRepository _positionRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICurrencyRepository _currencyRepository;
+        private readonly IOfferService _offerService;
 
-        public JobService(IUnitOfWork unitOfWork, IJobSkillsService jobSkillsService, IJobLanguagesService jobLanguagesService)
+        public JobService(IUnitOfWork unitOfWork, IJobSkillsService jobSkillsService, 
+            IJobLanguagesService jobLanguagesService, IOfferService offerService)
         {
             _jobRepository = unitOfWork.Jobs;
             _jobSkillsRepository = unitOfWork.JobSkills;
@@ -27,6 +29,7 @@ namespace MyCarearApi.Services.JobServices
             _positionRepository = unitOfWork.Positions;
             _companyRepository = unitOfWork.Companies;
             _currencyRepository = unitOfWork.Currencies;
+            _offerService = offerService;
         }
 
 
@@ -169,5 +172,13 @@ namespace MyCarearApi.Services.JobServices
             return (await _jobRepository.Update(job)).Id;
         }
 
+        public int GetCount() => _jobRepository.GetAll().Count();
+
+        public bool DeleteJob(int id)
+        {
+            _offerService.DeleteByJob(id);
+            _jobRepository.Remove(new Job { Id = id });
+            return true;
+        }
     }
 }

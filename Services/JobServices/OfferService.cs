@@ -47,4 +47,7 @@ public class OfferService: IOfferService
     public List<Offer> GetFreelancerOffers(string userId) =>
         _offerRepository.GetAll()
         .Where(x => x.AppUserId== userId).ToList();
+
+    public async Task DeleteByJob(int jobId) =>
+        await _offerRepository.RemoveRange(_offerRepository.GetAll().Where(x => x.JobId == jobId));
 }

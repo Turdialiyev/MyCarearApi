@@ -248,6 +248,7 @@ public class JobController: ControllerBase
     }
 
     [HttpGet("All")]
+    [Authorize]
     public IActionResult GetAllJobs()
     {
         var company = _jobService.GetCompany(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -259,7 +260,7 @@ public class JobController: ControllerBase
         return Ok(new
         {
             Succeded = true,
-            Jobs = _jobService.GetJobsOfComapany(company.Id)
+            Jobs = _jobService.GetJobsOfComapany(company.Id).Select(x => JobDto(x))
         });
     }
 
@@ -267,7 +268,7 @@ public class JobController: ControllerBase
     public IActionResult GetByPage(int page, int size) => Ok(new
     {
         Succeded = true,
-        Jobs = _jobService.GetByPage(page, size)
+        Jobs = _jobService.GetByPage(page, size).Select(x => JobDto(x))
     });
 
     [HttpGet("/{jobId}")]
@@ -286,61 +287,69 @@ public class JobController: ControllerBase
             });
         }
 
-        return Ok(new
-        {
-            Succeded = true,
-            Job = new
-            {
-                job.Id,
-                job.FilePath,
-                JobSkills = job.JobSkills.Select(x => new
-                {
-                    x.Id,
-                    x.JobId,
-                    x.SkillId,
-                    Skill = new
-                    {
-                        x.Skill.Name,
-                        x.Skill.Id,
-                        x.Skill.PositionId
-                    }
-                }),
-                JobLanguages = job.JobLanguages.Select(x => new
-                {
-                    x.Id, x.JobId, x.LanguageId, x.Language
-                }),
-                job.State,
-                job.CompanyId,
-                Company = new
-                {
-                    job.Company.Id,
-                    job.Company.Name,
-                    job.Company.PhoneNumber,
-                    job.Company.Photo,
-                    job.Company.CompanyLocations,
-                    job.Company.AppUserId,
-                    Email = job.Company.AppUser.CopmanyEmail,
-                    AppUser = new
-                    {
-                        job.Company.AppUser.Id,
-                        job.Company.AppUser.FirstName,
-                        job.Company.AppUser.LastName,
-                        job.Company.AppUser.Email,
-                        job.Company.AppUser.PhoneNumber
-                    }
-                },
-                job.CurrencyId,
-                job.Currency,
-                job.DeadLine,
-                job.DeadlineRate,
-                job.Description,
-                job.IsSaved,
-                job.PositionsId,
-                job.Position,
-                job.Price,
-                job.PriceRate,
-                job.RequiredLevel
-            }
-        });
+        return Ok(JobDto(job));
     }
+
+    [HttpGet("count")]
+    public IActionResult GetCount() => Ok(new { Count = _jobService.GetCount() });
+
+    private dynamic JobDto(Entities.Job job) => new
+    {
+        Succeded = true,
+        Job = new
+        {
+            job.Id,
+            job.FilePath,
+            JobSkills = job.JobSkills.Select(x => new
+            {
+                x.Id,
+                x.JobId,
+                x.SkillId,
+                Skill = new
+                {
+                    x.Skill.Name,
+                    x.Skill.Id,
+                    x.Skill.PositionId
+                }
+            }),
+            JobLanguages = job.JobLanguages.Select(x => new
+            {
+                x.Id,
+                x.JobId,
+                x.LanguageId,
+                x.Language
+            }),
+            job.State,
+            job.CompanyId,
+            Company = new
+            {
+                job.Company.Id,
+                job.Company.Name,
+                job.Company.PhoneNumber,
+                job.Company.Photo,
+                job.Company.CompanyLocations,
+                job.Company.AppUserId,
+                Email = job.Company.AppUser.CopmanyEmail,
+                AppUser = new
+                {
+                    job.Company.AppUser.Id,
+                    job.Company.AppUser.FirstName,
+                    job.Company.AppUser.LastName,
+                    job.Company.AppUser.Email,
+                    job.Company.AppUser.PhoneNumber
+                }
+            },
+            job.CurrencyId,
+            job.Currency,
+            job.DeadLine,
+            job.DeadlineRate,
+            job.Description,
+            job.IsSaved,
+            job.PositionsId,
+            job.Position,
+            job.Price,
+            job.PriceRate,
+            job.RequiredLevel
+        }
+    };
 }
