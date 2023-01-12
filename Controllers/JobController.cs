@@ -144,14 +144,14 @@ public class JobController: ControllerBase
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(contract.JobId);
 
-        if(company is null || job is null || company.Id != job.CompanyId || _jobService.IsCurrencyExist(contract.CurrencyId)
+        if(company is null || job is null || company.Id != job.CompanyId || !_jobService.IsCurrencyExist(contract.CurrencyId)
             || contract.Deadline < 1)
         {
             return BadRequest(new
             {
                 Succeded = false,
                 OwnerError = company is null || job is null || company.Id != job.CompanyId,
-                CurrencyError = _jobService.IsCurrencyExist(contract.CurrencyId),
+                CurrencyError = !_jobService.IsCurrencyExist(contract.CurrencyId),
                 DeadlineError = contract.Deadline < 1
             });
         }
@@ -268,4 +268,78 @@ public class JobController: ControllerBase
         Succeded = true,
         Jobs = _jobService.GetByPage(page, size)
     });
+
+    [HttpGet("/{jobId}")]
+    [Authorize]
+    public IActionResult GetById(int jobId)
+    {
+        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var job = _jobService.GetJob(jobId);
+
+        if (company is null || job is null || company.Id != job.CompanyId)
+        {
+            return BadRequest(new
+            {
+                Succeded = false,
+                OwnerError = company is null || job is null || company.Id != job.CompanyId
+            });
+        }
+
+        return Ok(new
+        {
+            Succeded = true,
+            Job = new
+            {
+                job.Id,
+                job.FilePath,
+                JobSkills = job.JobSkills.Select(x => new
+                {
+                    x.Id,
+                    x.JobId,
+                    x.SkillId,
+                    Skill = new
+                    {
+                        x.Skill.Name,
+                        x.Skill.Id,
+                        x.Skill.PositionId
+                    }
+                }),
+                JobLanguages = job.JobLanguages.Select(x => new
+                {
+                    x.Id, x.JobId, x.LanguageId, x.Language
+                }),
+                job.State,
+                job.CompanyId,
+                Company = new
+                {
+                    job.Company.Id,
+                    job.Company.Name,
+                    job.Company.PhoneNumber,
+                    job.Company.Photo,
+                    job.Company.CompanyLocations,
+                    job.Company.AppUserId,
+                    Email = job.Company.AppUser.CopmanyEmail,
+                    AppUser = new
+                    {
+                        job.Company.AppUser.Id,
+                        job.Company.AppUser.FirstName,
+                        job.Company.AppUser.LastName,
+                        job.Company.AppUser.Email,
+                        job.Company.AppUser.PhoneNumber
+                    }
+                },
+                job.CurrencyId,
+                job.Currency,
+                job.DeadLine,
+                job.DeadlineRate,
+                job.Description,
+                job.IsSaved,
+                job.PositionsId,
+                job.Position,
+                job.Price,
+                job.PriceRate,
+                job.RequiredLevel
+            }
+        });
+    }
 }

@@ -35,7 +35,10 @@ builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
                                                                   })
                                                               .AllowAnyMethod()));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(o =>
+{
+    o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -158,7 +161,12 @@ builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddSingleton<IUserTwoFactorTokenProvider<AppUser>, TwoFactorTokenProvider<AppUser>>();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddNewtonsoftJsonProtocol(o=> 
+    {
+        o.PayloadSerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    }
+);
 
 var app = builder.Build();
 
