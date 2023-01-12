@@ -1,4 +1,5 @@
-﻿using MyCarearApi.Entities.Enums;
+﻿#pragma warning disable
+using MyCarearApi.Entities.Enums;
 
 namespace MyCarearApi.Entities;
 
@@ -17,7 +18,9 @@ public class Offer
     /// Freelancer
     /// </summary>
     public AppUser AppUser { get; set; }
-
+    /// <summary>
+    /// Percent
+    /// </summary>
     public int Downpayment { get; set; } = 0;
 
     public int Deadline { get; set; }

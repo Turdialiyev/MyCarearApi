@@ -7,11 +7,15 @@ public interface IJobService
 {
     IEnumerable<Job> Jobs { get; }
 
+    IEnumerable<Job> GetJobsOfComapany(int companyId);
+
+    IEnumerable<Job> GetByPage(int page, int size);
+
     Job GetJob(int id);
 
     int AddJob(Job job);
 
-    int AddJob(string name, int PositionId, int companyId);
+    int AddJob(int jobId, string name, int PositionId, int companyId);
 
     Task<int> UpdateTitle(int id, string name, int PositionId);
 

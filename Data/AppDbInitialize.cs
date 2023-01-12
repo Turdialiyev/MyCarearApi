@@ -1,3 +1,4 @@
+# pragma warning disable
 using Microsoft.AspNetCore.Identity;
 using MyCarearApi.Entities;
 

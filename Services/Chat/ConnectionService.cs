@@ -4,11 +4,11 @@ using MyCarearApi.Entities.ChatEntities;
 
 namespace MyCarearApi.Services.Chat
 {
-    public class ConnectionService: IConnectionService 
+    public class ConnectionService: IConnectionService
     {
         private ChatDbContext _context;
 
-        public ConnectionService(ChatDbContext context) 
+        public ConnectionService(ChatDbContext context)
         {
             _context = context;
         }

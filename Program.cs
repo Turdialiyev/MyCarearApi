@@ -1,3 +1,4 @@
+#pragma warning disable
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -15,52 +16,125 @@ using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using MyCarearApi.Services.Chat;
 using MyCarearApi.Hubs;
+using MyCarearApi.Services.Chat.Interfaces;
+using Microsoft.OpenApi.Models;
+using SignalRSwaggerGen.Utils;
+using SignalRSwaggerGen.Naming;
+using SignalRSwaggerGen.Enums;
+using SignalRSwaggerGen.Attributes;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
+                                                              .AllowAnyHeader()
+                                                              .SetIsOriginAllowed((x) => {
+                                                                  File.WriteAllText($"C:\\{Guid.NewGuid()}.txt", x??"Text was null");
+                                                                  return true;
+                                                                  })
+                                                              .AllowAnyMethod()));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+   
+});
+
+builder.Services.AddSwaggerGen(option =>
+{
+    
+    option.SwaggerDoc("v2", new OpenApiInfo { Title = "Chat", Version = "v2" });
+    option.AddSignalRSwaggerGen(o => { o.ScanAssembly(typeof(ChatHub).Assembly); o.HubPathFunc = (hubName) => "/Hubs/ChatHub"; });
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite("Data Source = Data.db;");
-    //  options.UseInMemoryDatabase("TestDb");
+
+    //options.UseSqlServer("Data Source=(localDb)\\MSSQLLocalDB; Database=MyCareerDatabase;");
+    //options.UseSqlite("Data Source = Data.sqlite;");
+
+    options.UseInMemoryDatabase("TestDb");
 });
+
+builder.Services.AddDbContext<ChatDbContext>(options => options.UseInMemoryDatabase("ChatDatabase"));
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._@+!#$%";
-}).AddEntityFrameworkStores<AppDbContext>();
+    options.SignIn.RequireConfirmedEmail = false;
+}).AddEntityFrameworkStores<AppDbContext>().AddTokenProvider<TwoFactorTokenProvider<AppUser>>("Default");
 
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     Console.WriteLine("JwtBearerDefaults.AuthenticationScheme: " + JwtBearerDefaults.AuthenticationScheme);
-})
-    .AddJwtBearer(options =>
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
-        };
-    });
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:JwtSecretKey"]))
+    };
+});
+/*.AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration.GetSection("Google")["client_id"];
+    googleOptions.ClientSecret = builder.Configuration.GetSection("Google")["client_secret"];
+    googleOptions.CallbackPath = "/signin-google";
+    googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+    Console.WriteLine("\n\n****IdentityConstants.ExternalScheme : " + IdentityConstants.ExternalScheme + "****\n\n");
+}).AddOAuth("github", github =>
+{
+    github.ClientId = "c48925d14cde0345c9c5";
+    github.ClientSecret = "55229101dd1a1ba516121b7ae7d3ab79d840f269";
+    github.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+    github.CallbackPath = "/github-cb";
+}).AddFacebook(facebook =>
+{
 
-builder.Services.AddScoped<IPortfolioService, PortfolioService>();
-builder.Services.AddScoped<IProjectService, Projectservice>();    
+})*/;
+
+
 
 builder.Services.AddAuthorization(options =>
 {
 });
-
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -76,21 +150,27 @@ builder.Services.AddTransient<IJobSkillsService, JobSkillsService>();
 builder.Services.AddTransient<IJobLanguagesService, JobLanguageService>();
 builder.Services.AddTransient<IJobService, JobService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IConnectionService, ConnectionService>();
+builder.Services.AddTransient<IMailSender, MailSender>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddTransient<IUserIdProvider, UserIdProvider>();
+builder.Services.AddScoped<IGetInformationService, GetInformationService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddSingleton<IUserTwoFactorTokenProvider<AppUser>, TwoFactorTokenProvider<AppUser>>();
 
 builder.Services.AddSignalR();
-
-builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
-                                                              .AllowAnyHeader()
-                                                              .AllowAnyMethod()));
 
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment())
-{
+
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
+
+app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -99,7 +179,6 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-app.UseHttpsRedirection();
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();

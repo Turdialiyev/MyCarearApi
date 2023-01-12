@@ -1,3 +1,4 @@
+# pragma warning disable
 using FluentValidation;
 
 namespace MyCarearApi.Validations;

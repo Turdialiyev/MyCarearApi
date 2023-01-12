@@ -1,3 +1,4 @@
+# pragma warning disable
 using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -50,6 +51,9 @@ public partial class FreelancerController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new { ErrorMessage = e.Message });
         }
     }
+
+    [HttpGet("Page/{page}/{size}")]
+    public IActionResult GetByPage(int page, int size) => Ok(_freelancerService.GetByPage(page, size));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int freelancerId)

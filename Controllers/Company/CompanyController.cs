@@ -1,3 +1,4 @@
+# pragma warning disable
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ public partial class CompanyController : ControllerBase
     }
     
     [HttpPost("User/Create")]
- 
+    [Authorize]
     public async Task<IActionResult> CreateUser(CompanyUser companyUser)
     {
       if(string.IsNullOrEmpty(companyUser.CopmanyEmail)
@@ -40,6 +41,7 @@ public partial class CompanyController : ControllerBase
 
 
     [HttpPost("Create")]
+    [Authorize]
     public async Task<IActionResult> CreateCompany([FromForm] CreateCompanyDto createCompany)
     {
         if(string.IsNullOrEmpty(createCompany.PhoneNumber)
@@ -58,6 +60,7 @@ public partial class CompanyController : ControllerBase
     }
 
     [HttpPost("Location/Create")]
+    [Authorize]
     public async Task<IActionResult> CreateLocation(CreateCompanyLocation location)
     {
       if(location.Locations is null)

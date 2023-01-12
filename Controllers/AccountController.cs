@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿# pragma warning disable
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,9 +7,14 @@ using MyCarearApi.Entities;
 using MyCarearApi.Models.Account;
 using MyCarearApi.Services.JwtServices;
 using MyCarearApi.Services.JwtServices.Interfaces;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using MyCarearApi.Dtos.Account;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Newtonsoft.Json.Linq;
 
 namespace MyCarearApi.Controllers;
 
@@ -22,13 +28,16 @@ public class AccountController: ControllerBase
     private readonly IUserValidator<AppUser> _userValidator;
     private readonly IServiceProvider serviceProvider;
     private readonly IJwtService _jwtService;
+    private readonly IMailSender _mailSender;
+    private readonly IConfiguration _configuration;
 
 
     ILogger<AccountController> _logger;
 
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
         RoleManager<IdentityRole> roleManager, ILogger<AccountController> logger,
-        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator, IJwtService jwtService, IServiceProvider serviceProvider)
+        IPasswordValidator<AppUser> passwordValidator, IUserValidator<AppUser> userValidator, IJwtService jwtService, 
+        IServiceProvider serviceProvider, IMailSender mailSender, IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -39,6 +48,8 @@ public class AccountController: ControllerBase
         _regex = new Regex(pattern);
         _jwtService = jwtService;
         this.serviceProvider = serviceProvider;
+        _mailSender = mailSender;
+        _configuration = configuration;
     }
 
     private string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
@@ -85,8 +96,8 @@ public class AccountController: ControllerBase
         if (!signUpResult.Succeeded)
             errors["OtherError"].AddRange(signUpResult.Errors.Select(x => x.Description));
 
-        var result = new { Succeded = isSuccess(errors), Errors = errors };        
-
+        var result = new { Succeded = isSuccess(errors), Errors = errors };
+        Console.WriteLine((await _userManager.FindByEmailAsync(userModel.Email)).Id);
         if(result.Succeded) return Ok(result);
 
         return BadRequest( result );
@@ -101,10 +112,109 @@ public class AccountController: ControllerBase
     }
 
 
+    [HttpGet("emailconfirm/{email}")]
+    public async Task<IActionResult> EmailConfirm(string email)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(await _userManager.FindByEmailAsync(email));
+
+        _mailSender.Send(email, "Email Confirmation Message", @$"
+<html>
+<head> 
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+</head>
+<body>
+    <h3>Your confirmation message</h3>
+    <p>Visit through this link to confirm your email: </p>
+    <form method=""post"" action=""{_configuration.GetSection("Urls")["ConfirmUrl"]}"">
+        <input type=""hidden"" value=""{token}"" name=""token""/>
+        <input type=""hidden"" value=""{email}"" name=""email""/>
+        <button type=""submit"" style=""background-color:#0669B4; color: white; padding: 30px; margin: 50px; width:100px; height: 30px"">
+            Confirm
+        </button>
+    </form>
+    <h5 stype=""padding: 10px;"">{token}</h5>
+</body>
+</html>
+        ");
+
+        return Ok(new { Message = "Confirmation code has sent" });
+    }
+
+    [HttpPost("emailconfirm")]
+    public async Task<IActionResult> EmailConfirm([FromForm]string token, [FromForm] string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) return BadRequest(new
+        {
+            Succeded = false,
+            Error="User Not Found"
+        });
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        return result.Succeeded ? Ok(new { Succeded = true }) 
+            : BadRequest(new { Succeded = false, Error = result.Errors.Select(x => x.Description) });
+    }
+
+    [HttpPost("ExternalGoogleLogin")]
+    public async Task<IActionResult> ExternalGoogleLogin(ExternalAuthDto externalAuth)
+    {
+        var payload = await _jwtService.VerifyGoogleToken(externalAuth.Provider, externalAuth.IdToken);
+        if (payload is null)
+            return BadRequest(new
+            {
+                Succeded = false
+            });
+        var info = new UserLoginInfo(externalAuth.Provider, payload.Subject, externalAuth.Provider);
+
+        var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        if(user is null)
+        {
+            user = await _userManager.FindByEmailAsync(payload.Email);
+            if(user is null)
+            {
+                user = new AppUser { Email = payload.Email, UserName = payload.Email };
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded) return BadRequest(new
+                {
+                    Succeeded = false,
+                    Errors = new List<string>(result.Errors.Select(x => x.Description)) { "Invalid External Auth" }
+                });
+                var token = _userManager.GenerateEmailConfirmationTokenAsync(await _userManager.FindByEmailAsync(user.Email));
+                _mailSender.Send(user.Email, "Email Confirmation Message", @$"
+<html>
+<head> 
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+</head>
+<body>
+    <h3>Your confirmation message</h3>
+    <p>Visit through this link to confirm your email: </p>
+    <form method=""post"" action=""{_configuration.GetSection("Urls")["ConfirmUrl"]}"">
+        <input type=""hidden"" value=""{token}"" name=""token""/>
+        <input type=""hidden"" value=""{user.Email}"" name=""email""/>
+        <button type=""submit"" style=""background-color:#0669B4; color: white; padding: 30px; margin: 50px; width:100px; height: 30px"">
+            Confirm
+        </button>
+    </form>
+    <h5 stype=""padding: 10px;"">{token}</h5>
+</body>
+</html>
+        ");
+
+                await _userManager.AddLoginAsync(user, info);
+            }
+            else
+            {
+                await _userManager.AddLoginAsync(user, info);
+            }
+        }
+        
+        var jwtToken = await _jwtService.GenerateToken(await _userManager.FindByEmailAsync(user.Email));
+        return Ok(new { Succeeded = true, Token = jwtToken });
+
+    }
+
     [HttpPost("addtocompany")]
     [Authorize]
     public async Task<IActionResult> AddToCompany() => await AddToRole(StaticRoles.Company);
-
 
     [HttpPost("addtofreelancer")]
     [Authorize]
@@ -140,7 +250,7 @@ public class AccountController: ControllerBase
             CurrentRole = role
         });//
     }
-
+    
 
 
     [HttpPost("login")]

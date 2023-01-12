@@ -1,4 +1,5 @@
-﻿using MyCarearApi.Entities.Enums;
+﻿#pragma warning disable
+using MyCarearApi.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyCarearApi.Models.JobModels

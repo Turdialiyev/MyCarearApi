@@ -1,3 +1,4 @@
+# pragma warning disable
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 using MyCareerApi.Entities;
@@ -32,6 +33,9 @@ public partial class FreelancerService : IFreelancerService
     {
 
         string? filePath = null;
+        var fileFolder = FileFolders.UserImage;
+        var fullPath = _fileHelper.Folder(fileFolder);
+        _logger.LogInformation($"-------------------------> {fullPath}");
         try
         {
 
@@ -68,8 +72,11 @@ public partial class FreelancerService : IFreelancerService
             }
             else
             {
-                if (File.Exists(freelancerInformation.FreelancerImage))
-                    _fileHelper.DeleteFileByName(freelancerInformation.FreelancerImage!);
+                if (File.Exists(fullPath + @"\" + freelancerInformation.FreelancerImage))
+                {
+                     _logger.LogInformation("========> ---->   ");
+                    _fileHelper.DeleteFileByName(fullPath, freelancerInformation.FreelancerImage!);
+                }
 
                 try
                 {
@@ -415,6 +422,24 @@ public partial class FreelancerService : IFreelancerService
         }
     }
 
+    public Result<IEnumerable<Entities.FreelancerInformation>> GetByPage(int page, int size) =>
+        new(true)
+        {
+            Data = _unitOfwork.FreelancerInformations.GetAll().Where(x => x.Finish == true)
+                            .Skip((page - 1) * size).Take(size)
+                            .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
+                            .Include(x => x.Position)
+                            .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
+                            .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
+                            .Include(x => x.Address)
+                            .Include(x => x.Address)!.ThenInclude(c => c!.Country)
+                            .Include(x => x.Address)!.ThenInclude(r => r!.Region)
+                            .Include(x => x.Experiences)
+                            .Include(x => x.Educations)
+                            .Include(x => x.FreelancerContact)
+                            .ToList()
+        };
+
     private async ValueTask<Entities.FreelancerInformation> GetByIdFreelancer(int freelancerId)
     {
         var freelancer = await _unitOfwork.FreelancerInformations.GetAll().Where(x => x.Id == freelancerId)
@@ -438,7 +463,8 @@ public partial class FreelancerService : IFreelancerService
         try
         {
             var freelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
-
+            //qwer-tewddff-rtreeedsdf
+            //23 - freelancerInfo
             if (freelancer == null)
                 return new(false) { ErrorMessage = "Freelancer not found" };
 

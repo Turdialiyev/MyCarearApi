@@ -9,5 +9,6 @@ public interface IGetInformationService
     ValueTask<Result<List<Entities.Country>>> GetCountries();
     ValueTask<Result<List<Entities.Language>>> GetLanguages();
     ValueTask<Result<List<Entities.Hobby>>> GetHobbies();
-
+    Task<Result<List<Entities.Skill>>> GetSkills();
+    Task<Result<List<Entities.Currency>>> GetCurrencies();
 }

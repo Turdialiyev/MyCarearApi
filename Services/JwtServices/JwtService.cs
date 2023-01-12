@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿# pragma warning disable
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyCarearApi.Entities;
@@ -6,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MyCarearApi.Services.JwtServices.Interfaces;
+using Google.Apis.Auth;
+using MyCareerApi.Entities;
 
 namespace MyCarearApi.Services.JwtServices;
 
@@ -14,12 +17,14 @@ public class JwtService: IJwtService
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
+    private readonly IConfigurationSection _configurationGoogle;
 
     public JwtService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
+        _configurationGoogle = configuration.GetSection("Google");
     }
 
     public async Task<string> GenerateToken(AppUser user)
@@ -60,4 +65,21 @@ public class JwtService: IJwtService
 
     private string GetAudience() => _configuration.GetSection("Jwt")["Audience"];
 
+    public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string provider, string idToken)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { _configurationGoogle.GetSection("client_id").Value }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+            return payload;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 }

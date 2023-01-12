@@ -1,4 +1,5 @@
-﻿using MyCarearApi.Entities.Enums;
+﻿# pragma warning disable
+using MyCarearApi.Entities.Enums;
 using MyCarearApi.Entities;
 using MyCarearApi.Repositories;
 using MyCarearApi.Services.JobServices.Interfaces;
@@ -28,7 +29,24 @@ namespace MyCarearApi.Services.JobServices
             _currencyRepository = unitOfWork.Currencies;
         }
 
+
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
+            .Include(j => j.Currency)
+            .Include(j => j.JobLanguages)
+            .Include(j => j.JobSkills)
+            .Include(j => j.Position)
+            .Include(j => j.Company).ThenInclude(c => c.CompanyLocations)
+            .Include(j => j.Company).ThenInclude(c => c.AppUser)
+            .ToList();
+
+        public IEnumerable<Job> GetJobsOfComapany(int companyId) => _jobRepository.GetAll()
+            .Where(x => x.CompanyId == companyId)
+            .Include(x => x.Company)
+            .Include(x => x.JobLanguages).ThenInclude(y => y.Language)
+            .Include(x => x.JobSkills).ThenInclude(y => y.Skill).ToList();
+
+        public IEnumerable<Job> GetByPage(int page, int size) => _jobRepository.GetAll()
+            .Skip((page - 1) * size).Take(size)
             .Include(j => j.Currency)
             .Include(j => j.JobLanguages)
             .Include(j => j.JobSkills)
@@ -48,10 +66,18 @@ namespace MyCarearApi.Services.JobServices
 
         public int AddJob(Job job) => _jobRepository.Add(job).Id;
 
-        public int AddJob(string name, int PositionId, int companyId)
+        public int AddJob(int jobId, string name, int PositionId, int companyId)
         {
-            var job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
-            return _jobRepository.Add(job).Id;
+            var job = _jobRepository.GetById(jobId);
+            if (job is null)
+            {
+                job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
+                return _jobRepository.Add(job).Id;
+            }
+            else
+            {
+                return _jobRepository.Update(job).Result.Id;
+            }
         }
 
         public async Task<int> UpdateTitle(int id,string name, int PositionId)
