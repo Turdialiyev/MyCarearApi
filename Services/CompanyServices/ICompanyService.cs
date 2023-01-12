@@ -10,5 +10,7 @@ public interface ICompanyService
    ValueTask<Result<CompanyLocation>> CreateCompanyLocation(CompanyLocation companyLocation);
    ValueTask<Result<AppUser>> CrateCompanyUser(AppUser user, string userId);//
    public void DeleteEmptyLocations(List<int> Ids, int companyId); 
-    
+   ValueTask<Result<Company>> GetCompanyById(int id);
+   ValueTask<Result<List<Company>>> GetAllCompany();
+   ValueTask<Result<List<Company>>> GetCompanyWithPagination(int page, int limit);
 }

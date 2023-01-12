@@ -194,6 +194,72 @@ public partial class CompanyService : ICompanyService
         }
     }
 
+    public async ValueTask<Result<List<Company>>> GetAllCompany()
+    {
+       try
+       {
+         var existCopanies = _unitOfWork.Companies.GetAll();
+
+         if(existCopanies is null)
+         return new("Companies not found");
+
+         return new(true) {Data = existCopanies.Select(x => ToModelCompany(x)).ToList()};
+       }
+       catch (System.Exception e) 
+       {
+        _logger.LogInformation($"Companies didn't taked");
+        throw new Exception(e.Message);
+       }
+    }
+
+    public async ValueTask<Result<Company>> GetCompanyById(int id)
+    {
+        try
+        {
+            if(id <= 0)
+            return new("Id can't be thero ot Minus");
+
+            var company = _unitOfWork.Companies.GetById(id);
+
+            if(company is null)
+            return new("This Company not Found");
+
+            return new(true) {Data = ToModelCompany(company)};
+        }
+        catch (System.Exception e)
+        {
+            _logger.LogInformation($"Company didn't taked with Id:{id}");
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async ValueTask<Result<List<Company>>> GetCompanyWithPagination(int page, int limit)
+    {
+        try
+        {
+          if(page <= 0 || limit <= 0)
+          return new("Page or limit is null or minus there");
+
+          var existCopanies = _unitOfWork.Companies.GetAll();
+
+          if(existCopanies is null)
+          return new("Companies not found");
+
+          var filteredCompanies = existCopanies
+          .Skip((page-1)*limit)
+          .Take(limit)
+          .Select(x => ToModelCompany(x))
+          .ToList();
+
+          return new(true) {Data = filteredCompanies };
+        }
+        catch (System.Exception e)
+        {
+            _logger.LogInformation("Companies not found");
+            throw new Exception(e.Message);
+        }
+    }
+
     public string UploadCompanyPhoto(IFormFile file)
     {
         try
@@ -201,9 +267,8 @@ public partial class CompanyService : ICompanyService
             if(file is null)
             return new("File Can't be null");
 
-            var path = Path.Combine("/wwwroot", file.FileName);
-
-            var createdFile = new FileStream(path, FileMode.Create);
+            var path = Path.Combine("wwwroot", file.FileName);
+            var createdFile = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), path), FileMode.Create);
             file.CopyTo(createdFile);
 
             createdFile.Close();
