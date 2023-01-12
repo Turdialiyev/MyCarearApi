@@ -6,7 +6,7 @@ using MyCarearApi.Repositories;
 
 namespace MyCarearApi.Services;
 
-public partial class ContractService : IContractService
+public partial class ContractService : IContractService 
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ContractService> _logger;
@@ -25,20 +25,20 @@ public partial class ContractService : IContractService
         try
         {
             if(contract is null)
-            return new("contact  can't be null ");
+            return new("contract  can't be null ");
 
             if(contract.Id != 0)
             {
                var existContract = _unitOfWork.Contracts.GetById(contract.Id);
-
+               
                if( existContract is not null)
                {
                 var updatedContract = await _unitOfWork.Contracts.Update(UpdateContract(existContract, contract));
                 
                 if(updatedContract is null)
                 return new("Contract is not updated");
-
-
+                
+                 
                 return new(true) { Data = ToModel(updatedContract)};
                }
 
@@ -94,11 +94,11 @@ public partial class ContractService : IContractService
        }
        catch (System.Exception e)
        {
-        
         throw new Exception(e.Message);
        }
     }
-
+    
+    // <Summary>
     // https://www.signwell.com/online-signature/ -- bu elektron imzo uchin tekin sayt
     // https://smallpdf.com/sign-pdf -- buham
     // https://www.digisigner.com/free-electronic-signature/sign-document-online --bu eng zori
