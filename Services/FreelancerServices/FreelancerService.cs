@@ -476,8 +476,7 @@ public partial class FreelancerService : IFreelancerService
                                 .Include(x => x.Educations)
                                 .Include(x => x.FreelancerContact)
                                 .FirstOrDefault();
-            //qwer-tewddff-rtreeedsdf
-            //23 - freelancerInfo
+
             if (freelancer == null)
                 return new(false) { ErrorMessage = "Freelancer not found" };
 
