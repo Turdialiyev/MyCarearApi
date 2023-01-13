@@ -58,12 +58,15 @@ public partial class FreelancerController : ControllerBase
     [HttpGet("count")]
     public IActionResult GetCount() => Ok(new { Count = _freelancerService.GetCount() });
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int freelancerId)
+    [HttpGet("Freenalcer/Get")]
+    public async Task<IActionResult> GetById()
     {
         try
         {
-            var result = await _freelancerService.GetById(freelancerId);
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier) == null ? null : User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+
+            var result = await _freelancerService.GetById(userId);
 
             if (!result.IsSuccess)
                 return NotFound(new { ErrorMessage = result.ErrorMessage });

@@ -460,23 +460,32 @@ public partial class FreelancerService : IFreelancerService
         return freelancer!;
     }
 
-    public async ValueTask<Result<FreelancerInformation>> GetById(int freelancerId)
+    public async ValueTask<Result<FreelancerInformation>> GetById(string UserId)
     {
         try
         {
-            var freelancer = _unitOfwork.FreelancerInformations.GetById(freelancerId);
-            //qwer-tewddff-rtreeedsdf
-            //23 - freelancerInfo
+            var freelancer = _unitOfwork.FreelancerInformations.GetAll().Where(u => u.AppUserId == UserId)
+                                .Include(x => x.UserLanguages)!.ThenInclude(x => x.Language)
+                                .Include(x => x.Position)
+                                .Include(x => x.FreelancerSkills)!.ThenInclude(x => x.Skill)
+                                .Include(x => x.Hobbies)!.ThenInclude(x => x.Hobby)
+                                .Include(x => x.Address)
+                                .Include(x => x.Address)!.ThenInclude(c => c!.Country)
+                                .Include(x => x.Address)!.ThenInclude(r => r!.Region)
+                                .Include(x => x.Experiences)
+                                .Include(x => x.Educations)
+                                .Include(x => x.FreelancerContact)
+                                .FirstOrDefault();
+
             if (freelancer == null)
                 return new(false) { ErrorMessage = "Freelancer not found" };
 
-            return new(true) { Data = ToModel(GetByIdFreelancer(freelancerId).Result) };
+            return new(true) { Data = ToModel(freelancer) };
         }
         catch (Exception e)
         {
             _logger.LogError($"Error occured at {nameof(FreelancerService)} .", e);
-            throw new("Couldn't get Freelancers GetAll Please contact support");
+            throw new("Couldn't get Freelancers shu yer Please contact support");
         }
     }
-
 }
