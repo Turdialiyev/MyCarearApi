@@ -7,7 +7,7 @@ public interface IFreelancerService
 {
     ValueTask<Result<List<FreelancerInformation>>> GetAll();
     Result<IEnumerable<Entities.FreelancerInformation>> GetByPage(int page, int size);
-    ValueTask<Result<FreelancerInformation>> GetById(int freelancerId);
+    ValueTask<Result<FreelancerInformation>> GetById(string userId);
     ValueTask<Result<FreelancerInformation>> Information(string userId, FreelancerInformation information, IFormFile image);
     ValueTask<Result<FreelancerInformation>> FinishResume(string userId, bool finish);
     ValueTask<Result<FreelancerInformation>>  Resume(string userId, int resume);
