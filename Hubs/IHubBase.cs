@@ -1,4 +1,5 @@
 ﻿using MyCarearApi.Entities;
+using System.Runtime.CompilerServices;
 
 namespace MyCarearApi.Hubs
 {
@@ -6,6 +7,7 @@ namespace MyCarearApi.Hubs
     {
         Task WriteMessage(Message message, List<string> filePaths);
         IAsyncEnumerable<byte> SearchUsers(string key, CancellationToken cancellationToken);
+        IAsyncEnumerable<byte> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken);
         Task ReadMessage(int id);
         Task DeleteMessage(int messageId);
         Task ClearHistory(int chatId);

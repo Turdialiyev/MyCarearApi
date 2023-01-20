@@ -134,6 +134,7 @@ builder.Services.AddAuthentication(opt =>
 
 builder.Services.AddAuthorization(options =>
 {
+    
 });
 builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
@@ -183,7 +184,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-    RequestPath = ""
+    RequestPath = "/staticfiles"
 });
 
 

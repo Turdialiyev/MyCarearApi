@@ -54,7 +54,7 @@ public partial class CompanyService : ICompanyService
         try
         {
             var filePath = "";
-            if(file is null) {  filePath = Path.Combine("wwwroot","DefaultCompany.png");}
+            if(file is null) {  filePath = Path.Combine("DefaultCompany.png");}
             
             else  {filePath = UploadCompanyPhoto(file);}
             
@@ -267,8 +267,8 @@ public partial class CompanyService : ICompanyService
             if(file is null)
             return new("File Can't be null");
 
-            var path = Path.Combine("wwwroot", file.FileName);
-            var createdFile = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), path), FileMode.Create);
+            var path = Path.Combine( file.FileName);
+            var createdFile = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path), FileMode.Create);
             file.CopyTo(createdFile);
 
             createdFile.Close();

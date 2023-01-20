@@ -90,10 +90,20 @@ public class MessageService: IMessageService
             {
                 x.Id,
                 x.DateTime,
-                Messages = x.Messages.Select(m => new Message { Id = m.Id, ChatId = m.ChatId, DateTime = m.DateTime,
-                                             FromId = m.FromId, IsRead = m.IsRead, Text = m.Text, ToId = m.ToId,
-                                             ChatFiles = m.ChatFiles, HasFile = m.HasFile, HasMedia = m.HasMedia,
-                                             HasLink = m.HasLink
+                Messages = x.Messages
+                    .Select(m => new Message 
+                    { 
+                        Id = m.Id, 
+                        ChatId = m.ChatId,
+                        DateTime = m.DateTime, 
+                        FromId = m.FromId, 
+                        IsRead = m.IsRead,
+                        Text = m.Text, 
+                        ToId = m.ToId,
+                        ChatFiles = m.ChatFiles, 
+                        HasFile = m.HasFile, 
+                        HasMedia = m.HasMedia,
+                        HasLink = m.HasLink
                 }),
                 Member1 = new
                 {

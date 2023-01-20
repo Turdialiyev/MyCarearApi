@@ -30,7 +30,7 @@ public class Job
     public bool IsSaved { get; set; }
 
     //Category
-    public int? PositionsId { get; set; }
+    public int? PositionId { get; set; }
 
     public Position? Position { get; set; }
 

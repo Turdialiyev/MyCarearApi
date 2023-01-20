@@ -66,7 +66,7 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         await Clients.Users(chat.Member1, chat.Member2).HistoryCleared(new {ChatId = chatId, ClearedBy = Context.UserIdentifier });
     }
 
-    public async IAsyncEnumerable<Chat> GetChat(int id)
+    public async IAsyncEnumerable<byte> GetChat(int id)
     {
         var chat = await _messageService.GetChat(id, Users);
         var jsonChat = JsonSerializer.Serialize(chat);
@@ -88,7 +88,9 @@ public class ChatHub:Hub<IChatHub>, IHubBase
     public async Task ReadMessage(int id)
     {
         var message = await _messageService.ReadMessage(id);
-        var proxy = Clients.Clients(_connectionService.GetConnections(message.FromId));
+        var connections = _connectionService.GetConnections(message.FromId);
+        connections.AddRange(_connectionService.GetConnections(message.ToId));
+        var proxy = Clients.Clients(connections);
         await proxy.ReadMessage(new
         {
             message.Id,
@@ -105,8 +107,8 @@ public class ChatHub:Hub<IChatHub>, IHubBase
             Chat = new
             {
                 message.Chat.Id,
-                Member1 = await _userManager.FindByIdAsync(message.Chat.Member1),
-                Member2 = await _userManager.FindByIdAsync(message.Chat.Member2),
+                Member1 = AppUserToReturn(await _userManager.FindByIdAsync(message.Chat.Member1)),
+                Member2 = AppUserToReturn(await _userManager.FindByIdAsync(message.Chat.Member2)),
                 message.Chat.DateTime,
                 Messages = new List<string>()
             }
@@ -136,7 +138,11 @@ public class ChatHub:Hub<IChatHub>, IHubBase
     {
         var addedFiles = _messageService.SaveFiles(messsageId, paths);
         var message = _messageService.GetMessage(messsageId);
-
+        Clients.Users(message.FromId, message.ToId).MessageEdited(new
+        {
+            EditedBy = Context.UserIdentifier,
+            Message = await MessageToReturn(message)
+        });
     }
 
     private async Task<dynamic> MessageToReturn(Message message) => new
@@ -165,6 +171,15 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         }
     };
 
+    private async Task<dynamic> AppUserToReturn(AppUser user) => new
+    {
+        user.Id,
+        user.Email,
+        user.FirstName,
+        user.LastName,
+        user.PhoneNumber
+    };
+
     public async Task UpdateMessageText(string text, int messageId)
     {
         var message = await _messageService.UpdateText(text, messageId);
@@ -177,10 +192,6 @@ public class ChatHub:Hub<IChatHub>, IHubBase
 
     public override async Task OnConnectedAsync()
     {
-        
-        Clients.Caller.RecieveMessage(new Message { Text = "\n*****************\n************Global message\n*************\n****************" });
-
-        Console.WriteLine("-----------------" + Context.UserIdentifier);
         _connectionService.AddConnection(Context.ConnectionId, Context.UserIdentifier);
 
         Clients.Caller.InitializeChats();
