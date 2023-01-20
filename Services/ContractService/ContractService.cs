@@ -73,7 +73,7 @@ public partial class ContractService : IContractService
           
           var job = _unitOfWork.Jobs.GetById(contract.JobId);
           var offer = _unitOfWork.Offers.GetAll().FirstOrDefault(x => x.AppUserId == contract.AppUserId);
-          var position = _unitOfWork.Positions.GetById(job!.PositionsId!.Value);
+          var position = _unitOfWork.Positions.GetById(job!.PositionId!.Value);
           var currency = _unitOfWork.Currencies.GetById(2);
 
 

@@ -35,8 +35,8 @@ namespace MyCarearApi.Services.JobServices
 
         public IEnumerable<Job> Jobs => _jobRepository.GetAll()
             .Include(j => j.Currency)
-            .Include(j => j.JobLanguages)
-            .Include(j => j.JobSkills)
+            .Include(j => j.JobLanguages).ThenInclude(x => x.Language)
+            .Include(j => j.JobSkills).ThenInclude(x => x.Skill)
             .Include(j => j.Position)
             .Include(j => j.Company).ThenInclude(c => c.CompanyLocations)
             .Include(j => j.Company).ThenInclude(c => c.AppUser)
@@ -51,17 +51,17 @@ namespace MyCarearApi.Services.JobServices
         public IEnumerable<Job> GetByPage(int page, int size) => _jobRepository.GetAll()
             .Skip((page - 1) * size).Take(size)
             .Include(j => j.Currency)
-            .Include(j => j.JobLanguages)
-            .Include(j => j.JobSkills)
+            .Include(j => j.JobLanguages).ThenInclude(x => x.Language)
+            .Include(j => j.JobSkills).ThenInclude(x => x.Skill)
             .Include(j => j.Position)
             .Include(j => j.Company).ThenInclude(c => c.CompanyLocations)
             .Include(j => j.Company).ThenInclude(c => c.AppUser)
             .ToList();
 
-        public Job? GetJob(int id) => _jobRepository.GetAll()
+        public Job? GetJob(int id) => _jobRepository.GetAll().Where(x => x.Id == id)
             .Include(j => j.Currency)
-            .Include(j => j.JobLanguages)
-            .Include(j => j.JobSkills)
+            .Include(j => j.JobLanguages).ThenInclude(x => x.Language)
+            .Include(j => j.JobSkills).ThenInclude(x => x.Skill)
             .Include(j => j.Position)
             .Include(j => j.Company).ThenInclude(c => c.CompanyLocations )
             .Include(j => j.Company).ThenInclude(c => c.AppUser).FirstOrDefault();
@@ -74,11 +74,14 @@ namespace MyCarearApi.Services.JobServices
             var job = _jobRepository.GetById(jobId);
             if (job is null)
             {
-                job = new Job { Id = 0, Name = name, PositionsId = PositionId, IsSaved = false, CompanyId = companyId };
+                job = new Job { Id = 0, Name = name, PositionId = PositionId, IsSaved = false, CompanyId = companyId };
                 return _jobRepository.Add(job).Id;
             }
             else
             {
+                job.Name = name;
+                job.PositionId = PositionId;
+                job.CompanyId = companyId;
                 return _jobRepository.Update(job).Result.Id;
             }
         }
@@ -87,7 +90,7 @@ namespace MyCarearApi.Services.JobServices
         {
             var job = _jobRepository.GetById(id);
             job.Name = name;
-            job.PositionsId = PositionId;
+            job.PositionId = PositionId;
             var updatedJob = await _jobRepository.Update(job);
             return updatedJob.Id;
         }
@@ -98,8 +101,8 @@ namespace MyCarearApi.Services.JobServices
             string fileName="";
             if (file is not null)
             {
-                fileName = Guid.NewGuid().ToString() + file.FileName;
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "JobFiles", fileName);
+                fileName = Path.Combine("JobFiles", Guid.NewGuid().ToString() + file.FileName);
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",  fileName);
                 file.CopyTo(File.Create(filePath));
             }
 
@@ -119,15 +122,16 @@ namespace MyCarearApi.Services.JobServices
             var requiredSkillIdsToDelete = job.JobSkills.Where(j => !requiredSkillIds.Contains(j.Id)).Select(j=>j.Id).ToList();
 
             requiredSkillIdsToAdd.ForEach(x => _jobSkillsService.Add(id, x));
-            requiredSkillIdsToDelete.ForEach(async x => await _jobSkillsService.Delete(id, x));
+            requiredSkillIdsToDelete.ForEach(x => _jobSkillsService.Delete(id, x).Wait());
 
             var languageIdsToAdd = requiredLanguageIds.Where(x => !job.JobLanguages.Select(y => y.Id).Contains(x)).ToList();
             var languageIdsToDelete = job.JobLanguages.Where(x => !requiredLanguageIds.Contains(x.Id)).Select(x => x.Id).ToList();
 
             languageIdsToAdd.ForEach(langId => _jobLanguagesService.Add(id, langId));
-            languageIdsToDelete.ForEach(async langId => await _jobLanguagesService.Delete(id, langId));
+            languageIdsToDelete.ForEach(langId => _jobLanguagesService.Delete(id, langId).Wait());
 
             job.RequiredLevel= reuiredCandidateLevel;
+
 
             return (await _jobRepository.Update(job)).Id;
         }

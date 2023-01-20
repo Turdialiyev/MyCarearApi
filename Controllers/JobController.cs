@@ -55,31 +55,35 @@ public class JobController: ControllerBase
     [Authorize]
     public IActionResult StartCreateJob([FromBody]JobTitle job)
     {
-        job.Title = SpaceReplace(job.Title);
+        
+            job.Title = SpaceReplace(job.Title);
 
-        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-        if(string.IsNullOrWhiteSpace(job.Title) || !_jobService.IsPositionExist(job.PositionId) || company is null)
-        {
-            return BadRequest(new
+            if (string.IsNullOrWhiteSpace(job.Title) || !_jobService.IsPositionExist(job.PositionId) || company is null)
             {
-                Succeded = false,
-                TitleError = string.IsNullOrWhiteSpace(job.Title),
-                CategoryError = _jobService.IsPositionExist(job.PositionId),
-                CompanyNotFount = company is null
-            });
-        }
+                return BadRequest(new
+                {
+                    Succeded = false,
+                    TitleError = string.IsNullOrWhiteSpace(job.Title),
+                    CategoryError = _jobService.IsPositionExist(job.PositionId),
+                    CompanyNotFount = company is null
+                });
+            }
 
-        return Ok(new
-        {
-            Succeded = true,
-            JobId = _jobService.AddJob(job.JobId, job.Title, job.PositionId, company.Id)
-        });
+            return Ok(new
+            {
+                Succeded = true,
+                JobId = _jobService.AddJob(job.JobId, job.Title, job.PositionId, company.Id)
+            });
+        
     }
 
     [HttpPost("description")]
     [Authorize]
     public async Task<IActionResult> DescribeJob(int jobId, string description, IFormFile? file)
+    {
+    try
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(jobId);
@@ -96,18 +100,25 @@ public class JobController: ControllerBase
             });
         }
 
-        jobId = await _jobService.AddDescriptionToJob(company.Id, description, file);
+        jobId = await _jobService.AddDescriptionToJob(job.Id, description, file);
 
         return Ok(new
         {
             Succeded = true,
             JobId = jobId
         });
+        }
+        catch (Exception ex)
+        {
+            System.IO.File.WriteAllText($"C:\\{DateTime.Now}log.txt", ex.Message);
+
+            return StatusCode(StatusCodes.Status406NotAcceptable, new { ex.Message });
+        }
     }
     
     [HttpPost("talant")]
     [Authorize]
-    public IActionResult SetTalantRequirements([FromBody]TalantRequirementsModel talant) 
+    public async Task<IActionResult> SetTalantRequirements([FromBody]TalantRequirementsModel talant) 
     {
         var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(talant.JobId);
@@ -125,14 +136,14 @@ public class JobController: ControllerBase
                 SkillError = notFoundSkills.Count() > 0,
                 NotFoundSkills = notFoundSkills,
                 LanguageError = notFoundLanguages.Count() > 0,
-                NotFoundLanguages = notFoundLanguages
+                NotFoundLanguages = notFoundLanguages.Count() > 0
             });
 
 
         return Ok(new
         {
             Succeded = true,
-            JobId = _jobService.SetTalantRequirements(talant.JobId, talant.RequiredCandidateLevel,
+            JobId = await _jobService.SetTalantRequirements(talant.JobId, talant.RequiredCandidateLevel,
                                                    talant.RequiredSkillIds, talant.RequiredLanguageIds)
         });
     }
@@ -271,21 +282,12 @@ public class JobController: ControllerBase
         Jobs = _jobService.GetByPage(page, size).Select(x => JobDto(x))
     });
 
-    [HttpGet("/{jobId}")]
+    [HttpGet("{jobId}")]
     [Authorize]
     public IActionResult GetById(int jobId)
     {
-        var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //var company = _jobService.GetCompany(User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var job = _jobService.GetJob(jobId);
-
-        if (company is null || job is null || company.Id != job.CompanyId)
-        {
-            return BadRequest(new
-            {
-                Succeded = false,
-                OwnerError = company is null || job is null || company.Id != job.CompanyId
-            });
-        }
 
         return Ok(JobDto(job));
     }
@@ -299,6 +301,7 @@ public class JobController: ControllerBase
         Job = new
         {
             job.Id,
+            job.Name,
             job.FilePath,
             JobSkills = job.JobSkills.Select(x => new
             {
@@ -345,7 +348,7 @@ public class JobController: ControllerBase
             job.DeadlineRate,
             job.Description,
             job.IsSaved,
-            job.PositionsId,
+            job.PositionId,
             job.Position,
             job.Price,
             job.PriceRate,
