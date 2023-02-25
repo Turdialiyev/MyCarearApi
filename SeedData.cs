@@ -16,17 +16,17 @@ namespace MyCarearApi
             await roleManager.CreateAsync(new IdentityRole(StaticRoles.Company));
             await roleManager.CreateAsync(new IdentityRole(StaticRoles.Freelancer));
 
-            var admin = new AppUser { UserName = "Admin", Email = "admin@gmail.com" };
+            var admin = new AppUser { UserName = "Admin", Email = "admin@gmail.com", EmailConfirmed = true };
             var adminPassword = "lkjhDSAQre123$";
             var result = await userManager.CreateAsync(admin, adminPassword);
             await userManager.AddToRoleAsync(await userManager.FindByEmailAsync(admin.Email), StaticRoles.Admin);
 
-            var user = new AppUser { UserName = "User", Email = "user@gmail.com" };
+            var user = new AppUser { UserName = "User", Email = "user@gmail.com", EmailConfirmed = true };
             var userPassword = "lkjhDSAQre123$";
             result = await userManager.CreateAsync(user, userPassword);
             await userManager.AddToRoleAsync(await userManager.FindByEmailAsync(admin.Email), StaticRoles.Freelancer);
 
-            var test = new AppUser { UserName = "Test", Email = "test@gmail.com" };
+            var test = new AppUser { UserName = "Test", Email = "test@gmail.com", EmailConfirmed = true };
             var testPassword = "lkjhDSAQre123$";
             result = await userManager.CreateAsync(test, testPassword);
             await userManager.AddToRoleAsync(await userManager.FindByEmailAsync(user.Email), StaticRoles.Company);

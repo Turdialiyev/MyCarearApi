@@ -254,8 +254,6 @@ public class AccountController: ControllerBase
 
 
     [HttpPost("login")]
-    [Authorize]
-    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody]UserModel userModel)
     {
         Console.WriteLine(JsonSerializer.Serialize(userModel));
@@ -306,5 +304,27 @@ public class AccountController: ControllerBase
         await SeedData.SeedUserData(serviceProvider);
 
         return Ok();
+    }
+
+    [HttpGet("UserRoles")]
+    [Authorize]
+    public async Task<IActionResult> GetClaims()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if(userId is null) return NotFound();
+        var user = await _userManager.FindByIdAsync(userId);
+        if(user == null) return NotFound();
+        var claims = new List<Claim>()
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email)
+        };
+        _roleManager.Roles.ToList().ForEach(r =>
+        {
+            if (_userManager.IsInRoleAsync(user, r.Name).Result)
+                claims.Add(new Claim(ClaimTypes.Role, r.Name));
+        });
+        return Ok(new {CLaims = claims});
     }
 }
