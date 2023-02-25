@@ -86,6 +86,7 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             // var validator = new FreelancerDtoValidation().Validate(freelancer);
 
             // if (!validator.IsValid)
@@ -116,6 +117,7 @@ public partial class FreelancerController : ControllerBase
 
         try
         {
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             var valid = new AdressDtoValidation().Validate(address);
     
             if (!valid.IsValid)
@@ -145,6 +147,7 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             // var validator = new PositionDtoValidation().Validate(position);
 
             // if (!validator.IsValid)
@@ -172,6 +175,7 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             // var validator = new ContactDtoValidation().Validate(contact);
 
             // if (!validator.IsValid)
@@ -200,7 +204,7 @@ public partial class FreelancerController : ControllerBase
     {
         try
         {
-
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             if (!ModelState.IsValid)
                 return BadRequest();
 
@@ -228,6 +232,7 @@ public partial class FreelancerController : ControllerBase
         try
         {
 
+            Console.WriteLine(HttpContext.Request.Headers.Authorization.ToString());
             if (!ModelState.IsValid)
                 return BadRequest();
 
@@ -299,5 +304,6 @@ public partial class FreelancerController : ControllerBase
         LastName = freelancer.LastName,
         Email = freelancer.Email,
         PhoneNumber = freelancer.Phone,
+        Birthday = freelancer.BirthDay
     };
 }
