@@ -8,4 +8,6 @@ public class Position
     public int? PositionId { get; set; }
     public IEnumerable<FreelancerSkill>? PositionSkills { get; set; }
     public IEnumerable<FreelancerHobby>? FreelancerHobbies { get; set;}
+    public IEnumerable<string> NewHobbies { get; set; }
+    public IEnumerable<string> NewSkills { get; set; }
 }

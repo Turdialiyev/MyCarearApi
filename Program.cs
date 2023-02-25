@@ -22,16 +22,19 @@ using SignalRSwaggerGen.Utils;
 using SignalRSwaggerGen.Naming;
 using SignalRSwaggerGen.Enums;
 using SignalRSwaggerGen.Attributes;
+using System.Net;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Http.Connections;
+using MyCarearApi;
 
 var builder = WebApplication.CreateBuilder(args);
+var allowedOrigins = builder.Configuration["AllowedOrigins"].Split(',');
 
-
-
-builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.AllowAnyOrigin()
+builder.Services.AddCors(x => x.AddPolicy("EnableCORS", w => w.WithOrigins(allowedOrigins.ToArray())
                                                               .AllowAnyHeader()
+                                                              .AllowCredentials()
                                                               .SetIsOriginAllowed((x) => {
-                                                                  File.WriteAllText($"C:\\{Guid.NewGuid()}.txt", x??"Text was null");
-                                                                  return true;
+                                                                    return true;
                                                                   })
                                                               .AllowAnyMethod()));
 
@@ -40,6 +43,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(o =>
     o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
@@ -73,7 +77,6 @@ builder.Services.AddSwaggerGen(option =>
 {
     
     option.SwaggerDoc("v2", new OpenApiInfo { Title = "Chat", Version = "v2" });
-    option.AddSignalRSwaggerGen(o => { o.ScanAssembly(typeof(ChatHub).Assembly); o.HubPathFunc = (hubName) => "/Hubs/ChatHub"; });
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -128,13 +131,20 @@ builder.Services.AddAuthentication(opt =>
 }).AddFacebook(facebook =>
 {
 
-})*/;
+});*/
 
 
 
 builder.Services.AddAuthorization(options =>
 {
-    
+    options.AddPolicy(StaticRoles.Company, pb =>
+    {
+        pb.RequireRole(StaticRoles.Company);
+    });
+    options.AddPolicy(StaticRoles.Freelancer, pb =>
+    {
+        pb.RequireRole(StaticRoles.Freelancer);
+    });
 });
 builder.Services.AddScoped<IGetInformationService, GetInformationService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
@@ -191,7 +201,10 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<ChatHub>("/chat");
+app.MapHub<ChatHub>("/chat", o =>
+{
+    
+});
 app.MapControllers();
 
 AppDbInitialize.Seed(app);

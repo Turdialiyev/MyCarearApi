@@ -181,15 +181,33 @@ public partial class FreelancerService : IFreelancerService
             if (existInformation is null)
                 return new(false) { ErrorMessage = "Freelancer information not found" };
 
-            var skills = position.PositionSkills;
-            var hobbies = position.FreelancerHobbies;
-            var createdSkill = _unitOfwork.FreelancerSkills;
-
             if (position is null)
                 return new("Posstion could not be been null");
 
             if (position.PositionSkills is null)
                 return new("Skills should not be null");
+
+            var newAddedSkills = new List<Entities.Skill>();
+            position.NewSkills.ToList().ForEach(x =>
+            {
+               var newSkill = _unitOfwork.Skills.Add(new Entities.Skill { Name = x, PositionId = position.PositionId.Value });
+                newAddedSkills.Add(newSkill);
+            });
+            var newAddedHobbies = new List<Entities.Hobby>();
+            position.NewHobbies.ToList().ForEach(x =>
+            {
+                var newHobby = _unitOfwork.Hobbies.Add(new Entities.Hobby { Name = x });
+                newAddedHobbies.Add(newHobby);
+            });
+
+
+            var skills = position.PositionSkills.ToList();
+            var hobbies = position.FreelancerHobbies.ToList();
+            var createdSkill = _unitOfwork.FreelancerSkills;
+
+            skills.AddRange(newAddedSkills.Select(ns => 
+                new FreelancerSkill { SkillId = ns.Id, PossitionId = ns.PositionId, Name = ns.Name }));
+            hobbies.AddRange(newAddedHobbies.Select(x => new FreelancerHobby { HobbyId = x.Id, Name = x.Name }));
 
             existInformation.Birthday = position.Birthday;
             existInformation.Description = position.Description;

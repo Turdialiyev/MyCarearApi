@@ -117,7 +117,7 @@ public partial class FreelancerController : ControllerBase
         try
         {
             var valid = new AdressDtoValidation().Validate(address);
-
+    
             if (!valid.IsValid)
                 return BadRequest(valid.Errors);
 
@@ -264,6 +264,8 @@ public partial class FreelancerController : ControllerBase
     {
         Description = position.Description,
         PositionId = position.PositionId,
+        NewHobbies= position.NewHobbies,
+        NewSkills = position.NewSkills,
         PositionSkills = ToModelSkills(position.FreelancerSkills),
         FreelancerHobbies = ToModelHobbies(position.FreelancerHobbies),
     };

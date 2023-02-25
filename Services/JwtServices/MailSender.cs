@@ -19,15 +19,14 @@ public class MailSender: IMailSender
     public Task Send(string to, string subject, string body)
     {
         string fromMailRu = "sultonxonqudratov@mail.ru";
-        string appPasswordMailRu = "ZLyCVxYmnTxUVkNBThZn";
+        string appPasswordMailRu = "56f1KnjKbmmVqRxsx1Pg";
         SmtpClient client = new SmtpClient
         {
             Host = "smtp.mail.ru",
             Port = 587,
             EnableSsl = true,
-            UseDefaultCredentials = false
+            Credentials = new NetworkCredential(fromMailRu, appPasswordMailRu)
         };
-        client.Credentials = new NetworkCredential(fromMailRu, appPasswordMailRu);
 
         var message = new MailMessage(new MailAddress(fromMailRu, "MyCareer"), new MailAddress(to));
 
@@ -45,6 +44,7 @@ public class MailSender: IMailSender
             cancellationTokenSource.Cancel();
         };
         client.SendMailAsync(message, cancellationTokenSource.Token);
+        Console.WriteLine(to);
         return Task.CompletedTask;
     }
 }

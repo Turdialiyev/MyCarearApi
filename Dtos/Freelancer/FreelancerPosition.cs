@@ -9,4 +9,8 @@ public class Position
     public int[]? FreelancerHobbies { get; set; }
     
     public int[]? FreelancerSkills { get; set; }
+
+    public string[]? NewHobbies { get; set; }
+
+    public string[]? NewSkills { get; set; }
 }
