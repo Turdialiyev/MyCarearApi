@@ -12,7 +12,10 @@ public class TwoFactorTokenProvider<T> : IUserTwoFactorTokenProvider<T> where T:
     public Task<string> GenerateAsync(string purpose, UserManager<T> manager, T user)
     {
         var token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
-        Tokens.Add(user.Id, token);
+        if(Tokens.ContainsKey(user.Id))
+            Tokens[user.Id] = token;
+        else
+            Tokens.Add(user.Id, token);
         new Task(() => { Thread.Sleep(TimeSpan.FromHours(24)); if (Tokens.ContainsKey(user.Id)) Tokens.Remove(user.Id); });
         return Task.FromResult(token);
     }

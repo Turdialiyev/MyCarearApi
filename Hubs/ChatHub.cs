@@ -66,23 +66,23 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         await Clients.Users(chat.Member1, chat.Member2).HistoryCleared(new {ChatId = chatId, ClearedBy = Context.UserIdentifier });
     }
 
-    public async IAsyncEnumerable<byte> GetChat(int id)
+    public async IAsyncEnumerable<char> GetChat(int id)
     {
         var chat = await _messageService.GetChat(id, Users);
         var jsonChat = JsonSerializer.Serialize(chat);
-        foreach (var b in Encoding.UTF8.GetBytes(jsonChat))
+        foreach (var b in jsonChat)
         {
             yield return b;
         }
     }
 
-    public async IAsyncEnumerable<byte> SearchUsers(string key, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<char> SearchUsers(string key, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var users = JsonSerializer.Serialize(_messageService.SearchUsers(key, Users, Context.UserIdentifier));
-        foreach (var b in Encoding.UTF8.GetBytes(users))
+        foreach (var b in users)
         {
             yield return b;
-        }
+        } 
     }
 
     public async Task ReadMessage(int id)
@@ -115,9 +115,9 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         });
     }
 
-    public async IAsyncEnumerable<byte> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<char> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        foreach (var chat in Encoding.UTF8.GetBytes(JsonSerializer.Serialize(_messageService.GetChatsByUserInformations(Context.UserIdentifier, Users))))
+        foreach (var chat in JsonSerializer.Serialize(_messageService.GetChatsByUserInformations(Context.UserIdentifier, Users)))
         {
             yield return chat;
         }
@@ -192,12 +192,14 @@ public class ChatHub:Hub<IChatHub>, IHubBase
 
     public override async Task OnConnectedAsync()
     {
+        base.OnConnectedAsync();
         _connectionService.AddConnection(Context.ConnectionId, Context.UserIdentifier);
 
         Clients.Caller.InitializeChats();
 
         var connectionIds = new List<string>();
         _connectionService.GetUserIds().Where(x => x!= Context.UserIdentifier).ToList().ForEach(x => connectionIds.AddRange(_connectionService.GetConnections(x)));
+        if(!connectionIds.Any() ) { return; }
         var proxy = Clients.Clients(connectionIds);
         var user = await _userManager.FindByIdAsync(Context.UserIdentifier);
         proxy.IsOnlineChanged(new
@@ -211,7 +213,6 @@ public class ChatHub:Hub<IChatHub>, IHubBase
             IsOnline = true
         });
         
-        base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -220,7 +221,9 @@ public class ChatHub:Hub<IChatHub>, IHubBase
 
         var connectionIds = new List<string>();
         _connectionService.GetUserIds().ForEach(x => connectionIds.AddRange(_connectionService.GetConnections(x)));
+        if (!connectionIds.Any()) return;
         var proxy = Clients.Clients(connectionIds);
+        if (proxy is null) return;
         var user = await _userManager.FindByIdAsync(Context.UserIdentifier);
         proxy.IsOnlineChanged(new
         {

@@ -6,8 +6,8 @@ namespace MyCarearApi.Hubs
     public interface IHubBase
     {
         Task WriteMessage(Message message, List<string> filePaths);
-        IAsyncEnumerable<byte> SearchUsers(string key, CancellationToken cancellationToken);
-        IAsyncEnumerable<byte> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken);
+        IAsyncEnumerable<char> SearchUsers(string key, CancellationToken cancellationToken);
+        IAsyncEnumerable<char> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken);
         Task ReadMessage(int id);
         Task DeleteMessage(int messageId);
         Task ClearHistory(int chatId);
