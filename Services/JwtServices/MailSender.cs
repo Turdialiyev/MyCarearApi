@@ -23,7 +23,7 @@ public class MailSender: IMailSender
         SmtpClient client = new SmtpClient
         {
             Host = "smtp.mail.ru",
-            Port = 587,
+            Port = 465,
             EnableSsl = true,
             Credentials = new NetworkCredential(fromMailRu, appPasswordMailRu)
         };

@@ -68,7 +68,7 @@ public partial class FreelancerService : IFreelancerService
                         Console.WriteLine(e);
                     }
                 }
-                freelancerInformation = await _unitOfwork.FreelancerInformations.AddAsync(ToEntity(information, filePath!, userId));
+                freelancerInformation = await _unitOfwork.FreelancerInformations.AddAsync(ToEntity(information, filePath is null? null : Path.Combine("Folders", FileFolders.UserImage, filePath), userId));
             }
             else
             {
@@ -79,12 +79,15 @@ public partial class FreelancerService : IFreelancerService
                 }
 
                 try
-                {
-                    if (!_fileHelper.FileValidateImage(image))
-                        return new("File is invalid only picture");
-
+                { 
                     if (image is not null)
+                    {
+                        
+                        if (!_fileHelper.FileValidateImage(image))
+                            return new("File is invalid only picture");
                         filePath = await _fileHelper.WriteFileAsync(image, FileFolders.UserImage);
+
+                    }
                 }
                 catch (Exception e)
                 {
@@ -95,7 +98,7 @@ public partial class FreelancerService : IFreelancerService
                 freelancerInformation.LastName = information.LastName;
                 freelancerInformation.PhoneNumber = information.PhoneNumber;
                 freelancerInformation.Email = information.Email;
-                freelancerInformation.FreelancerImage = filePath;
+                freelancerInformation.FreelancerImage = filePath is null ? null : Path.Combine("Folders", FileFolders.UserImage, filePath);
                 freelancerInformation.AppUserId = userId;
 
                 freelancerInformation = await _unitOfwork.FreelancerInformations.Update(freelancerInformation);
