@@ -304,6 +304,6 @@ public partial class FreelancerController : ControllerBase
         LastName = freelancer.LastName,
         Email = freelancer.Email,
         PhoneNumber = freelancer.Phone,
-        Birthday = freelancer.BirthDay
+        Birthday = freelancer.BirthDay is null? null : DateOnly.FromDateTime(freelancer.BirthDay.Value)
     };
 }

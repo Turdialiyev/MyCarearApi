@@ -100,6 +100,7 @@ public partial class FreelancerService : IFreelancerService
                 freelancerInformation.Email = information.Email;
                 freelancerInformation.FreelancerImage = filePath is null ? null : Path.Combine("Folders", FileFolders.UserImage, filePath);
                 freelancerInformation.AppUserId = userId;
+                freelancerInformation.Birthday = information.Birthday;
 
                 freelancerInformation = await _unitOfwork.FreelancerInformations.Update(freelancerInformation);
             }

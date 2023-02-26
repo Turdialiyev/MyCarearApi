@@ -122,7 +122,8 @@ public partial class FreelancerService
         Email = information.Email,
         PhoneNumber = information.PhoneNumber,
         FreelancerImage = filePath,
-        AppUserId = userId
+        AppUserId = userId,
+        Birthday = information.Birthday
     };
 
 
