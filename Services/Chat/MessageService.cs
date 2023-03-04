@@ -90,7 +90,7 @@ public class MessageService: IMessageService
             {
                 x.Id,
                 x.DateTime,
-                Messages = x.Messages
+                /*Messages = x.Messages
                     .Select(m => new Message 
                     { 
                         Id = m.Id, 
@@ -104,7 +104,7 @@ public class MessageService: IMessageService
                         HasFile = m.HasFile, 
                         HasMedia = m.HasMedia,
                         HasLink = m.HasLink
-                }),
+                }),*/
                 Member1 = new
                 {
                     Member1.Id,
@@ -172,6 +172,7 @@ public class MessageService: IMessageService
                 x.LastName,
                 x.Email,
                 x.PhoneNumber,
+                Photo = PhotoUrl(x.Id),
                 IsOnline = users.ContainsKey(x.Id) && users[x.Id].Count > 0,
                 HasChat = HasChat(currentUserId, x.Id)
             }).ToList();

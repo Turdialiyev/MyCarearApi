@@ -74,7 +74,14 @@ namespace MyCarearApi.Services.JobServices
             var job = _jobRepository.GetById(jobId);
             if (job is null)
             {
-                job = new Job { Id = 0, Name = name, PositionId = PositionId, IsSaved = false, CompanyId = companyId };
+                job = new Job { 
+                    Id = 0, 
+                    Name = name, 
+                    PositionId = PositionId, 
+                    IsSaved = false,
+                    CompanyId = companyId, 
+                    Created = DateTime.Now 
+                };
                 return _jobRepository.Add(job).Id;
             }
             else

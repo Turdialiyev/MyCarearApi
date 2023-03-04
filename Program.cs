@@ -201,10 +201,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseCors("EnableCORS");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<ChatHub>("/chat", o =>
-{
-    
-});
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 AppDbInitialize.Seed(app);
