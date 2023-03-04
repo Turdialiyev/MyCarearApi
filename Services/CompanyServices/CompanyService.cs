@@ -268,7 +268,7 @@ public partial class CompanyService : ICompanyService
             if(file is null)
             return new("File Can't be null");
 
-            var path = Path.Combine( file.FileName);
+            var path = Path.Combine(Guid.NewGuid().ToString(), file.FileName);
             var createdFile = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path), FileMode.Create);
             file.CopyTo(createdFile);
 
