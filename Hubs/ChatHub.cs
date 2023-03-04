@@ -115,11 +115,11 @@ public class ChatHub:Hub<IChatHub>, IHubBase
         });
     }
 
-    public async IAsyncEnumerable<char> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> GetHistory([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        foreach (var chat in JsonSerializer.Serialize(_messageService.GetChatsByUserInformations(Context.UserIdentifier, Users)))
+        foreach (var chat in _messageService.GetChatsByUserInformations(Context.UserIdentifier, Users))
         {
-            yield return chat;
+            yield return JsonSerializer.Serialize(chat);
         }
     }
 

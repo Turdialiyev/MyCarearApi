@@ -21,6 +21,8 @@ public class Job
 
     public JobState? State { get; set; }
 
+    public DateTime? Created { get; set; }
+
     public int? DeadLine { get; set; }
 
     public DeadlineRate? DeadlineRate { get; set; }
