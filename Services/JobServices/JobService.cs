@@ -44,7 +44,7 @@ namespace MyCarearApi.Services.JobServices
 
         public IEnumerable<Job> GetJobsOfComapany(int companyId) => _jobRepository.GetAll()
             .Where(x => x.CompanyId == companyId)
-            .Include(x => x.Company)
+            .Include(x => x.Company).ThenInclude(x => x.AppUser)
             .Include(x => x.JobLanguages).ThenInclude(y => y.Language)
             .Include(x => x.JobSkills).ThenInclude(y => y.Skill).ToList();
 
