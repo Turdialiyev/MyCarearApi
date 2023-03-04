@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using MyCarearApi.Dtos;
+using MyCarearApi.Entities;
 using MyCarearApi.Models;
 using MyCarearApi.Services;
 using MyCarearApi.Validations;
@@ -121,12 +122,14 @@ public class FreelancerExperienceController : ControllerBase
         }
     }
 
-    private Experience ToModel(FreelancerExperience experience) => new()
+    private Models.Experience ToModel(FreelancerExperience experience) => new()
     {
         CompanyName = experience.CompanyName,
         Job = experience.Job,
         Descripeion = experience.Descripeion,
-        CurrentWorking = experience.CurrentWorking
+        CurrentWorking = experience.CurrentWorking,
+        StartDate = experience.StartDate is null ? null : DateOnly.FromDateTime(experience.StartDate.Value),
+        EndDate = experience.EndDate is null ? null : DateOnly.FromDateTime(experience.EndDate.Value),
     };
 
 }

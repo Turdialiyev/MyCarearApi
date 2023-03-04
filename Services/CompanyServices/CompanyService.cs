@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MyCarearApi.Models;
 using MyCarearApi.Repositories;
 using MyCareerApi.Entities;
@@ -219,7 +220,7 @@ public partial class CompanyService : ICompanyService
             if(id <= 0)
             return new("Id can't be thero ot Minus");
 
-            var company = _unitOfWork.Companies.GetById(id);
+            var company = _unitOfWork.Companies.GetAll().Include(x => x.CompanyLocations).FirstOrDefault(x => x.Id == id);
 
             if(company is null)
             return new("This Company not Found");

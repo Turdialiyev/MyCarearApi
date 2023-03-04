@@ -104,7 +104,9 @@ public class FreelancerEducationController : ControllerBase
         EducationDegree = educarion.EducationDegree,
         TypeStudy = educarion.TypeStudy,
         Location = educarion.Location,
-        CurrentStudy = educarion.CurrentStudy
+        CurrentStudy = educarion.CurrentStudy,
+        StartDate = educarion.StartDate is null ? null : DateOnly.FromDateTime(educarion.StartDate.Value),
+        EndDate = educarion.EndDate is null? null : DateOnly.FromDateTime(educarion.EndDate.Value),
     };
 
     [HttpDelete("{id}")]

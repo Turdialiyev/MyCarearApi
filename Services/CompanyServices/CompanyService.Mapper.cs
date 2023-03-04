@@ -21,6 +21,7 @@ public partial class CompanyService
         Name = company.Name,
         PhoneNumber = company.PhoneNumber,
         Photo = company.Photo,
+        CompanyLocations = company.CompanyLocations is null? new List<CompanyLocation>() : company.CompanyLocations.Select(x => ToModelCompanyLocation(x)).ToList()
     };
 
     private Entities.Company UpdatedCompany(Entities.Company existCopany, string filePath, Company company)
